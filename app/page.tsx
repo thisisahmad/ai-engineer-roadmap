@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/reveal";
+import { FaqSection } from "@/components/faq-section";
 import { PathCard } from "@/components/path-card";
 import { HeroVisual } from "@/components/three/hero-visual";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ import { accent } from "@/lib/accents";
 import {
   getAllPaths,
   getCareerLadder,
+  getFaq,
   getFoundation,
   getProjects,
 } from "@/lib/content";
@@ -52,6 +54,7 @@ export default function HomePage() {
   const foundation = getFoundation();
   const ladder = getCareerLadder();
   const projects = getProjects();
+  const faq = getFaq();
 
   const totalStages =
     paths.reduce((n, p) => n + p.stages.length, 0) + foundation.stages.length;
@@ -336,6 +339,8 @@ export default function HomePage() {
           </Button>
         </Reveal>
       </section>
+
+      <FaqSection faq={faq} />
 
       {/* --------------------------------------------------------- Extras */}
       <section className="mx-auto max-w-6xl px-4 pb-28 sm:px-6">

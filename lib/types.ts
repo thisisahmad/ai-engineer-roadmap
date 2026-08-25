@@ -198,3 +198,16 @@ export type ProjectLibrary = {
   intro: string;
   items: Project[];
 };
+
+/** content/faq.json — also emitted as FAQPage structured data. */
+export type FaqItem = {
+  id: string;
+  question: string;
+  answer: string;
+};
+
+export type Faq = {
+  title: string;
+  intro: string;
+  items: FaqItem[];
+};

@@ -4,6 +4,10 @@ import { ArrowLeft, ArrowRight, Hammer, Layers, Star } from "lucide-react";
 import type { Metadata } from "next";
 
 import { Reveal } from "@/components/motion/reveal";
+import {
+  PathProgressBar,
+  PathProgressProvider,
+} from "@/components/path-progress";
 import { PathRoadmapGraph } from "@/components/path-roadmap-graph";
 import { ResourceList } from "@/components/resource-list";
 import { StageTimeline } from "@/components/stage-timeline";
@@ -247,27 +251,36 @@ export default async function PathPage({
           <PathRoadmapGraph path={path} />
         </Reveal>
 
-        <section aria-labelledby="stages-heading">
-          <Reveal className="mb-10">
-            <h2
-              id="stages-heading"
-              className="text-2xl font-semibold tracking-tight sm:text-3xl"
-            >
-              The stages
-            </h2>
-            <p className="mt-3 leading-relaxed text-muted-foreground">
-              Work them in order. Each stage lists the topics to cover and every
-              resource from both sources — the team lead&apos;s original sheet
-              and the curated 2026 roadmap.
-            </p>
-          </Reveal>
+        <PathProgressProvider slug={path.slug}>
+          <section aria-labelledby="stages-heading">
+            <Reveal className="mb-10">
+              <h2
+                id="stages-heading"
+                className="text-2xl font-semibold tracking-tight sm:text-3xl"
+              >
+                The stages
+              </h2>
+              <p className="mt-3 leading-relaxed text-muted-foreground">
+                Work them in order. Each stage lists the topics to cover and
+                every resource from both sources — the team lead&apos;s original
+                sheet and the curated 2026 roadmap.
+              </p>
+            </Reveal>
 
-          <StageTimeline
-            stages={path.stages}
-            accentName={path.accent}
-            pathTitles={pathTitles}
-          />
-        </section>
+            <Reveal className="mb-10">
+              <PathProgressBar
+                stageIds={path.stages.map((stage) => stage.id)}
+              />
+            </Reveal>
+
+            <StageTimeline
+              stages={path.stages}
+              accentName={path.accent}
+              pathTitles={pathTitles}
+              trackProgress
+            />
+          </section>
+        </PathProgressProvider>
 
         {projects.length > 0 ? (
           <>

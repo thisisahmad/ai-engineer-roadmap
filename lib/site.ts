@@ -44,6 +44,7 @@ export const siteCta = {
 /** Primary nav, excluding the Paths dropdown which is built from content. */
 export const primaryNav = [
   { href: "/foundation/", label: "Foundation", match: "/foundation" },
+  { href: "/compare/", label: "Compare roles", match: "/compare" },
   { href: "/career-ladder/", label: "Career ladder", match: "/career-ladder" },
   { href: "/resources/", label: "Resources", match: "/resources" },
   {

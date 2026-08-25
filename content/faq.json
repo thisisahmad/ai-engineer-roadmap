@@ -1,0 +1,41 @@
+{
+  "title": "Common questions",
+  "intro": "The things people ask before starting, answered honestly rather than encouragingly.",
+  "items": [
+    {
+      "id": "cs-degree",
+      "question": "Do I need a CS degree?",
+      "answer": "No. Nothing on this site assumes one, and the shared foundation starts from Python syntax and how HTTP works. What a degree gives you is the maths and systems grounding that the ML Engineer path leans on hardest — linear algebra, probability, how a computer actually executes your code. You can pick that up deliberately instead, which is why Math Foundations is stage 1 of that path rather than an assumed prerequisite. The paths that route around pre-trained models, AI Engineer and Agentic AI Engineer especially, need much less of it. Hiring at the junior end still asks for proof you can build and finish things, and a degree is only one way to show that."
+    },
+    {
+      "id": "how-long",
+      "question": "How long does each path take?",
+      "answer": "Long enough that any number quoted here would be a guess. What the career ladder does say is that junior is roughly the first year, mid-level lands somewhere in years one to three, and senior in years three to five — and that those brackets describe the scope of work you are trusted with, not time served. A path here is a sequence of stages, not a course with an end date: the shorter ones run seven stages and the flagship runs ten, and how fast you move through them depends on how much of the shared foundation you already have and whether you are learning full-time. Treat the stage order as the reliable part and the pace as yours."
+    },
+    {
+      "id": "switch-paths",
+      "question": "Can I switch paths halfway?",
+      "answer": "Yes, and it costs less than it looks. The paths overlap heavily by design — LLM fundamentals and RAG are the same material in AI Engineer, Agentic AI Engineer, GenAI Engineer and Full Stack AI Engineer, and every stage that is shared says so on the page. Switching between those four is mostly a matter of picking up where they diverge. The expensive move is crossing into or out of ML Engineer, because that path is built on maths and model training that the others never touch. If you are unsure, start with the shared foundation: it sits under all seven and nothing in it is wasted whichever way you go."
+    },
+    {
+      "id": "really-free",
+      "question": "Are the resources actually free?",
+      "answer": "Most are genuinely free, and where they are not the site says so on the card. The case worth watching is a course that is free to work through but charges for the certificate — several platforms moved to that model, DeepLearning.AI among them, and people usually find out near the end. Those are labelled free with a paid certificate rather than simply free. The resource library has a filter for fully free material if that is the constraint you are working under."
+    },
+    {
+      "id": "foundation-first",
+      "question": "Do I have to finish the foundation first?",
+      "answer": "Only if you need it. The shared foundation covers Python, the terminal, HTTP and networking, APIs and databases, and the standard toolchain — Git, Docker, Postman. If you are already a working engineer, skim it, confirm nothing is unfamiliar, and go straight to a path. If you are not, it is the difference between following a RAG tutorial and understanding why it is structured the way it is. Every path assumes it, which is why it lives in one place rather than being repeated seven times."
+    },
+    {
+      "id": "which-path",
+      "question": "Which path should I pick?",
+      "answer": "If you want to build products on top of models that already exist, AI Engineer. If you want to train and tune the models themselves, ML Engineer, and expect the maths. If you want to build multi-step autonomous systems, Agentic AI Engineer, which is the deepest path here. Full Stack AI Engineer is the one to take if you already write web applications and want to add AI to them end to end. If none of that resolves it, the quiz asks four questions and points at one."
+    },
+    {
+      "id": "certifications-worth-it",
+      "question": "Are the certifications worth it?",
+      "answer": "They are worth less than a portfolio and more than nothing. A vendor credential is a reasonable way to force structure onto your own study and a reasonable signal on a CV that has no shipped work behind it yet. It is not a substitute for having built something. Each path has a certification checkpoint pointing at the credential that fits it, deliberately placed late rather than early — the useful order is to build first and certify after, not the reverse."
+    }
+  ]
+}

@@ -5,6 +5,8 @@ import { getPathSummaries } from "@/lib/content";
 import { brand } from "@/lib/site";
 
 const SITE_LINKS = [
+  { href: "/quiz/", label: "Which path quiz" },
+  { href: "/compare/", label: "Compare roles" },
   { href: "/foundation/", label: "Shared foundation" },
   { href: "/career-ladder/", label: "Career ladder" },
   { href: "/resources/", label: "Resource library" },

@@ -1,6 +1,7 @@
 import { Award, Compass, PenLine } from "lucide-react";
 
 import { Reveal } from "@/components/motion/reveal";
+import { StageCheckbox } from "@/components/path-progress";
 import { ResourceList } from "@/components/resource-list";
 import { Badge } from "@/components/ui/badge";
 import { accent } from "@/lib/accents";
@@ -19,11 +20,17 @@ export function StageTimeline({
   stages,
   accentName,
   pathTitles,
+  trackProgress = false,
 }: {
   stages: Stage[];
   accentName: AccentName;
   /** slug -> title, for rendering `sharedWith` references. */
   pathTitles?: Record<string, string>;
+  /**
+   * Renders a completion toggle per stage. Requires a PathProgressProvider
+   * above this component; off for the foundation, which is not tracked.
+   */
+  trackProgress?: boolean;
 }) {
   const a = accent(accentName);
 
@@ -70,6 +77,9 @@ export function StageTimeline({
                 >
                   {stage.levelLabel}
                 </Badge>
+                {trackProgress ? (
+                  <StageCheckbox stageId={stage.id} stageTitle={stage.title} />
+                ) : null}
               </div>
 
               <p className="text-sm leading-relaxed text-muted-foreground">

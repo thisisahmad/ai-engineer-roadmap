@@ -8,6 +8,7 @@ import type {
   CertificationLibrary,
   Foundation,
   Path,
+  Faq,
   ProjectLibrary,
   Resource,
   ResourceLibrary,
@@ -173,6 +174,10 @@ export function getResourceLibrary(): ResourceLibrary {
 
 export function getCertifications(): CertificationLibrary {
   return readJson<CertificationLibrary>("certifications.json");
+}
+
+export function getFaq(): Faq {
+  return readJson<Faq>("faq.json");
 }
 
 export function getProjects(): ProjectLibrary {
