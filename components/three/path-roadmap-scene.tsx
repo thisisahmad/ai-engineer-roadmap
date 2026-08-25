@@ -19,7 +19,10 @@ import type { Stage } from "@/lib/types";
  * interaction; hover only emphasises.
  */
 
-const X_SPAN = 6.0;
+const X_SPAN = 7.2;
+/** Label box width in px. Alternating sides gives each label twice the
+ *  node spacing, so this only has to clear 2x the gap, not 1x. */
+const LABEL_W = 96;
 
 type Placed = {
   stage: Stage;
@@ -28,7 +31,7 @@ type Placed = {
   color: THREE.Color;
   scale: number;
   emissive: number;
-  /** Labels alternate across the curve to stop them colliding. */
+  /** Strict index parity, not curve position — see place(). */
   above: boolean;
 };
 
@@ -40,8 +43,10 @@ function place(stages: Stage[]): Placed[] {
     const rank = LEVEL_RANK[stage.level];
 
     const x = THREE.MathUtils.lerp(-X_SPAN, X_SPAN, t);
-    const y = Math.sin(t * Math.PI * 2) * 0.86;
-    const z = Math.cos(t * Math.PI * 1.15) * 1.3;
+    // Gentler wave than before. The curve has to stay clear of two rows of
+    // labels, so amplitude buys shape at the cost of vertical headroom.
+    const y = Math.sin(t * Math.PI * 2) * 0.44;
+    const z = Math.cos(t * Math.PI * 1.15) * 0.85;
 
     return {
       stage,
@@ -55,14 +60,19 @@ function place(stages: Stage[]): Placed[] {
       // the brightest channel of each hue to clip, which turns every
       // high-level node white and destroys the colour coding.
       emissive: 0.75 + rank * 0.08,
-      above: y >= 0,
+      // Alternate strictly by index. Keying this off the curve (y >= 0) put
+      // every consecutive node on the same side, which is what collided:
+      // ten labels competing for one row instead of five in each.
+      above: i % 2 === 0,
     };
   });
 }
 
 function NodeLabel({ node, active }: { node: Placed; active: boolean }) {
   const style = LEVEL_STYLES[node.stage.level];
-  const offset = node.scale * 1.9 + 0.34;
+  // Constant offset from the node plus its own y, so both label rows land on
+  // a flat line regardless of where the curve happens to be.
+  const offset = 1.3 - (node.above ? node.position.y : -node.position.y);
 
   return (
     <Html
@@ -74,8 +84,9 @@ function NodeLabel({ node, active }: { node: Placed; active: boolean }) {
       style={{ pointerEvents: "none" }}
     >
       <div
+        style={{ width: LABEL_W }}
         className={cn(
-          "w-[104px] select-none text-center transition-opacity duration-200",
+          "select-none text-center transition-opacity duration-200",
           node.above ? "-translate-y-full pb-1" : "translate-y-0 pt-1",
           active ? "opacity-100" : "opacity-85",
         )}
@@ -88,9 +99,10 @@ function NodeLabel({ node, active }: { node: Placed; active: boolean }) {
         </p>
         <p
           className={cn(
-            "mt-1 text-[10px] font-medium leading-tight transition-colors",
+            "mt-1 line-clamp-2 text-[10px] font-medium leading-tight transition-colors",
             active ? "text-foreground" : "text-foreground/80",
           )}
+          title={node.stage.title}
         >
           {node.stage.title}
         </p>
