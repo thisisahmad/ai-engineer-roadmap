@@ -1,0 +1,272 @@
+{
+  "intro": "From Tab 12 of the team lead's sheet, tagged by the path each project fits. Work them in order within a path.",
+  "items": [
+    {
+      "id": "python-file-organizer",
+      "title": "Python File Organizer",
+      "paths": [
+        "foundation"
+      ],
+      "resources": [
+        {
+          "label": "Python File Handling",
+          "url": "https://docs.python.org/3/tutorial/inputoutput.html",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "csv-data-analyzer",
+      "title": "CSV Data Analyzer",
+      "paths": [
+        "foundation",
+        "ml-engineer",
+        "ai-ml-hybrid"
+      ],
+      "resources": [
+        {
+          "label": "Pandas Getting Started",
+          "url": "https://pandas.pydata.org/docs/getting_started/index.html",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "api-data-fetcher",
+      "title": "API Data Fetcher",
+      "paths": [
+        "foundation",
+        "full-stack-engineer"
+      ],
+      "resources": [
+        {
+          "label": "Requests Quickstart",
+          "url": "https://requests.readthedocs.io/en/latest/user/quickstart/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "simple-fastapi-app",
+      "title": "Simple FastAPI App",
+      "paths": [
+        "foundation",
+        "full-stack-engineer"
+      ],
+      "resources": [
+        {
+          "label": "FastAPI Tutorial",
+          "url": "https://fastapi.tiangolo.com/tutorial/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "crud-api-with-database",
+      "title": "CRUD API with Database",
+      "paths": [
+        "full-stack-engineer",
+        "full-stack-ai-engineer"
+      ],
+      "resources": [
+        {
+          "label": "FastAPI Tutorial",
+          "url": "https://fastapi.tiangolo.com/tutorial/",
+          "source": "team-lead"
+        },
+        {
+          "label": "PostgreSQL Tutorial",
+          "url": "https://www.postgresql.org/docs/current/tutorial.html",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "cv-resume-parser",
+      "title": "CV / Resume Parser with LLM",
+      "paths": [
+        "ai-engineer",
+        "full-stack-ai-engineer",
+        "genai-engineer"
+      ],
+      "resources": [
+        {
+          "label": "OpenAI Structured Outputs",
+          "url": "https://platform.openai.com/docs/guides/structured-outputs",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "prompt-text-classifier",
+      "title": "Prompt-Based Text Classifier",
+      "paths": [
+        "ai-engineer",
+        "genai-engineer"
+      ],
+      "resources": [
+        {
+          "label": "OpenAI Prompt Engineering",
+          "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "semantic-search-notes",
+      "title": "Semantic Search over Notes",
+      "paths": [
+        "ai-engineer",
+        "full-stack-ai-engineer"
+      ],
+      "resources": [
+        {
+          "label": "OpenAI Embeddings",
+          "url": "https://platform.openai.com/docs/guides/embeddings",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Retrieval",
+          "url": "https://platform.openai.com/docs/guides/retrieval",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "basic-rag-chatbot",
+      "title": "Basic RAG Chatbot",
+      "paths": [
+        "ai-engineer",
+        "full-stack-ai-engineer",
+        "genai-engineer",
+        "agentic-ai-engineer"
+      ],
+      "resources": [
+        {
+          "label": "LangChain RAG Tutorial",
+          "url": "https://python.langchain.com/docs/tutorials/rag/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "pdf-qa-app",
+      "title": "PDF Question Answering App",
+      "paths": [
+        "ai-engineer",
+        "full-stack-ai-engineer"
+      ],
+      "resources": [
+        {
+          "label": "LangChain Retrieval",
+          "url": "https://python.langchain.com/docs/concepts/retrieval/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "tool-calling-assistant",
+      "title": "Tool-Calling AI Assistant",
+      "paths": [
+        "ai-engineer",
+        "agentic-ai-engineer"
+      ],
+      "resources": [
+        {
+          "label": "OpenAI Function Calling",
+          "url": "https://platform.openai.com/docs/guides/function-calling",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "agentic-rag-langgraph",
+      "title": "Agentic RAG with LangGraph",
+      "paths": [
+        "agentic-ai-engineer"
+      ],
+      "resources": [
+        {
+          "label": "LangGraph Agentic RAG",
+          "url": "https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "multi-step-workflow-agent",
+      "title": "Multi-Step Workflow Agent",
+      "paths": [
+        "agentic-ai-engineer"
+      ],
+      "resources": [
+        {
+          "label": "LangGraph Overview",
+          "url": "https://langchain-ai.github.io/langgraph/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "dockerized-ai-api",
+      "title": "Dockerized AI API",
+      "paths": [
+        "ai-engineer",
+        "ml-engineer",
+        "ai-ml-hybrid"
+      ],
+      "resources": [
+        {
+          "label": "Docker Get Started",
+          "url": "https://docs.docker.com/get-started/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "llm-evaluation-setup",
+      "title": "LLM Evaluation Setup",
+      "paths": [
+        "ai-engineer",
+        "genai-engineer",
+        "agentic-ai-engineer"
+      ],
+      "resources": [
+        {
+          "label": "MLflow LLM & Agent Evaluation",
+          "url": "https://mlflow.org/docs/latest/genai/eval-monitor/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "capstone-production-ai-app",
+      "title": "Capstone: Production-Style AI App",
+      "paths": [
+        "ai-engineer",
+        "full-stack-ai-engineer",
+        "ml-engineer",
+        "agentic-ai-engineer",
+        "genai-engineer",
+        "ai-ml-hybrid"
+      ],
+      "resources": [
+        {
+          "label": "FastAPI Tutorial",
+          "url": "https://fastapi.tiangolo.com/tutorial/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Retrieval",
+          "url": "https://platform.openai.com/docs/guides/retrieval",
+          "source": "team-lead"
+        },
+        {
+          "label": "MLflow GenAI Evaluation",
+          "url": "https://mlflow.org/docs/latest/genai/eval-monitor/",
+          "source": "team-lead"
+        }
+      ]
+    }
+  ]
+}

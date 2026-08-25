@@ -1,0 +1,52 @@
+{
+  "title": "Junior → AI System Architect",
+  "intro": "The same shape applies to every path — only the technical depth changes. Each rung is a step up in the size of the ambiguity you are trusted to absorb, not a count of years served.",
+  "closing": "The last stage of every path points at this same ladder. There are not seven architect tracks: one sits above all of them, because at that level the job becomes system-level judgement rather than language or framework specifics.",
+  "levels": [
+    {
+      "id": "junior",
+      "level": "junior",
+      "title": "Junior",
+      "yearsExperience": "0-1 yr",
+      "focus": "Learn fundamentals",
+      "scope": "Follow existing patterns",
+      "guidance": "Follow the roadmap exactly, complete every project listed, and focus on correctness over cleverness."
+    },
+    {
+      "id": "mid",
+      "level": "mid",
+      "title": "Mid-level",
+      "yearsExperience": "1-3 yr",
+      "focus": "Own features end-to-end",
+      "scope": "Build one complete project solo",
+      "guidance": "Start making architecture choices on your own projects — why RAG vs fine-tuning, why this vector DB, why this framework."
+    },
+    {
+      "id": "senior",
+      "level": "senior",
+      "title": "Senior",
+      "yearsExperience": "3-5 yr",
+      "focus": "Own systems design and tradeoffs",
+      "scope": "Design new systems, mentor juniors",
+      "guidance": "Think in tradeoffs, not tutorials — reliability, cost, latency and security become your job rather than an afterthought. Mentor others."
+    },
+    {
+      "id": "lead-staff",
+      "level": "senior",
+      "title": "Lead / Staff",
+      "yearsExperience": "5-8 yr",
+      "focus": "Own multiple teams' architecture",
+      "scope": "Set technical standards, review architecture",
+      "guidance": "Own cross-team technical direction, write design docs before code, and evaluate build-vs-buy."
+    },
+    {
+      "id": "architect",
+      "level": "architect",
+      "title": "AI System Architect",
+      "yearsExperience": "8+ yr",
+      "focus": "Own org-wide AI strategy and platform",
+      "scope": "Diagrams and decision records over code; cost, risk and scale owner",
+      "guidance": "Own the end-to-end system — model and provider selection, scaling strategy, governance, cost ceilings, and how AI investment ties to business value. Works in diagrams and decision records as much as code."
+    }
+  ]
+}

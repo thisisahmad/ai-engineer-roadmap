@@ -1,0 +1,102 @@
+{
+  "intro": "Vendor-recognised credentials referenced across the paths. Each path also has its own certification checkpoint stage pointing at the most relevant one.",
+  "caveat": "Re-verify every entry before publishing — providers restructure exams and pricing regularly.",
+  "items": [
+    {
+      "id": "aws-ai-practitioner",
+      "name": "AWS Certified AI Practitioner",
+      "provider": "Amazon Web Services",
+      "url": "https://aws.amazon.com/certification/certified-ai-practitioner/",
+      "cost": "Paid exam",
+      "note": "Free-tier learning path available.",
+      "appearsInPaths": [
+        "ai-engineer",
+        "full-stack-ai-engineer"
+      ]
+    },
+    {
+      "id": "azure-ai-901",
+      "name": "Azure AI-901 Fundamentals",
+      "provider": "Microsoft",
+      "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-fundamentals/",
+      "cost": "Paid exam",
+      "note": "Replacing AI-900 as of June 30, 2026 — verify current status before publishing.",
+      "appearsInPaths": [
+        "ai-engineer"
+      ]
+    },
+    {
+      "id": "google-pro-mle",
+      "name": "Google Professional Machine Learning Engineer",
+      "provider": "Google Cloud",
+      "url": "https://cloud.google.com/learn/certification/machine-learning-engineer",
+      "cost": "Paid exam",
+      "appearsInPaths": [
+        "ml-engineer"
+      ]
+    },
+    {
+      "id": "aws-ml-specialty",
+      "name": "AWS Certified Machine Learning - Specialty",
+      "provider": "Amazon Web Services",
+      "url": "https://aws.amazon.com/certification/certified-machine-learning-specialty/",
+      "cost": "Paid exam",
+      "appearsInPaths": [
+        "ml-engineer"
+      ]
+    },
+    {
+      "id": "ibm-ai-engineering",
+      "name": "IBM AI Engineering Professional Certificate",
+      "provider": "IBM / Coursera",
+      "url": "https://www.coursera.org/professional-certificates/ai-engineering",
+      "cost": "Audit free, certificate paid",
+      "note": "Broadest all-round credential.",
+      "appearsInPaths": [
+        "ai-ml-hybrid"
+      ]
+    },
+    {
+      "id": "ibm-genai-engineering",
+      "name": "IBM Generative AI Engineering Professional Certificate",
+      "provider": "IBM / Coursera",
+      "url": "https://www.coursera.org/professional-certificates/ibm-generative-ai-engineering",
+      "cost": "Audit free, certificate paid",
+      "appearsInPaths": [
+        "genai-engineer"
+      ]
+    },
+    {
+      "id": "langchain-academy",
+      "name": "LangChain Academy",
+      "provider": "LangChain",
+      "url": "https://academy.langchain.com/",
+      "cost": "Free",
+      "note": "Agent-focused.",
+      "appearsInPaths": [
+        "agentic-ai-engineer"
+      ]
+    },
+    {
+      "id": "anthropic-academy",
+      "name": "Anthropic Academy",
+      "provider": "Anthropic",
+      "url": "https://www.anthropic.com/learn",
+      "cost": "Free",
+      "note": "~20 courses with completion certificates.",
+      "appearsInPaths": [
+        "agentic-ai-engineer"
+      ]
+    },
+    {
+      "id": "meta-frontend",
+      "name": "Meta Front-End Developer Certificate",
+      "provider": "Meta / Coursera",
+      "url": "https://www.coursera.org/professional-certificates/meta-front-end-developer",
+      "cost": "Audit free, certificate paid",
+      "appearsInPaths": [
+        "full-stack-engineer"
+      ]
+    }
+  ]
+}
