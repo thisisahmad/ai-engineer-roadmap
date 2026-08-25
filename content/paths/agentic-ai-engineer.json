@@ -1,0 +1,511 @@
+{
+  "slug": "agentic-ai-engineer",
+  "title": "Agentic AI Engineer",
+  "shortTitle": "Agentic AI",
+  "pathLetter": "E",
+  "order": 5,
+  "accent": "rose",
+  "flagship": true,
+  "tagline": "Builds multi-step autonomous agent systems",
+  "role": {
+    "whatTheyDo": "Builds multi-step autonomous agent systems",
+    "trainsModels": "No",
+    "coreFocus": "Orchestration, tool-calling, memory, multi-agent design"
+  },
+  "requiresFoundation": true,
+  "stages": [
+    {
+      "id": "llm-fundamentals-rag",
+      "order": 1,
+      "title": "LLM Fundamentals + RAG",
+      "level": "junior",
+      "levelLabel": "Junior",
+      "description": "Shared with the AI Engineer path, stages 1-2.",
+      "topics": [
+        "What is an LLM?",
+        "Tokens",
+        "Context Window",
+        "System Prompt vs User Prompt",
+        "Clear Task Instruction",
+        "Role Prompting",
+        "Few-Shot Prompting",
+        "Output Formatting",
+        "Structured Outputs",
+        "Function / Tool Calling",
+        "Temperature & Output Control",
+        "Hallucinations",
+        "Prompt Chaining",
+        "Prompt Templates",
+        "Evaluating Prompt Quality",
+        "Embeddings",
+        "Why Embeddings Matter",
+        "Text Embedding Models",
+        "Similarity Search",
+        "Semantic Search",
+        "Vector Database",
+        "Vector Stores",
+        "Metadata Filtering",
+        "Document Chunking",
+        "Retrieval Pipeline",
+        "What is RAG?",
+        "Basic RAG Flow",
+        "RAG vs Fine-Tuning",
+        "Hybrid Retrieval",
+        "Retrieval Agents",
+        "RAG Evaluation"
+      ],
+      "resources": [
+        {
+          "label": "OpenAI Prompting Guide",
+          "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+          "source": "curated"
+        },
+        {
+          "label": "Anthropic Academy — Prompt Engineering",
+          "url": "https://www.anthropic.com/learn",
+          "source": "curated"
+        },
+        {
+          "label": "LangChain RAG Tutorial",
+          "url": "https://python.langchain.com/docs/tutorials/rag/",
+          "source": "curated"
+        },
+        {
+          "label": "OpenAI Text Generation",
+          "url": "https://platform.openai.com/docs/guides/text",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Prompt Guidance",
+          "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Models Docs",
+          "url": "https://platform.openai.com/docs/models",
+          "source": "team-lead"
+        },
+        {
+          "label": "Gemini Prompt Design",
+          "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+          "source": "team-lead"
+        },
+        {
+          "label": "Claude Prompt Engineering Overview",
+          "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Structured Outputs",
+          "url": "https://platform.openai.com/docs/guides/structured-outputs",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Function Calling",
+          "url": "https://platform.openai.com/docs/guides/function-calling",
+          "source": "team-lead"
+        },
+        {
+          "label": "Hands-On Large Language Models (GitHub)",
+          "url": "https://github.com/HandsOnLLM/Hands-On-Large-Language-Models",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Embeddings Guide",
+          "url": "https://platform.openai.com/docs/guides/embeddings",
+          "source": "team-lead"
+        },
+        {
+          "label": "Qdrant Vectors Docs",
+          "url": "https://qdrant.tech/documentation/concepts/vectors/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Retrieval Guide",
+          "url": "https://platform.openai.com/docs/guides/retrieval",
+          "source": "team-lead"
+        },
+        {
+          "label": "Qdrant Overview",
+          "url": "https://qdrant.tech/documentation/overview/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Pinecone Vector Search",
+          "url": "https://docs.pinecone.io/guides/get-started/overview",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangChain Retrieval Docs",
+          "url": "https://python.langchain.com/docs/concepts/retrieval/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangChain RAG Tutorial",
+          "url": "https://python.langchain.com/docs/tutorials/rag/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Qdrant Hybrid Queries",
+          "url": "https://qdrant.tech/documentation/concepts/hybrid-queries/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangGraph Agentic RAG Tutorial",
+          "url": "https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangSmith RAG Evaluation Tutorial",
+          "url": "https://docs.smith.langchain.com/evaluation/tutorials/rag",
+          "source": "team-lead"
+        },
+        {
+          "label": "RAG (video series)",
+          "url": "https://www.youtube.com/watch?v=fZM3oX4xEyg&list=PLZoTAELRMXVM8Pf4U67L4UuDRgV4TNX9D",
+          "source": "team-lead"
+        }
+      ],
+      "sharedWith": [
+        "ai-engineer"
+      ]
+    },
+    {
+      "id": "async-programming",
+      "order": 2,
+      "title": "Async Programming",
+      "level": "junior",
+      "levelLabel": "Junior → Mid",
+      "description": "asyncio — agents wait on tool responses constantly.",
+      "topics": [
+        "Coroutines and the event loop",
+        "Concurrent tool calls",
+        "Timeouts and cancellation",
+        "Backpressure and rate limiting"
+      ],
+      "resources": [
+        {
+          "label": "Python asyncio Docs",
+          "url": "https://docs.python.org/3/library/asyncio.html",
+          "source": "curated"
+        }
+      ]
+    },
+    {
+      "id": "ai-agents-frameworks",
+      "order": 3,
+      "title": "AI Agents & Frameworks",
+      "level": "mid",
+      "levelLabel": "Mid",
+      "description": "State, memory, guardrails, LangGraph, MCP.",
+      "topics": [
+        "What is an AI Agent?",
+        "Agent Workflow",
+        "Tool / Function Calling",
+        "Tool Design",
+        "Agent State",
+        "Memory in Agents",
+        "Human-in-the-Loop",
+        "Guardrails",
+        "Orchestration & Handoffs",
+        "Multi-Agent Systems",
+        "OpenAI Agents SDK",
+        "LangChain Agents",
+        "LangGraph",
+        "Persistence & Checkpoints",
+        "MCP Basics",
+        "Agent Evaluation & Tracing"
+      ],
+      "resources": [
+        {
+          "label": "LangGraph Overview",
+          "url": "https://langchain-ai.github.io/langgraph/",
+          "source": "curated"
+        },
+        {
+          "label": "MCP Introduction",
+          "url": "https://modelcontextprotocol.io/introduction",
+          "source": "curated"
+        },
+        {
+          "label": "Anthropic Academy — MCP course",
+          "url": "https://www.anthropic.com/learn",
+          "source": "curated"
+        },
+        {
+          "label": "OpenAI Agents SDK",
+          "url": "https://openai.github.io/openai-agents-python/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Running Agents",
+          "url": "https://openai.github.io/openai-agents-python/running_agents/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Function Calling",
+          "url": "https://platform.openai.com/docs/guides/function-calling",
+          "source": "team-lead"
+        },
+        {
+          "label": "Define Agents",
+          "url": "https://openai.github.io/openai-agents-python/agents/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangGraph Persistence",
+          "url": "https://langchain-ai.github.io/langgraph/concepts/persistence/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangGraph Memory",
+          "url": "https://langchain-ai.github.io/langgraph/concepts/memory/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Guardrails and Human Review",
+          "url": "https://openai.github.io/openai-agents-python/guardrails/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Guardrails",
+          "url": "https://platform.openai.com/docs/guides/guardrails",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Orchestration and Handoffs",
+          "url": "https://openai.github.io/openai-agents-python/handoffs/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangChain Overview",
+          "url": "https://python.langchain.com/docs/introduction/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangGraph Overview",
+          "url": "https://langchain-ai.github.io/langgraph/",
+          "source": "team-lead"
+        },
+        {
+          "label": "MCP Introduction",
+          "url": "https://modelcontextprotocol.io/introduction",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangSmith Evaluation",
+          "url": "https://docs.smith.langchain.com/evaluation",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangSmith Observability",
+          "url": "https://docs.smith.langchain.com/observability",
+          "source": "team-lead"
+        },
+        {
+          "label": "MCP (video series)",
+          "url": "https://www.youtube.com/watch?v=-UQ6OZywZ2I&list=PLZoTAELRMXVPC8r1xF68Gksi241DAtMsK",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangChain / LangGraph (video series)",
+          "url": "https://www.youtube.com/watch?v=vVGXPRjtAJE&list=PLZoTAELRMXVPFd7JdvB-rnTb_5V26NYNO",
+          "source": "team-lead"
+        },
+        {
+          "label": "Agent walkthrough (video, uncategorised in sheet)",
+          "url": "https://www.youtube.com/watch?v=e-GR3PlEOVU",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "agentic-rag",
+      "order": 4,
+      "title": "Agentic RAG / RAG 2.0",
+      "level": "mid",
+      "levelLabel": "Mid",
+      "description": "Self-correcting retrieval, query rewriting.",
+      "topics": [
+        "Retrieval Agents",
+        "Query rewriting",
+        "Self-correcting retrieval loops",
+        "Hybrid Retrieval",
+        "RAG Evaluation"
+      ],
+      "resources": [
+        {
+          "label": "LangGraph Agentic RAG Tutorial",
+          "url": "https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag/",
+          "source": "curated"
+        },
+        {
+          "label": "Qdrant Hybrid Queries",
+          "url": "https://qdrant.tech/documentation/concepts/hybrid-queries/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangSmith RAG Evaluation Tutorial",
+          "url": "https://docs.smith.langchain.com/evaluation/tutorials/rag",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "multi-agent-orchestration-at-scale",
+      "order": 5,
+      "title": "Multi-Agent Orchestration at Scale",
+      "level": "senior",
+      "levelLabel": "Senior",
+      "description": "Agent handshake and comms, queue systems, microservice vs monolith, KV cache optimization.",
+      "topics": [
+        "Transformers internals",
+        "Generative modeling paradigm",
+        "KV cache optimization in transformers",
+        "Agent memory",
+        "Agent orchestration scalability (thousands of users)",
+        "Agent orchestration design patterns",
+        "Scalable microservice architecture",
+        "Monolith design",
+        "Agent handshake mechanism (intra-agent communication)",
+        "Queue systems"
+      ],
+      "resources": [],
+      "needsOriginalContent": true,
+      "note": "Flagged for original content. These topics had zero links in the team lead's sheet and no external course covers them well — write this section from production experience rather than linking out. This is the strongest differentiator on the site."
+    },
+    {
+      "id": "graph-theory-basics",
+      "order": 6,
+      "title": "Graph Theory Basics",
+      "level": "mid",
+      "levelLabel": "Mid",
+      "description": "Agents operate in loops and networks, not linear chains.",
+      "topics": [
+        "Nodes, edges and directed graphs",
+        "Cycles and termination",
+        "Traversal and shortest paths",
+        "Why agent graphs are not DAGs"
+      ],
+      "resources": [
+        {
+          "label": "Khan Academy Graph Theory intro",
+          "url": "https://www.khanacademy.org/computing/computer-science/algorithms",
+          "source": "curated"
+        }
+      ]
+    },
+    {
+      "id": "human-in-the-loop-guardrails",
+      "order": 7,
+      "title": "Human-in-the-loop & Guardrails",
+      "level": "senior",
+      "levelLabel": "Senior",
+      "description": "Approval flows, safety checks.",
+      "topics": [
+        "Human-in-the-Loop",
+        "Guardrails",
+        "Approval gates and escalation",
+        "Output validation",
+        "Failure containment"
+      ],
+      "resources": [
+        {
+          "label": "OpenAI Guardrails Docs",
+          "url": "https://platform.openai.com/docs/guides/guardrails",
+          "source": "curated"
+        },
+        {
+          "label": "Guardrails and Human Review",
+          "url": "https://openai.github.io/openai-agents-python/guardrails/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Guardrails",
+          "url": "https://platform.openai.com/docs/guides/guardrails",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-tracing",
+      "order": 8,
+      "title": "Evaluation & Tracing",
+      "level": "senior",
+      "levelLabel": "Senior",
+      "description": "Tool-call inspection, failure analysis.",
+      "topics": [
+        "Agent Evaluation & Tracing",
+        "Tool-call inspection",
+        "Trajectory and step-level scoring",
+        "Failure taxonomies"
+      ],
+      "resources": [
+        {
+          "label": "LangSmith Docs",
+          "url": "https://docs.smith.langchain.com/",
+          "source": "curated"
+        },
+        {
+          "label": "LangSmith Evaluation",
+          "url": "https://docs.smith.langchain.com/evaluation",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangSmith Observability",
+          "url": "https://docs.smith.langchain.com/observability",
+          "source": "team-lead"
+        },
+        {
+          "label": "MLflow LLM & Agent Evaluation",
+          "url": "https://mlflow.org/docs/latest/genai/eval-monitor/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "certification-checkpoint",
+      "order": 9,
+      "title": "Certification checkpoint",
+      "level": "mid",
+      "levelLabel": "Any level",
+      "description": "Vendor or framework credential.",
+      "topics": [],
+      "resources": [
+        {
+          "label": "LangChain Academy",
+          "url": "https://academy.langchain.com/",
+          "source": "curated",
+          "note": "Free."
+        },
+        {
+          "label": "Anthropic Academy",
+          "url": "https://www.anthropic.com/learn",
+          "source": "curated",
+          "note": "Free, ~20 courses with completion certificates."
+        }
+      ],
+      "kind": "certification",
+      "note": "Certification checkpoints are not tied to a level — take one whenever it is useful. `level` is set to mid only so the stage groups sensibly in the UI."
+    },
+    {
+      "id": "senior-to-architect",
+      "order": 10,
+      "title": "Senior → AI System Architect",
+      "level": "architect",
+      "levelLabel": "Senior+",
+      "description": "Multi-agent system architecture at scale.",
+      "topics": [
+        "Model and provider selection across the whole system",
+        "Scaling strategy and cost ceilings",
+        "Governance, risk and reliability ownership",
+        "Design docs and decision records over code",
+        "Tying AI investment to business value"
+      ],
+      "resources": [],
+      "kind": "architect",
+      "note": "One architect track sits above all seven paths — the job becomes system-level judgement rather than language or framework specifics. See the career ladder."
+    }
+  ],
+  "note": "Flagship path — the deepest coverage on the site, and the one where stage 5 is original production content rather than curated links."
+}

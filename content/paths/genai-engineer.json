@@ -1,0 +1,416 @@
+{
+  "slug": "genai-engineer",
+  "title": "GenAI Engineer",
+  "shortTitle": "GenAI",
+  "pathLetter": "F",
+  "order": 6,
+  "accent": "amber",
+  "tagline": "Builds generative apps, fine-tunes models",
+  "role": {
+    "whatTheyDo": "Builds generative apps, fine-tunes models",
+    "trainsModels": "Sometimes (LoRA/QLoRA)",
+    "coreFocus": "Fine-tuning, multimodal, RAG"
+  },
+  "requiresFoundation": true,
+  "stages": [
+    {
+      "id": "llm-fundamentals-rag",
+      "order": 1,
+      "title": "LLM Fundamentals + RAG",
+      "level": "junior",
+      "levelLabel": "Junior",
+      "description": "Shared with the AI Engineer path, stages 1-2.",
+      "topics": [
+        "What is an LLM?",
+        "Tokens",
+        "Context Window",
+        "System Prompt vs User Prompt",
+        "Clear Task Instruction",
+        "Role Prompting",
+        "Few-Shot Prompting",
+        "Output Formatting",
+        "Structured Outputs",
+        "Function / Tool Calling",
+        "Temperature & Output Control",
+        "Hallucinations",
+        "Prompt Chaining",
+        "Prompt Templates",
+        "Evaluating Prompt Quality",
+        "Embeddings",
+        "Why Embeddings Matter",
+        "Text Embedding Models",
+        "Similarity Search",
+        "Semantic Search",
+        "Vector Database",
+        "Vector Stores",
+        "Metadata Filtering",
+        "Document Chunking",
+        "Retrieval Pipeline",
+        "What is RAG?",
+        "Basic RAG Flow",
+        "RAG vs Fine-Tuning",
+        "Hybrid Retrieval",
+        "Retrieval Agents",
+        "RAG Evaluation"
+      ],
+      "resources": [
+        {
+          "label": "OpenAI Prompting Guide",
+          "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+          "source": "curated"
+        },
+        {
+          "label": "LangChain RAG Tutorial",
+          "url": "https://python.langchain.com/docs/tutorials/rag/",
+          "source": "curated"
+        },
+        {
+          "label": "OpenAI Text Generation",
+          "url": "https://platform.openai.com/docs/guides/text",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Prompt Guidance",
+          "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Models Docs",
+          "url": "https://platform.openai.com/docs/models",
+          "source": "team-lead"
+        },
+        {
+          "label": "Gemini Prompt Design",
+          "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+          "source": "team-lead"
+        },
+        {
+          "label": "Claude Prompt Engineering Overview",
+          "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Structured Outputs",
+          "url": "https://platform.openai.com/docs/guides/structured-outputs",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Function Calling",
+          "url": "https://platform.openai.com/docs/guides/function-calling",
+          "source": "team-lead"
+        },
+        {
+          "label": "Hands-On Large Language Models (GitHub)",
+          "url": "https://github.com/HandsOnLLM/Hands-On-Large-Language-Models",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Embeddings Guide",
+          "url": "https://platform.openai.com/docs/guides/embeddings",
+          "source": "team-lead"
+        },
+        {
+          "label": "Qdrant Vectors Docs",
+          "url": "https://qdrant.tech/documentation/concepts/vectors/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Retrieval Guide",
+          "url": "https://platform.openai.com/docs/guides/retrieval",
+          "source": "team-lead"
+        },
+        {
+          "label": "Qdrant Overview",
+          "url": "https://qdrant.tech/documentation/overview/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Pinecone Vector Search",
+          "url": "https://docs.pinecone.io/guides/get-started/overview",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangChain Retrieval Docs",
+          "url": "https://python.langchain.com/docs/concepts/retrieval/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangChain RAG Tutorial",
+          "url": "https://python.langchain.com/docs/tutorials/rag/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Qdrant Hybrid Queries",
+          "url": "https://qdrant.tech/documentation/concepts/hybrid-queries/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangGraph Agentic RAG Tutorial",
+          "url": "https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangSmith RAG Evaluation Tutorial",
+          "url": "https://docs.smith.langchain.com/evaluation/tutorials/rag",
+          "source": "team-lead"
+        },
+        {
+          "label": "RAG (video series)",
+          "url": "https://www.youtube.com/watch?v=fZM3oX4xEyg&list=PLZoTAELRMXVM8Pf4U67L4UuDRgV4TNX9D",
+          "source": "team-lead"
+        }
+      ],
+      "sharedWith": [
+        "ai-engineer"
+      ]
+    },
+    {
+      "id": "fine-tuning",
+      "order": 2,
+      "title": "Fine-Tuning (LoRA/QLoRA)",
+      "level": "mid",
+      "levelLabel": "Mid",
+      "description": "When to fine-tune vs RAG, dataset curation.",
+      "topics": [
+        "RAG vs Fine-Tuning",
+        "LoRA and QLoRA adapters",
+        "Dataset curation and deduplication",
+        "Evaluation against the base model",
+        "Quantisation tradeoffs"
+      ],
+      "resources": [
+        {
+          "label": "Hugging Face PEFT Docs",
+          "url": "https://huggingface.co/docs/peft/index",
+          "source": "curated"
+        },
+        {
+          "label": "OpenAI Retrieval Guide",
+          "url": "https://platform.openai.com/docs/guides/retrieval",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "multimodal-ai",
+      "order": 3,
+      "title": "Multimodal AI",
+      "level": "mid",
+      "levelLabel": "Mid → Senior",
+      "description": "Vision models, image generation basics, audio.",
+      "topics": [
+        "Diffusion model basics",
+        "Vision-language models",
+        "Image generation pipelines",
+        "Audio and speech models"
+      ],
+      "resources": [
+        {
+          "label": "Hugging Face Learn — Diffusion Course",
+          "url": "https://huggingface.co/learn/diffusion-course",
+          "source": "curated"
+        },
+        {
+          "label": "Hugging Face Learn",
+          "url": "https://huggingface.co/learn",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-generative-systems",
+      "order": 4,
+      "title": "Evaluation for Generative Systems",
+      "level": "senior",
+      "levelLabel": "Senior",
+      "description": "RAGAS, LLM-as-judge, golden test sets.",
+      "topics": [
+        "RAG Evaluation",
+        "LLM-as-judge and its failure modes",
+        "Golden test sets",
+        "Human preference evaluation"
+      ],
+      "resources": [
+        {
+          "label": "RAGAS Docs",
+          "url": "https://docs.ragas.io/",
+          "source": "curated"
+        },
+        {
+          "label": "MLflow LLM & Agent Evaluation",
+          "url": "https://mlflow.org/docs/latest/genai/eval-monitor/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangSmith RAG Evaluation Tutorial",
+          "url": "https://docs.smith.langchain.com/evaluation/tutorials/rag",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "deployment-monitoring",
+      "order": 5,
+      "title": "Deployment & Monitoring",
+      "level": "senior",
+      "levelLabel": "Senior",
+      "description": "Shared with the AI Engineer path, stage 5.",
+      "topics": [
+        "Local vs Production Deployment",
+        "Docker Basics",
+        "Dockerfile",
+        "Docker Compose",
+        "API Deployment Concepts",
+        "Workers & Scaling",
+        "CI/CD Basics",
+        "Secrets in Deployment",
+        "Experiment Tracking",
+        "Model Registry",
+        "Model Evaluation",
+        "LLM / Agent Evaluation",
+        "Logs",
+        "Metrics",
+        "Traces",
+        "Monitoring & Alerting",
+        "Kubernetes Basics"
+      ],
+      "resources": [
+        {
+          "label": "Docker Get Started",
+          "url": "https://docs.docker.com/get-started/",
+          "source": "curated"
+        },
+        {
+          "label": "MLflow Docs",
+          "url": "https://mlflow.org/docs/latest/index.html",
+          "source": "curated"
+        },
+        {
+          "label": "FastAPI Deployment",
+          "url": "https://fastapi.tiangolo.com/deployment/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Docker Get Started",
+          "url": "https://docs.docker.com/get-started/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Dockerfile Overview",
+          "url": "https://docs.docker.com/reference/dockerfile/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Docker Compose Docs",
+          "url": "https://docs.docker.com/compose/",
+          "source": "team-lead"
+        },
+        {
+          "label": "FastAPI Deployment Concepts",
+          "url": "https://fastapi.tiangolo.com/deployment/concepts/",
+          "source": "team-lead"
+        },
+        {
+          "label": "FastAPI Server Workers",
+          "url": "https://fastapi.tiangolo.com/deployment/server-workers/",
+          "source": "team-lead"
+        },
+        {
+          "label": "GitHub Actions Docs",
+          "url": "https://docs.github.com/en/actions",
+          "source": "team-lead"
+        },
+        {
+          "label": "GitHub Actions Secrets",
+          "url": "https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions",
+          "source": "team-lead"
+        },
+        {
+          "label": "MLflow Tracking",
+          "url": "https://mlflow.org/docs/latest/tracking.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "MLflow Model Registry",
+          "url": "https://mlflow.org/docs/latest/model-registry.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "MLflow Model Evaluation",
+          "url": "https://mlflow.org/docs/latest/models.html#model-evaluation",
+          "source": "team-lead"
+        },
+        {
+          "label": "MLflow LLM & Agent Evaluation",
+          "url": "https://mlflow.org/docs/latest/genai/eval-monitor/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenTelemetry Logs",
+          "url": "https://opentelemetry.io/docs/concepts/signals/logs/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Prometheus Overview",
+          "url": "https://prometheus.io/docs/introduction/overview/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenTelemetry Overview",
+          "url": "https://opentelemetry.io/docs/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Prometheus Getting Started",
+          "url": "https://prometheus.io/docs/prometheus/latest/getting_started/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Kubernetes Overview",
+          "url": "https://kubernetes.io/docs/concepts/overview/",
+          "source": "team-lead"
+        }
+      ],
+      "sharedWith": [
+        "ai-engineer"
+      ]
+    },
+    {
+      "id": "certification-checkpoint",
+      "order": 6,
+      "title": "Certification checkpoint",
+      "level": "mid",
+      "levelLabel": "Any level",
+      "description": "Vendor credential.",
+      "topics": [],
+      "resources": [
+        {
+          "label": "IBM Generative AI Engineering Professional Certificate",
+          "url": "https://www.coursera.org/professional-certificates/ibm-generative-ai-engineering",
+          "source": "curated",
+          "note": "Audit free."
+        }
+      ],
+      "kind": "certification",
+      "note": "Certification checkpoints are not tied to a level — take one whenever it is useful. `level` is set to mid only so the stage groups sensibly in the UI."
+    },
+    {
+      "id": "senior-to-architect",
+      "order": 7,
+      "title": "Senior → AI System Architect",
+      "level": "architect",
+      "levelLabel": "Senior+",
+      "description": "Generative system architecture, cost/quality tradeoffs.",
+      "topics": [
+        "Model and provider selection across the whole system",
+        "Scaling strategy and cost ceilings",
+        "Governance, risk and reliability ownership",
+        "Design docs and decision records over code",
+        "Tying AI investment to business value"
+      ],
+      "resources": [],
+      "kind": "architect",
+      "note": "One architect track sits above all seven paths — the job becomes system-level judgement rather than language or framework specifics. See the career ladder."
+    }
+  ]
+}

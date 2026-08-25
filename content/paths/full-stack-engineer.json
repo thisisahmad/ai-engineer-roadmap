@@ -1,0 +1,308 @@
+{
+  "slug": "full-stack-engineer",
+  "title": "Full Stack Engineer",
+  "shortTitle": "Full Stack",
+  "pathLetter": "C",
+  "order": 1,
+  "accent": "sky",
+  "tagline": "Complete web apps — the base for Full Stack AI Engineer",
+  "role": {
+    "whatTheyDo": "Builds complete web apps, frontend + backend",
+    "trainsModels": "No",
+    "coreFocus": "HTML/CSS/JS, a backend language, databases"
+  },
+  "requiresFoundation": true,
+  "stages": [
+    {
+      "id": "frontend-foundations",
+      "order": 1,
+      "title": "Frontend Foundations",
+      "level": "junior",
+      "levelLabel": "Junior",
+      "description": "HTML, CSS, JS, DOM, responsive design.",
+      "topics": [
+        "HTML structure",
+        "CSS layout and responsive design",
+        "JavaScript fundamentals",
+        "The DOM and events",
+        "Browser DevTools"
+      ],
+      "resources": [
+        {
+          "label": "freeCodeCamp Responsive Web Design",
+          "url": "https://www.freecodecamp.org/learn/2022/responsive-web-design/",
+          "source": "curated"
+        },
+        {
+          "label": "MDN Web Docs",
+          "url": "https://developer.mozilla.org/en-US/docs/Learn",
+          "source": "curated"
+        },
+        {
+          "label": "Chrome DevTools Docs",
+          "url": "https://developer.chrome.com/docs/devtools",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "frontend-framework",
+      "order": 2,
+      "title": "Frontend Framework",
+      "level": "junior",
+      "levelLabel": "Junior",
+      "description": "React or similar, component design.",
+      "topics": [
+        "Components and props",
+        "State and effects",
+        "Client-side routing",
+        "Component composition patterns"
+      ],
+      "resources": [
+        {
+          "label": "React Official Docs",
+          "url": "https://react.dev/learn",
+          "source": "curated"
+        }
+      ]
+    },
+    {
+      "id": "backend-language-framework",
+      "order": 3,
+      "title": "Backend Language & Framework",
+      "level": "junior",
+      "levelLabel": "Junior → Mid",
+      "description": "Node.js/Python backend, REST APIs.",
+      "topics": [
+        "What is an API?",
+        "REST API Basics",
+        "API Endpoint",
+        "Request & Response",
+        "Path Parameters",
+        "Query Parameters",
+        "Backend Framework Basics",
+        "API Documentation",
+        "OpenAPI / Swagger"
+      ],
+      "resources": [
+        {
+          "label": "Node.js Docs",
+          "url": "https://nodejs.org/en/docs/",
+          "source": "curated"
+        },
+        {
+          "label": "FastAPI Tutorial",
+          "url": "https://fastapi.tiangolo.com/tutorial/",
+          "source": "curated"
+        },
+        {
+          "label": "OpenAPI Introduction",
+          "url": "https://www.openapis.org/what-is-openapi",
+          "source": "team-lead"
+        },
+        {
+          "label": "FastAPI Path Parameters",
+          "url": "https://fastapi.tiangolo.com/tutorial/path-params/",
+          "source": "team-lead"
+        },
+        {
+          "label": "FastAPI Query Parameters",
+          "url": "https://fastapi.tiangolo.com/tutorial/query-params/",
+          "source": "team-lead"
+        },
+        {
+          "label": "FastAPI Request Body",
+          "url": "https://fastapi.tiangolo.com/tutorial/body/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAPI Specification",
+          "url": "https://spec.openapis.org/oas/latest.html",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "databases",
+      "order": 4,
+      "title": "Databases",
+      "level": "mid",
+      "levelLabel": "Mid",
+      "description": "SQL plus one NoSQL option.",
+      "topics": [
+        "What is a Database?",
+        "Relational Database Basics",
+        "SQL Basics",
+        "CRUD Operations",
+        "SELECT, INSERT, UPDATE, DELETE",
+        "Database Connection from Backend"
+      ],
+      "resources": [
+        {
+          "label": "PostgreSQL Tutorial",
+          "url": "https://www.postgresql.org/docs/current/tutorial.html",
+          "source": "curated"
+        },
+        {
+          "label": "MongoDB University",
+          "url": "https://learn.mongodb.com/",
+          "source": "curated"
+        },
+        {
+          "label": "PostgreSQL SQL Tutorial",
+          "url": "https://www.postgresql.org/docs/current/sql.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "PostgreSQL SELECT",
+          "url": "https://www.postgresql.org/docs/current/sql-select.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "PostgreSQL Getting Started",
+          "url": "https://www.postgresql.org/docs/current/tutorial-start.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "DBeaver Docs",
+          "url": "https://dbeaver.com/docs/dbeaver/",
+          "source": "team-lead"
+        },
+        {
+          "label": "pgAdmin Docs",
+          "url": "https://www.pgadmin.org/docs/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "auth-deployment-devops",
+      "order": 5,
+      "title": "Auth, Deployment, DevOps basics",
+      "level": "mid",
+      "levelLabel": "Mid",
+      "description": "Sessions/JWT, CI/CD, Docker.",
+      "topics": [
+        "API Authentication",
+        "API Authorization",
+        "API Security Basics",
+        "CI/CD Basics",
+        "Secrets in Deployment",
+        "Docker Basics",
+        "Dockerfile"
+      ],
+      "resources": [
+        {
+          "label": "Docker Get Started",
+          "url": "https://docs.docker.com/get-started/",
+          "source": "curated"
+        },
+        {
+          "label": "GitHub Actions Docs",
+          "url": "https://docs.github.com/en/actions",
+          "source": "curated"
+        },
+        {
+          "label": "OWASP Authentication Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "OWASP Authorization Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "OWASP API Security Project",
+          "url": "https://owasp.org/www-project-api-security/",
+          "source": "team-lead"
+        },
+        {
+          "label": "GitHub Actions Secrets",
+          "url": "https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions",
+          "source": "team-lead"
+        },
+        {
+          "label": "Dockerfile Overview",
+          "url": "https://docs.docker.com/reference/dockerfile/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Docker Compose Docs",
+          "url": "https://docs.docker.com/compose/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "system-design-basics",
+      "order": 6,
+      "title": "System Design Basics",
+      "level": "mid",
+      "levelLabel": "Mid → Senior",
+      "description": "Caching, load balancing, scaling.",
+      "topics": [
+        "Caching strategies",
+        "Load balancing",
+        "Horizontal vs vertical scaling",
+        "Workers & Scaling",
+        "Kubernetes Basics"
+      ],
+      "resources": [
+        {
+          "label": "System Design Primer (GitHub)",
+          "url": "https://github.com/donnemartin/system-design-primer",
+          "source": "curated"
+        },
+        {
+          "label": "FastAPI Server Workers",
+          "url": "https://fastapi.tiangolo.com/deployment/server-workers/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Kubernetes Overview",
+          "url": "https://kubernetes.io/docs/concepts/overview/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "certification-checkpoint",
+      "order": 7,
+      "title": "Certification checkpoint",
+      "level": "mid",
+      "levelLabel": "Any level",
+      "description": "Vendor credential.",
+      "topics": [],
+      "resources": [
+        {
+          "label": "Meta Front-End Developer Certificate",
+          "url": "https://www.coursera.org/professional-certificates/meta-front-end-developer",
+          "source": "curated",
+          "note": "Audit free; certificate is paid."
+        }
+      ],
+      "kind": "certification",
+      "note": "Certification checkpoints are not tied to a level — take one whenever it is useful. `level` is set to mid only so the stage groups sensibly in the UI."
+    },
+    {
+      "id": "senior-to-architect",
+      "order": 8,
+      "title": "Senior → AI System Architect",
+      "level": "architect",
+      "levelLabel": "Senior+",
+      "description": "Full-stack system architecture — or branch into Full Stack AI Engineer.",
+      "topics": [
+        "Model and provider selection across the whole system",
+        "Scaling strategy and cost ceilings",
+        "Governance, risk and reliability ownership",
+        "Design docs and decision records over code",
+        "Tying AI investment to business value"
+      ],
+      "resources": [],
+      "kind": "architect",
+      "note": "One architect track sits above all seven paths — the job becomes system-level judgement rather than language or framework specifics. See the career ladder."
+    }
+  ],
+  "note": "The architect stage here can also be a branch point: complete this path, then move to Full Stack AI Engineer rather than continuing up."
+}

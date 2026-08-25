@@ -1,0 +1,551 @@
+{
+  "slug": "ai-ml-hybrid",
+  "title": "AI/ML Engineer (Hybrid)",
+  "shortTitle": "AI/ML Hybrid",
+  "pathLetter": "G",
+  "order": 7,
+  "accent": "teal",
+  "tagline": "The generalist track — trains, deploys and integrates, full scope",
+  "role": {
+    "whatTheyDo": "Trains + deploys + integrates, full scope",
+    "trainsModels": "Yes",
+    "coreFocus": "Everything combined"
+  },
+  "requiresFoundation": true,
+  "note": "Combines the AI Engineer and ML Engineer core stages in a deliberate order. Most relevant for startups and small teams where one person owns the full lifecycle.",
+  "stages": [
+    {
+      "id": "math-foundations",
+      "order": 1,
+      "title": "Math Foundations",
+      "level": "junior",
+      "levelLabel": "Junior",
+      "description": "Linear algebra, probability, calculus basics.",
+      "topics": [
+        "Vectors, matrices and matrix calculus",
+        "Probability distributions",
+        "Derivatives and gradients",
+        "Descriptive and inferential statistics"
+      ],
+      "resources": [
+        {
+          "label": "3Blue1Brown Linear Algebra",
+          "url": "https://www.3blue1brown.com/topics/linear-algebra",
+          "source": "curated"
+        },
+        {
+          "label": "Khan Academy Statistics",
+          "url": "https://www.khanacademy.org/math/statistics-probability",
+          "source": "curated"
+        }
+      ],
+      "sharedWith": [
+        "ml-engineer"
+      ]
+    },
+    {
+      "id": "ai-ml-foundations",
+      "order": 2,
+      "title": "AI/ML Foundations",
+      "level": "junior",
+      "levelLabel": "Junior",
+      "description": "NumPy, Pandas, supervised/unsupervised.",
+      "topics": [
+        "NumPy Basics",
+        "Pandas Basics",
+        "Data Cleaning",
+        "Features and Labels",
+        "Supervised Learning",
+        "Unsupervised Learning",
+        "Classification",
+        "Regression",
+        "Train / Test Split",
+        "Validation & Cross-Validation",
+        "Data Preprocessing",
+        "Feature Engineering",
+        "Overfitting vs Underfitting",
+        "Evaluation Metrics",
+        "Accuracy, Precision, Recall, F1",
+        "Confusion Matrix",
+        "ML Pipelines"
+      ],
+      "resources": [
+        {
+          "label": "Scikit-learn Getting Started",
+          "url": "https://scikit-learn.org/stable/getting_started.html",
+          "source": "curated"
+        },
+        {
+          "label": "Andrew Ng ML Specialization",
+          "url": "https://www.coursera.org/specializations/machine-learning-introduction",
+          "source": "curated",
+          "note": "Audit free."
+        },
+        {
+          "label": "NumPy Quickstart",
+          "url": "https://numpy.org/doc/stable/user/quickstart.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "10 Minutes to Pandas",
+          "url": "https://pandas.pydata.org/docs/user_guide/10min.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Pandas Missing Data",
+          "url": "https://pandas.pydata.org/docs/user_guide/missing_data.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Scikit-learn Glossary",
+          "url": "https://scikit-learn.org/stable/glossary.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Scikit-learn Supervised Learning",
+          "url": "https://scikit-learn.org/stable/supervised_learning.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Scikit-learn Unsupervised Learning",
+          "url": "https://scikit-learn.org/stable/unsupervised_learning.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Scikit-learn Regression Overview",
+          "url": "https://scikit-learn.org/stable/modules/linear_model.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "train_test_split",
+          "url": "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Cross-validation",
+          "url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Scikit-learn Preprocessing",
+          "url": "https://scikit-learn.org/stable/modules/preprocessing.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Underfitting vs Overfitting",
+          "url": "https://scikit-learn.org/stable/auto_examples/model_selection/plot_underfitting_overfitting.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Model Evaluation",
+          "url": "https://scikit-learn.org/stable/modules/model_evaluation.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Classification Metrics",
+          "url": "https://scikit-learn.org/stable/modules/model_evaluation.html#classification-metrics",
+          "source": "team-lead"
+        },
+        {
+          "label": "Confusion Matrix",
+          "url": "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Scikit-learn Pipelines",
+          "url": "https://scikit-learn.org/stable/modules/compose.html",
+          "source": "team-lead"
+        }
+      ],
+      "sharedWith": [
+        "ml-engineer"
+      ]
+    },
+    {
+      "id": "llm-fundamentals",
+      "order": 3,
+      "title": "LLM Fundamentals",
+      "level": "junior",
+      "levelLabel": "Junior → Mid",
+      "description": "Tokens, context windows, function calling.",
+      "topics": [
+        "What is an LLM?",
+        "Tokens",
+        "Context Window",
+        "System Prompt vs User Prompt",
+        "Clear Task Instruction",
+        "Role Prompting",
+        "Few-Shot Prompting",
+        "Output Formatting",
+        "Structured Outputs",
+        "Function / Tool Calling",
+        "Temperature & Output Control",
+        "Hallucinations",
+        "Prompt Chaining",
+        "Prompt Templates",
+        "Evaluating Prompt Quality"
+      ],
+      "resources": [
+        {
+          "label": "OpenAI Prompting Guide",
+          "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+          "source": "curated"
+        },
+        {
+          "label": "Anthropic Academy — Prompt Engineering",
+          "url": "https://www.anthropic.com/learn",
+          "source": "curated"
+        },
+        {
+          "label": "OpenAI Text Generation",
+          "url": "https://platform.openai.com/docs/guides/text",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Prompt Guidance",
+          "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Models Docs",
+          "url": "https://platform.openai.com/docs/models",
+          "source": "team-lead"
+        },
+        {
+          "label": "Gemini Prompt Design",
+          "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+          "source": "team-lead"
+        },
+        {
+          "label": "Claude Prompt Engineering Overview",
+          "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Structured Outputs",
+          "url": "https://platform.openai.com/docs/guides/structured-outputs",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Function Calling",
+          "url": "https://platform.openai.com/docs/guides/function-calling",
+          "source": "team-lead"
+        },
+        {
+          "label": "Hands-On Large Language Models (GitHub)",
+          "url": "https://github.com/HandsOnLLM/Hands-On-Large-Language-Models",
+          "source": "team-lead"
+        }
+      ],
+      "sharedWith": [
+        "ai-engineer"
+      ]
+    },
+    {
+      "id": "rag",
+      "order": 4,
+      "title": "RAG",
+      "level": "mid",
+      "levelLabel": "Mid",
+      "description": "Chunking, retrieval, reranking.",
+      "topics": [
+        "Embeddings",
+        "Why Embeddings Matter",
+        "Text Embedding Models",
+        "Similarity Search",
+        "Semantic Search",
+        "Vector Database",
+        "Vector Stores",
+        "Metadata Filtering",
+        "Document Chunking",
+        "Retrieval Pipeline",
+        "What is RAG?",
+        "Basic RAG Flow",
+        "RAG vs Fine-Tuning",
+        "Hybrid Retrieval",
+        "Retrieval Agents",
+        "RAG Evaluation"
+      ],
+      "resources": [
+        {
+          "label": "LangChain RAG Tutorial",
+          "url": "https://python.langchain.com/docs/tutorials/rag/",
+          "source": "curated"
+        },
+        {
+          "label": "OpenAI Embeddings Guide",
+          "url": "https://platform.openai.com/docs/guides/embeddings",
+          "source": "team-lead"
+        },
+        {
+          "label": "Qdrant Vectors Docs",
+          "url": "https://qdrant.tech/documentation/concepts/vectors/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Retrieval Guide",
+          "url": "https://platform.openai.com/docs/guides/retrieval",
+          "source": "team-lead"
+        },
+        {
+          "label": "Qdrant Overview",
+          "url": "https://qdrant.tech/documentation/overview/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Pinecone Vector Search",
+          "url": "https://docs.pinecone.io/guides/get-started/overview",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangChain Retrieval Docs",
+          "url": "https://python.langchain.com/docs/concepts/retrieval/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangChain RAG Tutorial",
+          "url": "https://python.langchain.com/docs/tutorials/rag/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Qdrant Hybrid Queries",
+          "url": "https://qdrant.tech/documentation/concepts/hybrid-queries/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangGraph Agentic RAG Tutorial",
+          "url": "https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangSmith RAG Evaluation Tutorial",
+          "url": "https://docs.smith.langchain.com/evaluation/tutorials/rag",
+          "source": "team-lead"
+        },
+        {
+          "label": "RAG (video series)",
+          "url": "https://www.youtube.com/watch?v=fZM3oX4xEyg&list=PLZoTAELRMXVM8Pf4U67L4UuDRgV4TNX9D",
+          "source": "team-lead"
+        }
+      ],
+      "sharedWith": [
+        "ai-engineer"
+      ]
+    },
+    {
+      "id": "deep-learning",
+      "order": 5,
+      "title": "Deep Learning",
+      "level": "mid",
+      "levelLabel": "Mid",
+      "description": "Neural nets, backprop, PyTorch.",
+      "topics": [
+        "Neural network fundamentals",
+        "Backpropagation",
+        "Tensors and training loops",
+        "Common architectures"
+      ],
+      "resources": [
+        {
+          "label": "PyTorch Tutorials",
+          "url": "https://pytorch.org/tutorials/",
+          "source": "curated"
+        },
+        {
+          "label": "d2l.ai",
+          "url": "https://d2l.ai/",
+          "source": "team-lead"
+        }
+      ],
+      "sharedWith": [
+        "ml-engineer"
+      ]
+    },
+    {
+      "id": "mlops",
+      "order": 6,
+      "title": "MLOps",
+      "level": "mid",
+      "levelLabel": "Mid → Senior",
+      "description": "Experiment tracking, feature stores, pipelines.",
+      "topics": [
+        "Experiment Tracking",
+        "Model Registry",
+        "Model Evaluation",
+        "LLM / Agent Evaluation"
+      ],
+      "resources": [
+        {
+          "label": "MLflow Tracking",
+          "url": "https://mlflow.org/docs/latest/tracking.html",
+          "source": "curated"
+        },
+        {
+          "label": "Weights & Biases free tier",
+          "url": "https://wandb.ai/site",
+          "source": "curated"
+        },
+        {
+          "label": "MLflow Tracking",
+          "url": "https://mlflow.org/docs/latest/tracking.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "MLflow Model Registry",
+          "url": "https://mlflow.org/docs/latest/model-registry.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "MLflow Model Evaluation",
+          "url": "https://mlflow.org/docs/latest/models.html#model-evaluation",
+          "source": "team-lead"
+        },
+        {
+          "label": "MLflow LLM & Agent Evaluation",
+          "url": "https://mlflow.org/docs/latest/genai/eval-monitor/",
+          "source": "team-lead"
+        }
+      ],
+      "sharedWith": [
+        "ml-engineer"
+      ]
+    },
+    {
+      "id": "deployment",
+      "order": 7,
+      "title": "Deployment",
+      "level": "senior",
+      "levelLabel": "Senior",
+      "description": "Serving, scaling, monitoring.",
+      "topics": [
+        "Local vs Production Deployment",
+        "Docker Basics",
+        "Dockerfile",
+        "Docker Compose",
+        "API Deployment Concepts",
+        "Workers & Scaling",
+        "CI/CD Basics",
+        "Secrets in Deployment",
+        "Logs",
+        "Metrics",
+        "Traces",
+        "Monitoring & Alerting",
+        "Kubernetes Basics"
+      ],
+      "resources": [
+        {
+          "label": "Docker Get Started",
+          "url": "https://docs.docker.com/get-started/",
+          "source": "curated"
+        },
+        {
+          "label": "FastAPI Deployment Docs",
+          "url": "https://fastapi.tiangolo.com/deployment/",
+          "source": "curated"
+        },
+        {
+          "label": "FastAPI Deployment",
+          "url": "https://fastapi.tiangolo.com/deployment/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Docker Get Started",
+          "url": "https://docs.docker.com/get-started/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Dockerfile Overview",
+          "url": "https://docs.docker.com/reference/dockerfile/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Docker Compose Docs",
+          "url": "https://docs.docker.com/compose/",
+          "source": "team-lead"
+        },
+        {
+          "label": "FastAPI Deployment Concepts",
+          "url": "https://fastapi.tiangolo.com/deployment/concepts/",
+          "source": "team-lead"
+        },
+        {
+          "label": "FastAPI Server Workers",
+          "url": "https://fastapi.tiangolo.com/deployment/server-workers/",
+          "source": "team-lead"
+        },
+        {
+          "label": "GitHub Actions Docs",
+          "url": "https://docs.github.com/en/actions",
+          "source": "team-lead"
+        },
+        {
+          "label": "GitHub Actions Secrets",
+          "url": "https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenTelemetry Logs",
+          "url": "https://opentelemetry.io/docs/concepts/signals/logs/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Prometheus Overview",
+          "url": "https://prometheus.io/docs/introduction/overview/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenTelemetry Overview",
+          "url": "https://opentelemetry.io/docs/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Prometheus Getting Started",
+          "url": "https://prometheus.io/docs/prometheus/latest/getting_started/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Kubernetes Overview",
+          "url": "https://kubernetes.io/docs/concepts/overview/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "certification-checkpoint",
+      "order": 8,
+      "title": "Certification checkpoint",
+      "level": "mid",
+      "levelLabel": "Any level",
+      "description": "Broadest all-round credential.",
+      "topics": [],
+      "resources": [
+        {
+          "label": "IBM AI Engineering Professional Certificate",
+          "url": "https://www.coursera.org/professional-certificates/ai-engineering",
+          "source": "curated",
+          "note": "Audit free."
+        }
+      ],
+      "kind": "certification",
+      "note": "Certification checkpoints are not tied to a level — take one whenever it is useful. `level` is set to mid only so the stage groups sensibly in the UI."
+    },
+    {
+      "id": "senior-to-architect",
+      "order": 9,
+      "title": "Senior → AI System Architect",
+      "level": "architect",
+      "levelLabel": "Senior+",
+      "description": "End-to-end AI/ML system architecture across the full lifecycle.",
+      "topics": [
+        "Model and provider selection across the whole system",
+        "Scaling strategy and cost ceilings",
+        "Governance, risk and reliability ownership",
+        "Design docs and decision records over code",
+        "Tying AI investment to business value"
+      ],
+      "resources": [],
+      "kind": "architect",
+      "note": "One architect track sits above all seven paths — the job becomes system-level judgement rather than language or framework specifics. See the career ladder."
+    }
+  ]
+}

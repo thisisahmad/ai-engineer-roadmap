@@ -1,0 +1,439 @@
+{
+  "slug": "full-stack-ai-engineer",
+  "title": "Full Stack AI Engineer",
+  "shortTitle": "Full Stack AI",
+  "pathLetter": "D",
+  "order": 2,
+  "accent": "cyan",
+  "tagline": "Full web stack + AI integration end-to-end — fastest-growing hybrid role in 2026",
+  "role": {
+    "whatTheyDo": "Full web stack + AI integration end-to-end",
+    "trainsModels": "No",
+    "coreFocus": "Frontend + backend + LLM integration + streaming UI"
+  },
+  "requiresFoundation": true,
+  "prerequisite": "Complete the Full Stack Engineer path, or at minimum frontend and backend basics.",
+  "prerequisitePathSlug": "full-stack-engineer",
+  "stages": [
+    {
+      "id": "llm-api-integration",
+      "order": 1,
+      "title": "LLM API Integration",
+      "level": "junior",
+      "levelLabel": "Junior → Mid",
+      "description": "Calling LLM APIs from a backend, streaming responses.",
+      "topics": [
+        "What is an LLM?",
+        "Tokens",
+        "Context Window",
+        "System Prompt vs User Prompt",
+        "Clear Task Instruction",
+        "Role Prompting",
+        "Few-Shot Prompting",
+        "Output Formatting",
+        "Structured Outputs",
+        "Function / Tool Calling",
+        "Temperature & Output Control",
+        "Hallucinations",
+        "Prompt Chaining",
+        "Prompt Templates",
+        "Evaluating Prompt Quality"
+      ],
+      "resources": [
+        {
+          "label": "OpenAI API Quickstart",
+          "url": "https://platform.openai.com/docs/quickstart",
+          "source": "curated"
+        },
+        {
+          "label": "Anthropic API Docs",
+          "url": "https://docs.claude.com/",
+          "source": "curated"
+        },
+        {
+          "label": "OpenAI Text Generation",
+          "url": "https://platform.openai.com/docs/guides/text",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Prompt Guidance",
+          "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Models Docs",
+          "url": "https://platform.openai.com/docs/models",
+          "source": "team-lead"
+        },
+        {
+          "label": "Gemini Prompt Design",
+          "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+          "source": "team-lead"
+        },
+        {
+          "label": "Claude Prompt Engineering Overview",
+          "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Structured Outputs",
+          "url": "https://platform.openai.com/docs/guides/structured-outputs",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Function Calling",
+          "url": "https://platform.openai.com/docs/guides/function-calling",
+          "source": "team-lead"
+        },
+        {
+          "label": "Hands-On Large Language Models (GitHub)",
+          "url": "https://github.com/HandsOnLLM/Hands-On-Large-Language-Models",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "client-side-ai-ux",
+      "order": 2,
+      "title": "Client-Side AI UX",
+      "level": "mid",
+      "levelLabel": "Mid",
+      "description": "Streaming UI, the Vercel AI SDK (TypeScript standard for AI features).",
+      "topics": [
+        "Streaming responses to the browser",
+        "Optimistic and partial UI",
+        "Token-by-token rendering",
+        "Error and cancellation states"
+      ],
+      "resources": [
+        {
+          "label": "Vercel AI SDK Docs",
+          "url": "https://sdk.vercel.ai/docs",
+          "source": "curated"
+        }
+      ]
+    },
+    {
+      "id": "rag-integration",
+      "order": 3,
+      "title": "RAG Integration",
+      "level": "mid",
+      "levelLabel": "Mid",
+      "description": "Document ingestion, chunking, vector DB in a full-stack app.",
+      "topics": [
+        "Embeddings",
+        "Why Embeddings Matter",
+        "Text Embedding Models",
+        "Similarity Search",
+        "Semantic Search",
+        "Vector Database",
+        "Vector Stores",
+        "Metadata Filtering",
+        "Document Chunking",
+        "Retrieval Pipeline",
+        "What is RAG?",
+        "Basic RAG Flow",
+        "RAG vs Fine-Tuning",
+        "Hybrid Retrieval",
+        "Retrieval Agents",
+        "RAG Evaluation"
+      ],
+      "resources": [
+        {
+          "label": "LangChain RAG Tutorial",
+          "url": "https://python.langchain.com/docs/tutorials/rag/",
+          "source": "curated"
+        },
+        {
+          "label": "OpenAI Embeddings Guide",
+          "url": "https://platform.openai.com/docs/guides/embeddings",
+          "source": "team-lead"
+        },
+        {
+          "label": "Qdrant Vectors Docs",
+          "url": "https://qdrant.tech/documentation/concepts/vectors/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Retrieval Guide",
+          "url": "https://platform.openai.com/docs/guides/retrieval",
+          "source": "team-lead"
+        },
+        {
+          "label": "Qdrant Overview",
+          "url": "https://qdrant.tech/documentation/overview/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Pinecone Vector Search",
+          "url": "https://docs.pinecone.io/guides/get-started/overview",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangChain Retrieval Docs",
+          "url": "https://python.langchain.com/docs/concepts/retrieval/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangChain RAG Tutorial",
+          "url": "https://python.langchain.com/docs/tutorials/rag/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Qdrant Hybrid Queries",
+          "url": "https://qdrant.tech/documentation/concepts/hybrid-queries/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangGraph Agentic RAG Tutorial",
+          "url": "https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag/",
+          "source": "team-lead"
+        },
+        {
+          "label": "LangSmith RAG Evaluation Tutorial",
+          "url": "https://docs.smith.langchain.com/evaluation/tutorials/rag",
+          "source": "team-lead"
+        },
+        {
+          "label": "RAG (video series)",
+          "url": "https://www.youtube.com/watch?v=fZM3oX4xEyg&list=PLZoTAELRMXVM8Pf4U67L4UuDRgV4TNX9D",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "data-ingestion-pipelines",
+      "order": 4,
+      "title": "Data Ingestion Pipelines",
+      "level": "mid",
+      "levelLabel": "Mid",
+      "description": "Turning PDFs and unstructured data into usable input for LLMs.",
+      "topics": [
+        "Document loaders",
+        "PDF and OCR extraction",
+        "Normalisation and cleaning",
+        "Incremental re-indexing"
+      ],
+      "resources": [
+        {
+          "label": "LangChain Document Loaders",
+          "url": "https://python.langchain.com/docs/integrations/document_loaders/",
+          "source": "curated"
+        },
+        {
+          "label": "LangChain Retrieval Docs",
+          "url": "https://python.langchain.com/docs/concepts/retrieval/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "agentic-workflows-in-app",
+      "order": 5,
+      "title": "Agentic Workflows in-app",
+      "level": "mid",
+      "levelLabel": "Mid → Senior",
+      "description": "Multi-step reasoning triggered from your UI.",
+      "topics": [
+        "What is an AI Agent?",
+        "Agent Workflow",
+        "Tool / Function Calling",
+        "Tool Design",
+        "Guardrails",
+        "MCP Basics"
+      ],
+      "resources": [
+        {
+          "label": "LangGraph Overview",
+          "url": "https://langchain-ai.github.io/langgraph/",
+          "source": "curated"
+        },
+        {
+          "label": "OpenAI Agents SDK",
+          "url": "https://openai.github.io/openai-agents-python/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Running Agents",
+          "url": "https://openai.github.io/openai-agents-python/running_agents/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Function Calling",
+          "url": "https://platform.openai.com/docs/guides/function-calling",
+          "source": "team-lead"
+        },
+        {
+          "label": "Define Agents",
+          "url": "https://openai.github.io/openai-agents-python/agents/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAI Guardrails",
+          "url": "https://platform.openai.com/docs/guides/guardrails",
+          "source": "team-lead"
+        },
+        {
+          "label": "MCP Introduction",
+          "url": "https://modelcontextprotocol.io/introduction",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "deployment-cost-aware-scaling",
+      "order": 6,
+      "title": "Deployment & Cost-aware Scaling",
+      "level": "senior",
+      "levelLabel": "Senior",
+      "description": "Full-stack deployment with AI cost controls.",
+      "topics": [
+        "Local vs Production Deployment",
+        "Docker Basics",
+        "Dockerfile",
+        "Docker Compose",
+        "API Deployment Concepts",
+        "Workers & Scaling",
+        "CI/CD Basics",
+        "Secrets in Deployment",
+        "Experiment Tracking",
+        "Model Registry",
+        "Model Evaluation",
+        "LLM / Agent Evaluation",
+        "Logs",
+        "Metrics",
+        "Traces",
+        "Monitoring & Alerting",
+        "Kubernetes Basics"
+      ],
+      "resources": [
+        {
+          "label": "Docker Get Started",
+          "url": "https://docs.docker.com/get-started/",
+          "source": "curated"
+        },
+        {
+          "label": "FastAPI Deployment",
+          "url": "https://fastapi.tiangolo.com/deployment/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Docker Get Started",
+          "url": "https://docs.docker.com/get-started/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Dockerfile Overview",
+          "url": "https://docs.docker.com/reference/dockerfile/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Docker Compose Docs",
+          "url": "https://docs.docker.com/compose/",
+          "source": "team-lead"
+        },
+        {
+          "label": "FastAPI Deployment Concepts",
+          "url": "https://fastapi.tiangolo.com/deployment/concepts/",
+          "source": "team-lead"
+        },
+        {
+          "label": "FastAPI Server Workers",
+          "url": "https://fastapi.tiangolo.com/deployment/server-workers/",
+          "source": "team-lead"
+        },
+        {
+          "label": "GitHub Actions Docs",
+          "url": "https://docs.github.com/en/actions",
+          "source": "team-lead"
+        },
+        {
+          "label": "GitHub Actions Secrets",
+          "url": "https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions",
+          "source": "team-lead"
+        },
+        {
+          "label": "MLflow Tracking",
+          "url": "https://mlflow.org/docs/latest/tracking.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "MLflow Model Registry",
+          "url": "https://mlflow.org/docs/latest/model-registry.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "MLflow Model Evaluation",
+          "url": "https://mlflow.org/docs/latest/models.html#model-evaluation",
+          "source": "team-lead"
+        },
+        {
+          "label": "MLflow LLM & Agent Evaluation",
+          "url": "https://mlflow.org/docs/latest/genai/eval-monitor/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenTelemetry Logs",
+          "url": "https://opentelemetry.io/docs/concepts/signals/logs/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Prometheus Overview",
+          "url": "https://prometheus.io/docs/introduction/overview/",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenTelemetry Overview",
+          "url": "https://opentelemetry.io/docs/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Prometheus Getting Started",
+          "url": "https://prometheus.io/docs/prometheus/latest/getting_started/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Kubernetes Overview",
+          "url": "https://kubernetes.io/docs/concepts/overview/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "certification-checkpoint",
+      "order": 7,
+      "title": "Certification checkpoint",
+      "level": "mid",
+      "levelLabel": "Any level",
+      "description": "Vendor credential.",
+      "topics": [],
+      "resources": [
+        {
+          "label": "AWS Certified AI Practitioner",
+          "url": "https://aws.amazon.com/certification/certified-ai-practitioner/",
+          "source": "curated"
+        }
+      ],
+      "kind": "certification",
+      "note": "Certification checkpoints are not tied to a level — take one whenever it is useful. `level` is set to mid only so the stage groups sensibly in the UI."
+    },
+    {
+      "id": "senior-to-architect",
+      "order": 8,
+      "title": "Senior → AI System Architect",
+      "level": "architect",
+      "levelLabel": "Senior+",
+      "description": "End-to-end product and AI system architecture.",
+      "topics": [
+        "Model and provider selection across the whole system",
+        "Scaling strategy and cost ceilings",
+        "Governance, risk and reliability ownership",
+        "Design docs and decision records over code",
+        "Tying AI investment to business value"
+      ],
+      "resources": [],
+      "kind": "architect",
+      "note": "One architect track sits above all seven paths — the job becomes system-level judgement rather than language or framework specifics. See the career ladder."
+    }
+  ]
+}

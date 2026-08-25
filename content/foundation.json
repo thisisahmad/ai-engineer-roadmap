@@ -1,0 +1,549 @@
+{
+  "id": "shared-foundation",
+  "title": "Shared Foundation",
+  "subtitle": "Stage 0 — everyone starts here",
+  "description": "The same ground floor under all seven paths. Every path below assumes it. If you are already a working engineer, skim it and move on; if you are not, this is where the first few months go.",
+  "stages": [
+    {
+      "id": "programming-fundamentals",
+      "order": 1,
+      "title": "Programming Fundamentals",
+      "level": "junior",
+      "levelLabel": "Junior",
+      "description": "Python syntax, OOP, file and error handling.",
+      "topics": [
+        "Python Syntax & Basic Structure",
+        "Data Types",
+        "Operators",
+        "Conditional Statements",
+        "Loops",
+        "Functions",
+        "List & Dictionary Comprehensions",
+        "File Handling",
+        "Exception Handling",
+        "Modules & Imports",
+        "Object-Oriented Programming",
+        "Virtual Environments & Packages",
+        "Debugging Basics",
+        "Type Hints",
+        "Basic Coding Practice"
+      ],
+      "resources": [
+        {
+          "label": "Python Official Tutorial",
+          "url": "https://docs.python.org/3/tutorial/",
+          "source": "curated"
+        },
+        {
+          "label": "freeCodeCamp Python",
+          "url": "https://www.freecodecamp.org/learn/scientific-computing-with-python/",
+          "source": "curated"
+        },
+        {
+          "label": "Python Tutorial",
+          "url": "https://docs.python.org/3/tutorial/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Python Data Structures",
+          "url": "https://docs.python.org/3/tutorial/datastructures.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Python Expressions",
+          "url": "https://docs.python.org/3/reference/expressions.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Python Control Flow",
+          "url": "https://docs.python.org/3/tutorial/controlflow.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Defining Functions",
+          "url": "https://docs.python.org/3/tutorial/controlflow.html#defining-functions",
+          "source": "team-lead"
+        },
+        {
+          "label": "Reading and Writing Files",
+          "url": "https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files",
+          "source": "team-lead"
+        },
+        {
+          "label": "Errors and Exceptions",
+          "url": "https://docs.python.org/3/tutorial/errors.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Modules",
+          "url": "https://docs.python.org/3/tutorial/modules.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Classes",
+          "url": "https://docs.python.org/3/tutorial/classes.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Python venv Guide",
+          "url": "https://docs.python.org/3/library/venv.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Packaging Guide",
+          "url": "https://packaging.python.org/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Python pdb Docs",
+          "url": "https://docs.python.org/3/library/pdb.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Python Typing Docs",
+          "url": "https://docs.python.org/3/library/typing.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Google's Python Class",
+          "url": "https://developers.google.com/edu/python",
+          "source": "team-lead"
+        },
+        {
+          "label": "Data Analysis with Python: Zero to Pandas (Jovian)",
+          "url": "https://jovian.ai/learn/data-analysis-with-python-zero-to-pandas",
+          "source": "team-lead"
+        },
+        {
+          "label": "Python course (video series)",
+          "url": "https://www.youtube.com/watch?v=t2_Q2BRzeEE&list=PLGjplNEQ1it8-0CmoljS5yeV-GlKSUEt0",
+          "source": "team-lead"
+        },
+        {
+          "label": "Python (video)",
+          "url": "https://www.youtube.com/watch?v=UrsmFxEIp5k",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "developer-essentials",
+      "order": 2,
+      "title": "Developer Essentials",
+      "level": "junior",
+      "levelLabel": "Junior",
+      "description": "Terminal, virtual environments, project structure.",
+      "topics": [
+        "Command Line / Terminal Basics",
+        "File & Folder Paths",
+        "Installing Packages",
+        "Virtual Environments",
+        "requirements.txt",
+        "Environment Variables",
+        ".env Files",
+        "JSON Basics",
+        "YAML Basics",
+        "Reading Error Messages",
+        "Logging Basics",
+        "Basic Project Structure",
+        "README Files",
+        "Local Development Setup"
+      ],
+      "resources": [
+        {
+          "label": "Python venv Docs",
+          "url": "https://docs.python.org/3/library/venv.html",
+          "source": "curated"
+        },
+        {
+          "label": "Bash Manual",
+          "url": "https://www.gnu.org/software/bash/manual/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Python Packaging Guide",
+          "url": "https://packaging.python.org/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Python venv Docs",
+          "url": "https://docs.python.org/3/library/venv.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "pip Requirements Files",
+          "url": "https://pip.pypa.io/en/stable/reference/requirements-file-format/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Node.js Environment Variables",
+          "url": "https://nodejs.org/en/learn/command-line/how-to-read-environment-variables-from-nodejs",
+          "source": "team-lead"
+        },
+        {
+          "label": "python-dotenv",
+          "url": "https://pypi.org/project/python-dotenv/",
+          "source": "team-lead"
+        },
+        {
+          "label": "MDN JSON Guide",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+          "source": "team-lead"
+        },
+        {
+          "label": "YAML Specification",
+          "url": "https://yaml.org/spec/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Python Errors and Exceptions",
+          "url": "https://docs.python.org/3/tutorial/errors.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Python Logging Docs",
+          "url": "https://docs.python.org/3/library/logging.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "Python Packaging Project Structure",
+          "url": "https://packaging.python.org/en/latest/tutorials/packaging-projects/",
+          "source": "team-lead"
+        },
+        {
+          "label": "GitHub README Guide",
+          "url": "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes",
+          "source": "team-lead"
+        },
+        {
+          "label": "Python HTTP Server Docs",
+          "url": "https://docs.python.org/3/library/http.server.html",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "networking-server-basics",
+      "order": 3,
+      "title": "Networking & Server Basics",
+      "level": "junior",
+      "levelLabel": "Junior",
+      "description": "HTTP, DNS, ports, client-server.",
+      "topics": [
+        "Client vs Server",
+        "Localhost",
+        "Localhost vs Deployed Server",
+        "127.0.0.1 vs 0.0.0.0",
+        "IP Address",
+        "Domain Name",
+        "DNS",
+        "Ports",
+        "HTTP & HTTPS",
+        "HTTP Requests & Responses",
+        "HTTP Methods",
+        "HTTP Status Codes",
+        "TCP vs UDP",
+        "SSH Basics",
+        "Remote Server Login Flow"
+      ],
+      "resources": [
+        {
+          "label": "MDN HTTP Overview",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview",
+          "source": "curated"
+        },
+        {
+          "label": "MDN Client-Server Overview",
+          "url": "https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps/Client-Server_overview",
+          "source": "team-lead"
+        },
+        {
+          "label": "MDN Local Testing Server",
+          "url": "https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/set_up_a_local_testing_server",
+          "source": "team-lead"
+        },
+        {
+          "label": "Flask API Docs",
+          "url": "https://flask.palletsprojects.com/en/stable/api/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Uvicorn Settings",
+          "url": "https://www.uvicorn.org/settings/",
+          "source": "team-lead"
+        },
+        {
+          "label": "MDN IP Address",
+          "url": "https://developer.mozilla.org/en-US/docs/Glossary/IP_Address",
+          "source": "team-lead"
+        },
+        {
+          "label": "MDN Domain Name",
+          "url": "https://developer.mozilla.org/en-US/docs/Glossary/Domain_name",
+          "source": "team-lead"
+        },
+        {
+          "label": "MDN DNS",
+          "url": "https://developer.mozilla.org/en-US/docs/Glossary/DNS",
+          "source": "team-lead"
+        },
+        {
+          "label": "IANA Port Number Registry",
+          "url": "https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml",
+          "source": "team-lead"
+        },
+        {
+          "label": "MDN HTTP Overview",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview",
+          "source": "team-lead"
+        },
+        {
+          "label": "MDN HTTP Messages",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages",
+          "source": "team-lead"
+        },
+        {
+          "label": "MDN HTTP Methods",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods",
+          "source": "team-lead"
+        },
+        {
+          "label": "MDN HTTP Status Codes",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status",
+          "source": "team-lead"
+        },
+        {
+          "label": "RFC 9293 - TCP",
+          "url": "https://www.rfc-editor.org/rfc/rfc9293.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "RFC 768 - UDP",
+          "url": "https://www.rfc-editor.org/rfc/rfc768.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenSSH Manual",
+          "url": "https://www.openssh.com/manual.html",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "apis-backend-databases",
+      "order": 4,
+      "title": "APIs, Backend & Databases",
+      "level": "junior",
+      "levelLabel": "Junior",
+      "description": "REST, SQL, auth basics.",
+      "topics": [
+        "What is an API?",
+        "REST API Basics",
+        "API Endpoint",
+        "Request & Response",
+        "Path Parameters",
+        "Query Parameters",
+        "JSON",
+        "HTTP Status Codes",
+        "API Authentication",
+        "API Authorization",
+        "Backend Framework Basics",
+        "What is a Database?",
+        "Relational Database Basics",
+        "SQL Basics",
+        "CRUD Operations",
+        "SELECT, INSERT, UPDATE, DELETE",
+        "Database Connection from Backend",
+        "API Documentation",
+        "OpenAPI / Swagger",
+        "API Security Basics"
+      ],
+      "resources": [
+        {
+          "label": "MDN HTTP Methods",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods",
+          "source": "curated"
+        },
+        {
+          "label": "PostgreSQL Tutorial",
+          "url": "https://www.postgresql.org/docs/current/tutorial.html",
+          "source": "curated"
+        },
+        {
+          "label": "OpenAPI Introduction",
+          "url": "https://www.openapis.org/what-is-openapi",
+          "source": "team-lead"
+        },
+        {
+          "label": "MDN HTTP Methods",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods",
+          "source": "team-lead"
+        },
+        {
+          "label": "FastAPI Path Parameters",
+          "url": "https://fastapi.tiangolo.com/tutorial/path-params/",
+          "source": "team-lead"
+        },
+        {
+          "label": "FastAPI Request Body",
+          "url": "https://fastapi.tiangolo.com/tutorial/body/",
+          "source": "team-lead"
+        },
+        {
+          "label": "FastAPI Query Parameters",
+          "url": "https://fastapi.tiangolo.com/tutorial/query-params/",
+          "source": "team-lead"
+        },
+        {
+          "label": "MDN Working with JSON",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+          "source": "team-lead"
+        },
+        {
+          "label": "MDN HTTP Status Codes",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status",
+          "source": "team-lead"
+        },
+        {
+          "label": "OWASP Authentication Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "OWASP Authorization Cheat Sheet",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "FastAPI Tutorial",
+          "url": "https://fastapi.tiangolo.com/tutorial/",
+          "source": "team-lead"
+        },
+        {
+          "label": "PostgreSQL Tutorial",
+          "url": "https://www.postgresql.org/docs/current/tutorial.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "PostgreSQL SQL Tutorial",
+          "url": "https://www.postgresql.org/docs/current/sql.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "PostgreSQL SELECT",
+          "url": "https://www.postgresql.org/docs/current/sql-select.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "PostgreSQL Getting Started",
+          "url": "https://www.postgresql.org/docs/current/tutorial-start.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "OpenAPI Specification",
+          "url": "https://spec.openapis.org/oas/latest.html",
+          "source": "team-lead"
+        },
+        {
+          "label": "OWASP API Security Project",
+          "url": "https://owasp.org/www-project-api-security/",
+          "source": "team-lead"
+        }
+      ]
+    },
+    {
+      "id": "developer-tools",
+      "order": 5,
+      "title": "Developer Tools",
+      "level": "junior",
+      "levelLabel": "Junior",
+      "description": "Git, GitHub, Docker, Postman, VS Code.",
+      "topics": [
+        "VS Code",
+        "Git",
+        "GitHub",
+        "GitHub Desktop",
+        "Postman",
+        "Termius",
+        "Docker",
+        "Chrome DevTools",
+        "DBeaver",
+        "pgAdmin",
+        "Jupyter Notebook / JupyterLab",
+        "GitHub Copilot"
+      ],
+      "resources": [
+        {
+          "label": "Git Docs",
+          "url": "https://git-scm.com/doc",
+          "source": "curated"
+        },
+        {
+          "label": "Docker Get Started",
+          "url": "https://docs.docker.com/get-started/",
+          "source": "curated"
+        },
+        {
+          "label": "VS Code Docs",
+          "url": "https://code.visualstudio.com/docs",
+          "source": "team-lead"
+        },
+        {
+          "label": "Git Docs",
+          "url": "https://git-scm.com/doc",
+          "source": "team-lead"
+        },
+        {
+          "label": "GitHub Docs",
+          "url": "https://docs.github.com/en",
+          "source": "team-lead"
+        },
+        {
+          "label": "GitHub Desktop Docs",
+          "url": "https://docs.github.com/en/desktop",
+          "source": "team-lead"
+        },
+        {
+          "label": "Postman Docs",
+          "url": "https://learning.postman.com/docs/introduction/overview/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Termius",
+          "url": "https://termius.com/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Docker Get Started",
+          "url": "https://docs.docker.com/get-started/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Chrome DevTools Docs",
+          "url": "https://developer.chrome.com/docs/devtools",
+          "source": "team-lead"
+        },
+        {
+          "label": "DBeaver Docs",
+          "url": "https://dbeaver.com/docs/dbeaver/",
+          "source": "team-lead"
+        },
+        {
+          "label": "pgAdmin Docs",
+          "url": "https://www.pgadmin.org/docs/",
+          "source": "team-lead"
+        },
+        {
+          "label": "Jupyter Docs",
+          "url": "https://docs.jupyter.org/en/latest/",
+          "source": "team-lead"
+        },
+        {
+          "label": "GitHub Copilot Docs",
+          "url": "https://docs.github.com/en/copilot",
+          "source": "team-lead"
+        }
+      ]
+    }
+  ]
+}
