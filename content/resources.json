@@ -1,134 +1,406 @@
 {
   "intro": "The cross-path course library. Everything here is free to learn from, though some certificates are paid — where that is true it is marked.",
   "caveat": "Re-verify every link before publishing. Course platforms restructure pricing and access often, as DeepLearning.AI did with its certificates.",
-  "groups": [
+  "categories": [
+    { "id": "foundations", "label": "Foundations" },
+    { "id": "ml", "label": "Machine learning" },
+    { "id": "llm", "label": "LLMs & RAG" },
+    { "id": "agents", "label": "Agents" },
+    { "id": "web", "label": "Web & product" },
+    { "id": "mlops", "label": "MLOps & evaluation" }
+  ],
+  "items": [
     {
-      "id": "anthropic",
-      "title": "Anthropic / Claude",
-      "resources": [
-        {
-          "label": "Anthropic Academy",
-          "url": "https://www.anthropic.com/learn",
-          "source": "curated",
-          "note": "Free, ~20 courses with completion certificates: Claude, Claude Code, API, MCP."
-        }
-      ]
+      "id": "anthropic-academy",
+      "label": "Anthropic Academy",
+      "url": "https://www.anthropic.com/learn",
+      "provider": "Anthropic",
+      "cost": "free",
+      "note": "~20 courses with completion certificates: Claude, Claude Code, API, MCP.",
+      "category": "llm",
+      "paths": ["ai-engineer", "agentic-ai-engineer", "full-stack-ai-engineer", "genai-engineer"]
     },
     {
-      "id": "foundational",
-      "title": "Foundational",
-      "description": "Free, verified working as of mid-2026.",
-      "resources": [
-        {
-          "label": "freeCodeCamp Machine Learning with Python",
-          "url": "https://www.freecodecamp.org/learn/machine-learning-with-python/",
-          "source": "curated",
-          "note": "~300 hrs, free certificate."
-        },
-        {
-          "label": "MIT 6.S191 Introduction to Deep Learning",
-          "url": "http://introtodeeplearning.com/",
-          "source": "curated",
-          "note": "Free, lectures and labs."
-        },
-        {
-          "label": "CS50's Intro to AI with Python (Harvard)",
-          "url": "https://cs50.harvard.edu/ai/",
-          "source": "curated",
-          "note": "Free to audit."
-        },
-        {
-          "label": "Stanford CS229 (Andrew Ng, YouTube)",
-          "url": "https://www.youtube.com/playlist?list=PLoROMvodv4rMiGQp3WXShtMGgzqpfVfbU",
-          "source": "curated",
-          "note": "Free, math-heavy."
-        },
-        {
-          "label": "Elements of AI (University of Helsinki)",
-          "url": "https://www.elementsofai.com/",
-          "source": "curated",
-          "note": "Free, non-technical."
-        },
-        {
-          "label": "Hugging Face Learn",
-          "url": "https://huggingface.co/learn",
-          "source": "curated",
-          "note": "Free NLP, Transformers and Diffusion courses."
-        },
-        {
-          "label": "d2l.ai",
-          "url": "https://d2l.ai/",
-          "source": "curated",
-          "note": "Free interactive deep learning book."
-        }
-      ]
+      "id": "elements-of-ai",
+      "label": "Elements of AI",
+      "url": "https://www.elementsofai.com/",
+      "provider": "University of Helsinki",
+      "cost": "free",
+      "note": "Non-technical. A good first orientation before any of the paths.",
+      "category": "foundations",
+      "paths": ["foundation"]
     },
     {
-      "id": "paid-gated",
-      "title": "Free to watch, paid to certify",
-      "description": "DeepLearning.AI videos are free to watch but certificates now require a Pro membership. Flagged here so nobody discovers it mid-course.",
-      "resources": [
-        {
-          "label": "DeepLearning.AI Deep Learning Specialization",
-          "url": "https://www.deeplearning.ai/courses/deep-learning-specialization/",
-          "source": "curated",
-          "note": "Videos free; certificate requires Pro."
-        },
-        {
-          "label": "DeepLearning.AI RAG short course",
-          "url": "https://www.deeplearning.ai/short-courses/",
-          "source": "curated",
-          "note": "Videos free; certificate requires Pro."
-        },
-        {
-          "label": "Andrew Ng ML Specialization",
-          "url": "https://www.coursera.org/specializations/machine-learning-introduction",
-          "source": "curated",
-          "note": "Audit free; certificate paid."
-        }
-      ]
+      "id": "cs50-ai",
+      "label": "CS50 Introduction to AI with Python",
+      "url": "https://cs50.harvard.edu/ai/",
+      "provider": "Harvard",
+      "cost": "free-audit",
+      "note": "Free to audit.",
+      "category": "foundations",
+      "paths": ["foundation", "ai-engineer", "ml-engineer", "ai-ml-hybrid"]
     },
     {
-      "id": "team-lead-extras",
-      "title": "From the team lead's sheet",
-      "description": "Additional material from the original sheet that does not sit under one stage.",
-      "resources": [
-        {
-          "label": "Data Analysis with Python: Zero to Pandas (Jovian)",
-          "url": "https://jovian.ai/learn/data-analysis-with-python-zero-to-pandas",
-          "source": "team-lead"
-        },
-        {
-          "label": "Hands-On Large Language Models (GitHub)",
-          "url": "https://github.com/HandsOnLLM/Hands-On-Large-Language-Models",
-          "source": "team-lead"
-        },
-        {
-          "label": "Machine Learning Mastery",
-          "url": "https://machinelearningmastery.com",
-          "source": "team-lead"
-        },
-        {
-          "label": "Python course (video series)",
-          "url": "https://www.youtube.com/watch?v=t2_Q2BRzeEE&list=PLGjplNEQ1it8-0CmoljS5yeV-GlKSUEt0",
-          "source": "team-lead"
-        },
-        {
-          "label": "RAG (video series)",
-          "url": "https://www.youtube.com/watch?v=fZM3oX4xEyg&list=PLZoTAELRMXVM8Pf4U67L4UuDRgV4TNX9D",
-          "source": "team-lead"
-        },
-        {
-          "label": "MCP (video series)",
-          "url": "https://www.youtube.com/watch?v=-UQ6OZywZ2I&list=PLZoTAELRMXVPC8r1xF68Gksi241DAtMsK",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangChain / LangGraph (video series)",
-          "url": "https://www.youtube.com/watch?v=vVGXPRjtAJE&list=PLZoTAELRMXVPFd7JdvB-rnTb_5V26NYNO",
-          "source": "team-lead"
-        }
-      ]
+      "id": "google-python-class",
+      "label": "Google Python Class",
+      "url": "https://developers.google.com/edu/python",
+      "provider": "Google",
+      "cost": "free",
+      "category": "foundations",
+      "paths": ["foundation"]
+    },
+    {
+      "id": "zero-to-pandas",
+      "label": "Data Analysis with Python: Zero to Pandas",
+      "url": "https://jovian.ai/learn/data-analysis-with-python-zero-to-pandas",
+      "provider": "Jovian",
+      "cost": "free",
+      "category": "foundations",
+      "paths": ["foundation", "ml-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "python-video-series",
+      "label": "Python course (video series)",
+      "url": "https://www.youtube.com/watch?v=t2_Q2BRzeEE&list=PLGjplNEQ1it8-0CmoljS5yeV-GlKSUEt0",
+      "provider": "YouTube",
+      "cost": "free",
+      "category": "foundations",
+      "paths": ["foundation"]
+    },
+    {
+      "id": "fcc-ml-python",
+      "label": "freeCodeCamp Machine Learning with Python",
+      "url": "https://www.freecodecamp.org/learn/machine-learning-with-python/",
+      "provider": "freeCodeCamp",
+      "cost": "free",
+      "note": "~300 hrs, free certificate.",
+      "category": "ml",
+      "paths": ["ml-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "mit-6s191",
+      "label": "MIT 6.S191 Introduction to Deep Learning",
+      "url": "http://introtodeeplearning.com/",
+      "provider": "MIT",
+      "cost": "free",
+      "note": "Lectures and labs.",
+      "category": "ml",
+      "paths": ["ml-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "cs229",
+      "label": "Stanford CS229 (Andrew Ng)",
+      "url": "https://www.youtube.com/playlist?list=PLoROMvodv4rMiGQp3WXShtMGgzqpfVfbU",
+      "provider": "Stanford",
+      "cost": "free",
+      "note": "Math-heavy.",
+      "category": "ml",
+      "paths": ["ml-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "d2l",
+      "label": "Dive into Deep Learning (d2l.ai)",
+      "url": "https://d2l.ai/",
+      "provider": "d2l.ai",
+      "cost": "free",
+      "note": "Interactive deep learning book.",
+      "category": "ml",
+      "paths": ["ml-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "ml-mastery",
+      "label": "Machine Learning Mastery",
+      "url": "https://machinelearningmastery.com",
+      "provider": "Machine Learning Mastery",
+      "cost": "free",
+      "category": "ml",
+      "paths": ["ml-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "pytorch-tutorials",
+      "label": "PyTorch Tutorials",
+      "url": "https://pytorch.org/tutorials/",
+      "provider": "PyTorch",
+      "cost": "free",
+      "category": "ml",
+      "paths": ["ml-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "dl-specialization",
+      "label": "DeepLearning.AI Deep Learning Specialization",
+      "url": "https://www.deeplearning.ai/courses/deep-learning-specialization/",
+      "provider": "DeepLearning.AI",
+      "cost": "free-audit",
+      "note": "Videos free; certificate requires a Pro membership.",
+      "category": "ml",
+      "paths": ["ml-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "ng-ml-specialization",
+      "label": "Machine Learning Specialization (Andrew Ng)",
+      "url": "https://www.coursera.org/specializations/machine-learning-introduction",
+      "provider": "Coursera",
+      "cost": "free-audit",
+      "note": "Audit free; certificate paid.",
+      "category": "ml",
+      "paths": ["ml-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "hugging-face-learn",
+      "label": "Hugging Face Learn",
+      "url": "https://huggingface.co/learn",
+      "provider": "Hugging Face",
+      "cost": "free",
+      "note": "NLP, Transformers and Diffusion courses.",
+      "category": "llm",
+      "paths": ["ml-engineer", "genai-engineer", "ai-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "hands-on-llms",
+      "label": "Hands-On Large Language Models",
+      "url": "https://github.com/HandsOnLLM/Hands-On-Large-Language-Models",
+      "provider": "GitHub",
+      "cost": "free",
+      "category": "llm",
+      "paths": ["ai-engineer", "genai-engineer", "agentic-ai-engineer"]
+    },
+    {
+      "id": "openai-prompting",
+      "label": "OpenAI Prompt Engineering Guide",
+      "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+      "provider": "OpenAI",
+      "cost": "free",
+      "category": "llm",
+      "paths": ["ai-engineer", "agentic-ai-engineer", "genai-engineer", "full-stack-ai-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "claude-prompt-engineering",
+      "label": "Claude Prompt Engineering Overview",
+      "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+      "provider": "Anthropic",
+      "cost": "free",
+      "category": "llm",
+      "paths": ["ai-engineer", "agentic-ai-engineer", "genai-engineer", "full-stack-ai-engineer"]
+    },
+    {
+      "id": "langchain-rag",
+      "label": "LangChain RAG Tutorial",
+      "url": "https://python.langchain.com/docs/tutorials/rag/",
+      "provider": "LangChain",
+      "cost": "free",
+      "category": "llm",
+      "paths": ["ai-engineer", "agentic-ai-engineer", "genai-engineer", "full-stack-ai-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "rag-video-series",
+      "label": "RAG (video series)",
+      "url": "https://www.youtube.com/watch?v=fZM3oX4xEyg&list=PLZoTAELRMXVM8Pf4U67L4UuDRgV4TNX9D",
+      "provider": "YouTube",
+      "cost": "free",
+      "category": "llm",
+      "paths": ["ai-engineer", "agentic-ai-engineer", "genai-engineer", "full-stack-ai-engineer"]
+    },
+    {
+      "id": "dlai-rag-course",
+      "label": "DeepLearning.AI RAG short course",
+      "url": "https://www.deeplearning.ai/short-courses/",
+      "provider": "DeepLearning.AI",
+      "cost": "free-audit",
+      "note": "Videos free; certificate requires a Pro membership.",
+      "category": "llm",
+      "paths": ["ai-engineer", "agentic-ai-engineer", "genai-engineer", "full-stack-ai-engineer"]
+    },
+    {
+      "id": "hf-peft",
+      "label": "Hugging Face PEFT (LoRA / QLoRA)",
+      "url": "https://huggingface.co/docs/peft/index",
+      "provider": "Hugging Face",
+      "cost": "free",
+      "category": "llm",
+      "paths": ["genai-engineer"]
+    },
+    {
+      "id": "hf-diffusion",
+      "label": "Hugging Face Diffusion Course",
+      "url": "https://huggingface.co/learn/diffusion-course",
+      "provider": "Hugging Face",
+      "cost": "free",
+      "category": "llm",
+      "paths": ["genai-engineer"]
+    },
+    {
+      "id": "langgraph",
+      "label": "LangGraph Overview",
+      "url": "https://langchain-ai.github.io/langgraph/",
+      "provider": "LangChain",
+      "cost": "free",
+      "category": "agents",
+      "paths": ["agentic-ai-engineer", "full-stack-ai-engineer", "ai-engineer"]
+    },
+    {
+      "id": "mcp-intro",
+      "label": "Model Context Protocol Introduction",
+      "url": "https://modelcontextprotocol.io/introduction",
+      "provider": "Anthropic",
+      "cost": "free",
+      "category": "agents",
+      "paths": ["agentic-ai-engineer", "ai-engineer"]
+    },
+    {
+      "id": "mcp-video-series",
+      "label": "MCP (video series)",
+      "url": "https://www.youtube.com/watch?v=-UQ6OZywZ2I&list=PLZoTAELRMXVPC8r1xF68Gksi241DAtMsK",
+      "provider": "YouTube",
+      "cost": "free",
+      "category": "agents",
+      "paths": ["agentic-ai-engineer", "ai-engineer"]
+    },
+    {
+      "id": "langchain-video-series",
+      "label": "LangChain / LangGraph (video series)",
+      "url": "https://www.youtube.com/watch?v=vVGXPRjtAJE&list=PLZoTAELRMXVPFd7JdvB-rnTb_5V26NYNO",
+      "provider": "YouTube",
+      "cost": "free",
+      "category": "agents",
+      "paths": ["agentic-ai-engineer", "ai-engineer", "full-stack-ai-engineer"]
+    },
+    {
+      "id": "openai-agents-sdk",
+      "label": "OpenAI Agents SDK",
+      "url": "https://openai.github.io/openai-agents-python/",
+      "provider": "OpenAI",
+      "cost": "free",
+      "category": "agents",
+      "paths": ["agentic-ai-engineer", "ai-engineer"]
+    },
+    {
+      "id": "vercel-ai-sdk",
+      "label": "Vercel AI SDK",
+      "url": "https://sdk.vercel.ai/docs",
+      "provider": "Vercel",
+      "cost": "free",
+      "note": "The TypeScript standard for streaming AI features.",
+      "category": "web",
+      "paths": ["full-stack-ai-engineer"]
+    },
+    {
+      "id": "react-docs",
+      "label": "React Documentation",
+      "url": "https://react.dev/learn",
+      "provider": "Meta",
+      "cost": "free",
+      "category": "web",
+      "paths": ["full-stack-engineer", "full-stack-ai-engineer"]
+    },
+    {
+      "id": "mdn",
+      "label": "MDN Web Docs",
+      "url": "https://developer.mozilla.org/en-US/docs/Learn",
+      "provider": "Mozilla",
+      "cost": "free",
+      "category": "web",
+      "paths": ["foundation", "full-stack-engineer", "full-stack-ai-engineer"]
+    },
+    {
+      "id": "fcc-responsive",
+      "label": "freeCodeCamp Responsive Web Design",
+      "url": "https://www.freecodecamp.org/learn/2022/responsive-web-design/",
+      "provider": "freeCodeCamp",
+      "cost": "free",
+      "note": "Free certificate.",
+      "category": "web",
+      "paths": ["full-stack-engineer"]
+    },
+    {
+      "id": "system-design-primer",
+      "label": "System Design Primer",
+      "url": "https://github.com/donnemartin/system-design-primer",
+      "provider": "GitHub",
+      "cost": "free",
+      "category": "web",
+      "paths": ["full-stack-engineer", "full-stack-ai-engineer"]
+    },
+    {
+      "id": "fastapi",
+      "label": "FastAPI Tutorial",
+      "url": "https://fastapi.tiangolo.com/tutorial/",
+      "provider": "FastAPI",
+      "cost": "free",
+      "category": "web",
+      "paths": ["foundation", "full-stack-engineer", "ai-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "docker",
+      "label": "Docker Get Started",
+      "url": "https://docs.docker.com/get-started/",
+      "provider": "Docker",
+      "cost": "free",
+      "category": "mlops",
+      "paths": ["foundation", "ai-engineer", "ml-engineer", "full-stack-engineer", "full-stack-ai-engineer", "genai-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "mlflow",
+      "label": "MLflow Documentation",
+      "url": "https://mlflow.org/docs/latest/index.html",
+      "provider": "MLflow",
+      "cost": "free",
+      "category": "mlops",
+      "paths": ["ml-engineer", "ai-engineer", "genai-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "wandb",
+      "label": "Weights & Biases",
+      "url": "https://wandb.ai/site",
+      "provider": "Weights & Biases",
+      "cost": "free",
+      "note": "Free tier.",
+      "category": "mlops",
+      "paths": ["ml-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "ragas",
+      "label": "RAGAS Documentation",
+      "url": "https://docs.ragas.io/",
+      "provider": "RAGAS",
+      "cost": "free",
+      "category": "mlops",
+      "paths": ["ai-engineer", "genai-engineer", "agentic-ai-engineer"]
+    },
+    {
+      "id": "langfuse",
+      "label": "Langfuse Documentation",
+      "url": "https://langfuse.com/docs",
+      "provider": "Langfuse",
+      "cost": "free",
+      "category": "mlops",
+      "paths": ["ai-engineer", "agentic-ai-engineer"]
+    },
+    {
+      "id": "langsmith",
+      "label": "LangSmith Documentation",
+      "url": "https://docs.smith.langchain.com/",
+      "provider": "LangChain",
+      "cost": "free",
+      "category": "mlops",
+      "paths": ["agentic-ai-engineer", "ai-engineer"]
+    },
+    {
+      "id": "prometheus",
+      "label": "Prometheus",
+      "url": "https://prometheus.io/docs/introduction/overview/",
+      "provider": "Prometheus",
+      "cost": "free",
+      "category": "mlops",
+      "paths": ["ml-engineer", "ai-engineer", "ai-ml-hybrid"]
+    },
+    {
+      "id": "opentelemetry",
+      "label": "OpenTelemetry",
+      "url": "https://opentelemetry.io/docs/",
+      "provider": "OpenTelemetry",
+      "cost": "free",
+      "category": "mlops",
+      "paths": ["ml-engineer", "ai-engineer", "ai-ml-hybrid"]
     }
   ]
 }

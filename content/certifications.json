@@ -12,7 +12,8 @@
       "appearsInPaths": [
         "ai-engineer",
         "full-stack-ai-engineer"
-      ]
+      ],
+      "costTier": "paid"
     },
     {
       "id": "azure-ai-901",
@@ -23,7 +24,8 @@
       "note": "Replacing AI-900 as of June 30, 2026 — verify current status before publishing.",
       "appearsInPaths": [
         "ai-engineer"
-      ]
+      ],
+      "costTier": "paid"
     },
     {
       "id": "google-pro-mle",
@@ -33,7 +35,8 @@
       "cost": "Paid exam",
       "appearsInPaths": [
         "ml-engineer"
-      ]
+      ],
+      "costTier": "paid"
     },
     {
       "id": "aws-ml-specialty",
@@ -43,7 +46,8 @@
       "cost": "Paid exam",
       "appearsInPaths": [
         "ml-engineer"
-      ]
+      ],
+      "costTier": "paid"
     },
     {
       "id": "ibm-ai-engineering",
@@ -54,7 +58,8 @@
       "note": "Broadest all-round credential.",
       "appearsInPaths": [
         "ai-ml-hybrid"
-      ]
+      ],
+      "costTier": "free-audit"
     },
     {
       "id": "ibm-genai-engineering",
@@ -64,7 +69,8 @@
       "cost": "Audit free, certificate paid",
       "appearsInPaths": [
         "genai-engineer"
-      ]
+      ],
+      "costTier": "free-audit"
     },
     {
       "id": "langchain-academy",
@@ -75,7 +81,8 @@
       "note": "Agent-focused.",
       "appearsInPaths": [
         "agentic-ai-engineer"
-      ]
+      ],
+      "costTier": "free"
     },
     {
       "id": "anthropic-academy",
@@ -86,7 +93,8 @@
       "note": "~20 courses with completion certificates.",
       "appearsInPaths": [
         "agentic-ai-engineer"
-      ]
+      ],
+      "costTier": "free"
     },
     {
       "id": "meta-frontend",
@@ -96,7 +104,8 @@
       "cost": "Audit free, certificate paid",
       "appearsInPaths": [
         "full-stack-engineer"
-      ]
+      ],
+      "costTier": "free-audit"
     }
   ]
 }

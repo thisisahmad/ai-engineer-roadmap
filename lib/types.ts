@@ -130,18 +130,38 @@ export type CareerLadder = {
   levels: LadderLevel[];
 };
 
+/**
+ * How much a resource actually costs to get value from.
+ *
+ * "free-audit" is the case worth calling out: the material is free to work
+ * through, but the certificate is behind a paywall. Several courses moved into
+ * this bucket during 2026 and people find out mid-course.
+ */
+export type CostTier = "free" | "free-audit" | "paid";
+
 /** content/resources.json */
-export type ResourceGroup = {
+export type ResourceCategory = {
   id: string;
-  title: string;
-  description?: string;
-  resources: Resource[];
+  label: string;
+};
+
+export type LibraryResource = {
+  id: string;
+  label: string;
+  url: string;
+  provider: string;
+  cost: CostTier;
+  note?: string;
+  category: string;
+  /** Path slugs this is relevant to, plus "foundation" for pre-path material. */
+  paths: string[];
 };
 
 export type ResourceLibrary = {
   intro: string;
   caveat: string;
-  groups: ResourceGroup[];
+  categories: ResourceCategory[];
+  items: LibraryResource[];
 };
 
 /** content/certifications.json */
@@ -150,7 +170,10 @@ export type Certification = {
   name: string;
   provider: string;
   url: string;
+  /** Human-readable cost, as written in the source doc. */
   cost: string;
+  /** Normalised form of `cost`, for badges and filtering. */
+  costTier: CostTier;
   note?: string;
   /** Path slugs whose certification checkpoint recommends this one. */
   appearsInPaths: string[];
