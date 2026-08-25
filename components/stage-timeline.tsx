@@ -4,16 +4,10 @@ import { Reveal } from "@/components/motion/reveal";
 import { ResourceList } from "@/components/resource-list";
 import { Badge } from "@/components/ui/badge";
 import { accent } from "@/lib/accents";
+import { LEVEL_STYLES, stageAnchorId } from "@/lib/levels";
 import { cn } from "@/lib/utils";
 import type { AccentName } from "@/lib/accents";
-import type { Level, Stage } from "@/lib/types";
-
-const LEVEL_STYLE: Record<Level, string> = {
-  junior: "border-sky-500/40 text-sky-400",
-  mid: "border-amber-500/40 text-amber-400",
-  senior: "border-rose-500/40 text-rose-400",
-  architect: "border-violet-500/40 text-violet-400",
-};
+import type { Stage } from "@/lib/types";
 
 /**
  * The ordered stages of a path.
@@ -41,7 +35,11 @@ export function StageTimeline({
       />
 
       {stages.map((stage, index) => (
-        <li key={stage.id} className="relative pl-12">
+        <li
+          key={stage.id}
+          id={stageAnchorId(stage.id)}
+          className="relative scroll-mt-24 pl-12"
+        >
           <Reveal delay={Math.min(index, 6) * 0.04}>
             <span
               className={cn(
@@ -68,7 +66,7 @@ export function StageTimeline({
                 </h3>
                 <Badge
                   variant="outline"
-                  className={cn("font-normal", LEVEL_STYLE[stage.level])}
+                  className={cn("font-normal", LEVEL_STYLES[stage.level].badge)}
                 >
                   {stage.levelLabel}
                 </Badge>

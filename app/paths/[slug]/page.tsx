@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Hammer, Layers, Star } from "lucide-react";
 import type { Metadata } from "next";
 
 import { Reveal } from "@/components/motion/reveal";
+import { PathRoadmapGraph } from "@/components/path-roadmap-graph";
 import { ResourceList } from "@/components/resource-list";
 import { StageTimeline } from "@/components/stage-timeline";
 import { Badge } from "@/components/ui/badge";
@@ -239,6 +240,12 @@ export default async function PathPage({
             </section>
           </Reveal>
         ) : null}
+
+        {/* Overview graph. Lazy, client-only, and rendered above the stage
+            list it links into — the list itself stays server-rendered. */}
+        <Reveal className="mb-14">
+          <PathRoadmapGraph path={path} />
+        </Reveal>
 
         <section aria-labelledby="stages-heading">
           <Reveal className="mb-10">
