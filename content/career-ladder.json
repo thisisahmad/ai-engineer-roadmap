@@ -10,7 +10,19 @@
       "yearsExperience": "0-1 yr",
       "focus": "Learn fundamentals",
       "scope": "Follow existing patterns",
-      "guidance": "Follow the roadmap exactly, complete every project listed, and focus on correctness over cleverness."
+      "guidance": "Follow the roadmap exactly, complete every project listed, and focus on correctness over cleverness.",
+      "responsibilities": [
+        "Work inside patterns the codebase already establishes",
+        "Complete every project on the path rather than sampling them",
+        "Optimise for correctness over cleverness",
+        "Put work up for review early, while it is still cheap to change"
+      ],
+      "entryNote": "The entry rung. The bar here is finishing things, not designing them.",
+      "separators": [
+        "Can read an existing codebase and add to it without breaking its conventions",
+        "Finishes what gets started, including the unglamorous last ten percent",
+        "Knows when to ask rather than guessing for another two hours"
+      ]
     },
     {
       "id": "mid",
@@ -19,7 +31,18 @@
       "yearsExperience": "1-3 yr",
       "focus": "Own features end-to-end",
       "scope": "Build one complete project solo",
-      "guidance": "Start making architecture choices on your own projects — why RAG vs fine-tuning, why this vector DB, why this framework."
+      "guidance": "Start making architecture choices on your own projects — why RAG vs fine-tuning, why this vector DB, why this framework.",
+      "responsibilities": [
+        "Take a feature from requirement to production without being sequenced through it",
+        "Ship one complete project solo, start to finish",
+        "Choose between competing approaches and defend the choice",
+        "Notice when an established pattern does not fit, and say so"
+      ],
+      "separators": [
+        "Chooses the approach instead of implementing the one handed over",
+        "Can justify RAG versus fine-tuning, this vector database, this framework",
+        "Owns a whole feature rather than a well-specified slice of one"
+      ]
     },
     {
       "id": "senior",
@@ -28,7 +51,18 @@
       "yearsExperience": "3-5 yr",
       "focus": "Own systems design and tradeoffs",
       "scope": "Design new systems, mentor juniors",
-      "guidance": "Think in tradeoffs, not tutorials — reliability, cost, latency and security become your job rather than an afterthought. Mentor others."
+      "guidance": "Think in tradeoffs, not tutorials — reliability, cost, latency and security become your job rather than an afterthought. Mentor others.",
+      "responsibilities": [
+        "Design systems rather than features",
+        "Carry reliability, cost, latency and security as first-class concerns",
+        "Mentor juniors and raise the ceiling of the people nearby",
+        "State the tradeoff plainly when there is no clean answer"
+      ],
+      "separators": [
+        "Reliability, cost, latency and security are the job, not an afterthought",
+        "Thinks in tradeoffs rather than tutorials — there is rarely one right answer",
+        "Output now includes other people getting better, not only shipped code"
+      ]
     },
     {
       "id": "lead-staff",
@@ -37,7 +71,18 @@
       "yearsExperience": "5-8 yr",
       "focus": "Own multiple teams' architecture",
       "scope": "Set technical standards, review architecture",
-      "guidance": "Own cross-team technical direction, write design docs before code, and evaluate build-vs-buy."
+      "guidance": "Own cross-team technical direction, write design docs before code, and evaluate build-vs-buy.",
+      "responsibilities": [
+        "Set technical direction across more than one team",
+        "Write the design document before the code exists",
+        "Review other people's architecture, not only their diffs",
+        "Run build-versus-buy decisions with real numbers attached"
+      ],
+      "separators": [
+        "Scope crosses team boundaries rather than stopping at one",
+        "The design document comes before the implementation, not after it",
+        "Evaluates whether to build the thing at all"
+      ]
     },
     {
       "id": "architect",
@@ -46,7 +91,19 @@
       "yearsExperience": "8+ yr",
       "focus": "Own org-wide AI strategy and platform",
       "scope": "Diagrams and decision records over code; cost, risk and scale owner",
-      "guidance": "Own the end-to-end system — model and provider selection, scaling strategy, governance, cost ceilings, and how AI investment ties to business value. Works in diagrams and decision records as much as code."
+      "guidance": "Own the end-to-end system — model and provider selection, scaling strategy, governance, cost ceilings, and how AI investment ties to business value. Works in diagrams and decision records as much as code.",
+      "responsibilities": [
+        "Own model and provider selection across the whole organisation",
+        "Set scaling strategy and the cost ceilings that go with it",
+        "Own governance and risk as named outcomes",
+        "Tie AI investment to business value in terms the business recognises",
+        "Work in diagrams and decision records as much as in code"
+      ],
+      "separators": [
+        "Scope is the organisation, not a set of teams",
+        "Cost, risk and scale are owned outcomes rather than inputs someone hands over",
+        "The primary artefact is a decision record; code is no longer the main one"
+      ]
     }
   ]
 }

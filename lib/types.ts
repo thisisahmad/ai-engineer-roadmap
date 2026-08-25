@@ -109,6 +109,18 @@ export type LadderLevel = {
   focus: string;
   scope: string;
   guidance: string;
+  /** What changes at this level — drawn from Section 2 of the v2 doc. */
+  responsibilities: string[];
+  /**
+   * What separates this rung from the one below.
+   *
+   * The source doc does not carry this as a field; it is derived from the
+   * deltas between consecutive rungs. Edit freely — nothing else depends on
+   * the wording.
+   */
+  separators: string[];
+  /** Only on the first rung, which has no rung below it to differ from. */
+  entryNote?: string;
 };
 
 export type CareerLadder = {
