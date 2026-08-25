@@ -59,9 +59,18 @@ function VerticalRoadmap({ path }: { path: Path }) {
               onClick={() => scrollToStage(stage.id)}
               className="flex-1 rounded-md px-1.5 py-1 text-left transition-colors hover:bg-white/5"
             >
-              <span className="text-sm font-medium">{stage.title}</span>
+              <span className="font-mono text-[10px]" style={{ color: style.hex }}>
+                {String(i + 1).padStart(2, "0")} · {stage.levelLabel}
+              </span>
+              <span className="mt-0.5 block text-sm font-medium leading-tight">
+                {stage.title}
+              </span>
               <span className="mt-0.5 block text-xs text-muted-foreground">
-                {stage.levelLabel}
+                {stage.resources.length > 0
+                  ? `${stage.resources.length} resources`
+                  : stage.needsOriginalContent
+                    ? "Original content to write"
+                    : null}
               </span>
             </button>
           </li>
@@ -127,7 +136,7 @@ export function PathRoadmapGraph({ path }: { path: Path }) {
           The 2D list is server-rendered and swaps to the canvas after mount,
           so without a fixed box that swap would shift the page. Below lg the
           box is auto-height and the list is the real content. */}
-      <div className="lg:h-[340px]">
+      <div className="lg:h-[400px]">
         {use3D ? (
           <div className="h-full w-full">
             <WebGLBoundary>
@@ -144,7 +153,7 @@ export function PathRoadmapGraph({ path }: { path: Path }) {
       {/* Always rendered, so the hint line cannot shift the page either. */}
       <p className="border-t border-border/50 px-5 py-2.5 text-[11px] text-muted-foreground">
         {use3D
-          ? "Hover a node for its stage, click to jump to it below."
+          ? "Click any stage to jump to it below."
           : "Tap a stage to jump to it below."}
       </p>
     </section>

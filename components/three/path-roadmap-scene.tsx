@@ -7,25 +7,29 @@ import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import * as THREE from "three";
 
 import { LEVEL_RANK, LEVEL_STYLES, stageAnchorId } from "@/lib/levels";
+import { cn } from "@/lib/utils";
 import type { Stage } from "@/lib/types";
 
 /**
  * The per-path roadmap graph.
  *
- * Stages are laid out along a gentle S-curve through 3D space rather than a
- * straight line, so the sequence reads as a journey instead of a table row.
- * Node size and glow follow level rank, and colour comes from the shared
- * LEVEL_STYLES map so the graph and the stage cards below always agree.
+ * Stages sit on a Catmull-Rom S-curve through 3D space so the sequence reads
+ * as a journey rather than a table row. Every node carries a permanent label —
+ * this is a reference diagram, so the information has to be readable without
+ * interaction; hover only emphasises.
  */
 
-const X_SPAN = 6.4;
+const X_SPAN = 6.0;
 
 type Placed = {
   stage: Stage;
+  index: number;
   position: THREE.Vector3;
   color: THREE.Color;
   scale: number;
   emissive: number;
+  /** Labels alternate across the curve to stop them colliding. */
+  above: boolean;
 };
 
 function place(stages: Stage[]): Placed[] {
@@ -35,20 +39,73 @@ function place(stages: Stage[]): Placed[] {
     const t = i / last;
     const rank = LEVEL_RANK[stage.level];
 
-    // S-curve: one full sine period across y, a slower cosine sweep in z so
-    // the path leans toward and away from the camera as it advances.
     const x = THREE.MathUtils.lerp(-X_SPAN, X_SPAN, t);
-    const y = Math.sin(t * Math.PI * 2) * 0.92;
-    const z = Math.cos(t * Math.PI * 1.15) * 1.35;
+    const y = Math.sin(t * Math.PI * 2) * 0.86;
+    const z = Math.cos(t * Math.PI * 1.15) * 1.3;
 
     return {
       stage,
+      index: i,
       position: new THREE.Vector3(x, y, z),
       color: new THREE.Color(LEVEL_STYLES[stage.level].hex),
-      scale: 0.17 + rank * 0.052,
-      emissive: 1.35 + rank * 0.72,
+      // Size carries level rank.
+      scale: 0.15 + rank * 0.058,
+      // Brightness carries it too, but as a premultiplier on the colour that
+      // can never exceed 1.0. Driving emissiveIntensity above 1 instead pushes
+      // the brightest channel of each hue to clip, which turns every
+      // high-level node white and destroys the colour coding.
+      emissive: 0.75 + rank * 0.08,
+      above: y >= 0,
     };
   });
+}
+
+function NodeLabel({ node, active }: { node: Placed; active: boolean }) {
+  const style = LEVEL_STYLES[node.stage.level];
+  const offset = node.scale * 1.9 + 0.34;
+
+  return (
+    <Html
+      center
+      position={[0, node.above ? offset : -offset, 0]}
+      zIndexRange={[30, 0]}
+      // Labels never intercept the pointer; the node itself owns interaction,
+      // otherwise a label would block the node behind it.
+      style={{ pointerEvents: "none" }}
+    >
+      <div
+        className={cn(
+          "w-[104px] select-none text-center transition-opacity duration-200",
+          node.above ? "-translate-y-full pb-1" : "translate-y-0 pt-1",
+          active ? "opacity-100" : "opacity-85",
+        )}
+      >
+        <p
+          className="font-mono text-[9px] leading-none"
+          style={{ color: style.hex }}
+        >
+          {String(node.index + 1).padStart(2, "0")} · {style.label}
+        </p>
+        <p
+          className={cn(
+            "mt-1 text-[10px] font-medium leading-tight transition-colors",
+            active ? "text-foreground" : "text-foreground/80",
+          )}
+        >
+          {node.stage.title}
+        </p>
+        {node.stage.resources.length > 0 ? (
+          <p className="mt-0.5 text-[9px] leading-none text-muted-foreground">
+            {node.stage.resources.length} resources
+          </p>
+        ) : node.stage.needsOriginalContent ? (
+          <p className="mt-0.5 text-[9px] leading-none text-amber-400/80">
+            to write
+          </p>
+        ) : null}
+      </div>
+    </Html>
+  );
 }
 
 function Node({
@@ -64,24 +121,53 @@ function Node({
   onLeave: () => void;
   onSelect: () => void;
 }) {
-  const mesh = useRef<THREE.Mesh>(null);
+  const core = useRef<THREE.Mesh>(null);
+  const ring = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
-    if (!mesh.current) return;
-    // Hovered node swells slightly; the rest breathe just enough to look live.
-    const idle = 1 + Math.sin(state.clock.elapsedTime * 1.6 + node.position.x) * 0.03;
-    const target = node.scale * (active ? 1.42 : idle);
-    mesh.current.scale.lerp(new THREE.Vector3(target, target, target), 0.18);
-  });
+    const idle =
+      1 + Math.sin(state.clock.elapsedTime * 1.5 + node.position.x) * 0.028;
+    const target = node.scale * (active ? 1.34 : idle);
 
-  const style = LEVEL_STYLES[node.stage.level];
+    if (core.current) {
+      core.current.scale.lerp(new THREE.Vector3(target, target, target), 0.18);
+    }
+    if (ring.current) {
+      const r = target * (active ? 2.5 : 2.1);
+      ring.current.scale.lerp(new THREE.Vector3(r, r, r), 0.18);
+      ring.current.lookAt(state.camera.position);
+    }
+  });
 
   return (
     <group position={node.position}>
-      <Sphere
-        ref={mesh}
-        args={[1, 24, 24]}
-        scale={node.scale}
+      {/* Halo, so level colour is still legible where the core is small. */}
+      <mesh ref={ring} scale={node.scale * 2.1}>
+        <circleGeometry args={[1, 32]} />
+        <meshBasicMaterial
+          color={node.color}
+          transparent
+          opacity={active ? 0.3 : 0.16}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+          toneMapped={false}
+        />
+      </mesh>
+
+      <Sphere ref={core} args={[1, 24, 24]} scale={node.scale}>
+        <meshBasicMaterial
+          color={node.color
+            .clone()
+            .multiplyScalar(active ? Math.min(node.emissive * 1.25, 1) : node.emissive)}
+          toneMapped={false}
+        />
+      </Sphere>
+
+      {/* Invisible, generously sized hit target — the visible core is far too
+          small to hover comfortably. */}
+      <mesh
+        visible={false}
+        scale={Math.max(node.scale * 3.4, 0.44)}
         onPointerOver={(e) => {
           e.stopPropagation();
           onEnter();
@@ -92,34 +178,10 @@ function Node({
           onSelect();
         }}
       >
-        <meshStandardMaterial
-          color={node.color}
-          emissive={node.color}
-          emissiveIntensity={active ? node.emissive * 1.7 : node.emissive}
-          roughness={0.28}
-          metalness={0.1}
-          toneMapped={false}
-        />
-      </Sphere>
+        <sphereGeometry args={[1, 8, 8]} />
+      </mesh>
 
-      {active ? (
-        <Html
-          center
-          // Lifted clear of the node so the label never sits on the glow.
-          position={[0, node.scale * 2.6, 0]}
-          zIndexRange={[40, 0]}
-          style={{ pointerEvents: "none" }}
-        >
-          <div className="w-max max-w-[15rem] -translate-y-1 rounded-lg border border-border/80 bg-background/95 px-2.5 py-1.5 text-center shadow-xl backdrop-blur-sm">
-            <p className="text-xs font-medium leading-tight">
-              {node.stage.title}
-            </p>
-            <p className={`mt-0.5 text-[10px] ${style.badge.split(" ")[1]}`}>
-              {node.stage.levelLabel}
-            </p>
-          </div>
-        </Html>
-      ) : null}
+      <NodeLabel node={node} active={active} />
     </group>
   );
 }
@@ -131,19 +193,36 @@ function Roadmap({ stages }: { stages: Stage[] }) {
 
   const nodes = useMemo(() => place(stages), [stages]);
 
-  /** Smooth curve through every node, sampled densely enough to look drawn
-   *  rather than segmented. */
-  const curve = useMemo(() => {
+  /** Curve sampled by hand so each point can take the colour of the segment
+   *  it falls in — the connector then shifts hue as the levels progress. */
+  const { points, colors } = useMemo(() => {
     const spline = new THREE.CatmullRomCurve3(nodes.map((n) => n.position));
-    return spline.getPoints(Math.max(nodes.length * 14, 60));
+    const steps = Math.max(nodes.length * 18, 80);
+    const points: THREE.Vector3[] = [];
+    const colors: THREE.Color[] = [];
+    const lastIndex = nodes.length - 1;
+
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      points.push(spline.getPoint(t));
+
+      const scaled = t * lastIndex;
+      const from = Math.min(Math.floor(scaled), lastIndex);
+      const to = Math.min(from + 1, lastIndex);
+      colors.push(
+        nodes[from].color.clone().lerp(nodes[to].color, scaled - from),
+      );
+    }
+
+    return { points, colors };
   }, [nodes]);
 
   useFrame((state, delta) => {
     if (!group.current) return;
-    // Slight pointer lean. Not orbit controls — this is an overview, and it
-    // should not be draggable.
-    const targetY = state.pointer.x * 0.16;
-    const targetX = -state.pointer.y * 0.1;
+    // Slight lean toward the pointer. Not orbit controls — this is an
+    // overview and must not be draggable.
+    const targetY = state.pointer.x * 0.13;
+    const targetX = -state.pointer.y * 0.08;
     const damp = 1 - Math.pow(0.0022, delta);
     group.current.rotation.y += (targetY - group.current.rotation.y) * damp;
     group.current.rotation.x += (targetX - group.current.rotation.x) * damp;
@@ -162,14 +241,12 @@ function Roadmap({ stages }: { stages: Stage[] }) {
 
   return (
     <group ref={group}>
-      {/* Connector. Rendered under the nodes so it reads as the path they sit
-          on rather than a line drawn over them. */}
       <Line
-        points={curve}
-        color="#6b7280"
-        lineWidth={1.4}
+        points={points}
+        vertexColors={colors}
+        lineWidth={1.6}
         transparent
-        opacity={0.5}
+        opacity={0.55}
         toneMapped={false}
       />
 
@@ -203,7 +280,7 @@ export default function PathRoadmapScene({
   return (
     <Canvas
       dpr={[1, 1.6]}
-      camera={{ position: [0, 0.4, 9.6], fov: 42 }}
+      camera={{ position: [0, 0, 10.4], fov: 42 }}
       gl={{
         antialias: !bloom,
         alpha: true,
@@ -212,21 +289,20 @@ export default function PathRoadmapScene({
       }}
       style={{ background: "transparent" }}
     >
-      <ambientLight intensity={0.7} />
-      <pointLight position={[0, 3, 7]} intensity={22} color="#ffffff" />
-
+      {/* No lights: every material here is unlit, so hue is exactly the
+          level colour and cannot be shifted by lighting. */}
       <Roadmap stages={stages} />
 
       {bloom ? (
-        // Lighter than the hero: smaller canvas, and the labels must stay
-        // readable against it.
+        // Threshold sits above the node emissive so bloom halos the cores
+        // without washing the labels sitting next to them.
         <EffectComposer multisampling={0}>
           <Bloom
-            intensity={0.5}
-            luminanceThreshold={0.3}
-            luminanceSmoothing={0.4}
+            intensity={0.42}
+            luminanceThreshold={0.34}
+            luminanceSmoothing={0.45}
             mipmapBlur
-            radius={0.5}
+            radius={0.45}
           />
         </EffectComposer>
       ) : null}
