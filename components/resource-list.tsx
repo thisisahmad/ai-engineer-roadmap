@@ -17,12 +17,20 @@ export function ResourceList({
   resources: Resource[];
   className?: string;
 }) {
-  if (resources.length === 0) return null;
+  // Collapse repeats by URL. Stage resources arrive already deduped from the
+  // loader, but projects and the resource library do not go through it, and
+  // two entries for one URL would render as identical rows with a duplicate
+  // React key. Deduping here makes that impossible for every caller.
+  const unique = Array.from(
+    new Map(resources.map((resource) => [resource.url, resource])).values(),
+  );
+
+  if (unique.length === 0) return null;
 
   return (
     <ul className={cn("grid gap-1 sm:grid-cols-2", className)}>
-      {resources.map((resource) => (
-        <li key={`${resource.url}-${resource.label}`}>
+      {unique.map((resource) => (
+        <li key={resource.url}>
           <a
             href={resource.url}
             target="_blank"

@@ -9,6 +9,7 @@ import type {
   Foundation,
   Path,
   ProjectLibrary,
+  Resource,
   ResourceLibrary,
   Stage,
 } from "@/lib/types";
@@ -33,6 +34,40 @@ function readJson<T>(...segments: string[]): T {
 
 const LEVELS = new Set(["junior", "mid", "senior", "architect"]);
 const SOURCES = new Set(["team-lead", "curated"]);
+
+/**
+ * Collapses resources that point at the same URL.
+ *
+ * The JSON deliberately keeps one entry per source, so a link the team sheet
+ * and the curated research both landed on appears twice — that provenance is
+ * worth preserving in the files. The UI does not render `source`, though, so
+ * at runtime those two entries are one link and would otherwise render as a
+ * visually identical duplicate row.
+ *
+ * First occurrence wins, and `merge()` orders curated ahead of team-lead, so
+ * the curated label and its note survive. Deduping here rather than in the
+ * component keeps the counts shown on cards in step with the list beneath.
+ */
+function dedupeResources(stage: Stage): Stage {
+  const byUrl = new Map<string, Resource>();
+
+  for (const resource of stage.resources) {
+    const existing = byUrl.get(resource.url);
+
+    if (!existing) {
+      byUrl.set(resource.url, resource);
+      continue;
+    }
+    // Keep the surviving entry, but do not lose a note the loser carried.
+    if (!existing.note && resource.note) {
+      byUrl.set(resource.url, { ...existing, note: resource.note });
+    }
+  }
+
+  return byUrl.size === stage.resources.length
+    ? stage
+    : { ...stage, resources: [...byUrl.values()] };
+}
 
 /** Fails the build loudly rather than rendering a half-empty page. */
 function assertStages(stages: Stage[], where: string) {
@@ -90,7 +125,7 @@ function loadPaths(): Path[] {
     }
     assertStages(doc.stages, `content/paths/${file}`);
 
-    return doc;
+    return { ...doc, stages: doc.stages.map(dedupeResources) };
   });
 
   pathCache = docs.sort((a, b) => a.order - b.order);
@@ -123,7 +158,7 @@ export function getFoundation(): Foundation {
   if (!foundationCache) {
     const doc = readJson<Foundation>("foundation.json");
     assertStages(doc.stages, "content/foundation.json");
-    foundationCache = doc;
+    foundationCache = { ...doc, stages: doc.stages.map(dedupeResources) };
   }
   return foundationCache;
 }
