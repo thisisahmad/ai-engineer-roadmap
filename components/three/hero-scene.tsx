@@ -2,30 +2,33 @@
 
 import { useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Sphere } from "@react-three/drei";
+import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 
 /**
- * Hero scene: a layered neural / agent network with signals propagating
- * left to right through it.
+ * Homepage hero: a GPU-rendered 3D node network.
  *
- * The subject is deliberate — this is a learning site for AI engineering, so
- * the background is a network being traversed rather than abstract shapes.
- * Layout is seeded, not random, so the composition is the same on every load.
+ * Nodes occupy a real volume — z position drives both scale and emissive
+ * intensity, so depth reads without needing a depth-of-field pass. Links are
+ * distance-based, so the graph looks locally clustered rather than uniformly
+ * webbed.
  *
- * No drei <Environment> here: that fetches an HDRI from a CDN at runtime.
- * Everything is lit explicitly so the scene works offline.
+ * No drei <Environment>: that fetches an HDRI from a CDN. Everything is lit
+ * explicitly so the scene works offline.
  */
 
-/** Node counts per layer, read left to right. Widening then narrowing reads
- *  as a network rather than a grid. */
-const LAYERS = [4, 6, 7, 6, 4];
-const LAYER_GAP = 3.1;
-const PULSE_COUNT = 44;
+/** Violet primary with an amber accent — deliberately not the usual
+ *  violet+cyan that most AI products land on. */
+const VIOLET = ["#8b5cf6", "#a78bfa", "#7c3aed"];
+const AMBER = ["#f59e0b", "#fbbf24", "#f97316"];
+const AMBER_SHARE = 0.3;
 
-const COLOR_IN = new THREE.Color("#8b5cf6"); // violet
-const COLOR_OUT = new THREE.Color("#22d3ee"); // cyan
+/** Squared link distance. Tuned so each node keeps ~2-4 neighbours at the
+ *  desktop density; everything-to-everything reads as fog. */
+const LINK_DIST_SQ = 3.05 ** 2;
+const MAX_LINKS = 190;
 
-/** Deterministic PRNG, so the layout never shifts between reloads. */
 function mulberry32(seed: number) {
   return () => {
     seed |= 0;
@@ -36,285 +39,249 @@ function mulberry32(seed: number) {
   };
 }
 
-type Node = {
-  position: THREE.Vector3;
+type NodeSpec = {
+  base: THREE.Vector3;
   color: THREE.Color;
-  layer: number;
   scale: number;
+  emissive: number;
+  /** Phase offsets so idle drift is not synchronised across the cluster. */
+  phase: THREE.Vector3;
+  driftAmp: number;
 };
 
-function buildNetwork() {
+function buildNodes(count: number) {
   const random = mulberry32(20260825);
-  const nodes: Node[] = [];
-  const layerRanges: { start: number; count: number }[] = [];
+  const nodes: NodeSpec[] = [];
 
-  LAYERS.forEach((count, layer) => {
-    layerRanges.push({ start: nodes.length, count });
+  for (let i = 0; i < count; i++) {
+    // Ellipsoid volume: wider than tall, with genuine z spread so the cluster
+    // has front and back rather than being a scattered plane.
+    const theta = random() * Math.PI * 2;
+    const phi = Math.acos(2 * random() - 1);
+    const r = Math.cbrt(random()) * 7.4;
 
-    const x = (layer - (LAYERS.length - 1) / 2) * LAYER_GAP;
-    const color = COLOR_IN.clone().lerp(COLOR_OUT, layer / (LAYERS.length - 1));
+    const x = r * Math.sin(phi) * Math.cos(theta) * 1.42;
+    const y = r * Math.sin(phi) * Math.sin(theta) * 0.82;
+    const z = r * Math.cos(phi) * 0.72;
 
-    for (let i = 0; i < count; i++) {
-      // Even vertical spread with a small seeded offset, so the layers read as
-      // organised without looking like graph paper.
-      const spread = 4.6;
-      const y = ((i - (count - 1) / 2) / Math.max(count - 1, 1)) * spread;
-      const jitterY = (random() - 0.5) * 0.42;
-      const z = (random() - 0.5) * 3.4;
+    // Depth cue: nearer nodes are larger and brighter.
+    const depthT = THREE.MathUtils.clamp((z + 5.4) / 10.8, 0, 1);
+    const isAmber = random() < AMBER_SHARE;
+    const palette = isAmber ? AMBER : VIOLET;
 
-      nodes.push({
-        position: new THREE.Vector3(x, y + jitterY, z),
-        color,
-        layer,
-        scale: 0.055 + random() * 0.055,
-      });
-    }
-  });
+    nodes.push({
+      base: new THREE.Vector3(x, y, z),
+      color: new THREE.Color(palette[Math.floor(random() * palette.length)]),
+      scale: THREE.MathUtils.lerp(0.032, 0.115, depthT) * (0.72 + random() * 0.6),
+      emissive: THREE.MathUtils.lerp(1.15, 3.1, depthT),
+      phase: new THREE.Vector3(
+        random() * Math.PI * 2,
+        random() * Math.PI * 2,
+        random() * Math.PI * 2,
+      ),
+      driftAmp: 0.09 + random() * 0.16,
+    });
+  }
 
-  // Connect each node to a seeded subset of the next layer. A full bipartite
-  // mesh turns into visual soup at this node count.
-  const edges: { from: number; to: number }[] = [];
-  for (let layer = 0; layer < layerRanges.length - 1; layer++) {
-    const a = layerRanges[layer];
-    const b = layerRanges[layer + 1];
+  return nodes;
+}
 
-    for (let i = 0; i < a.count; i++) {
-      const targets = new Set<number>();
-      const wanted = 2 + Math.floor(random() * 2);
-      while (targets.size < Math.min(wanted, b.count)) {
-        targets.add(Math.floor(random() * b.count));
-      }
-      for (const t of targets) {
-        edges.push({ from: a.start + i, to: b.start + t });
-      }
+/** Index pairs closer than the link threshold, nearest pairs kept first. */
+function buildLinks(nodes: NodeSpec[]) {
+  const pairs: { a: number; b: number; d: number }[] = [];
+
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const d = nodes[i].base.distanceToSquared(nodes[j].base);
+      if (d < LINK_DIST_SQ) pairs.push({ a: i, b: j, d });
     }
   }
 
-  return { nodes, edges };
+  pairs.sort((p, q) => p.d - q.d);
+  return pairs.slice(0, MAX_LINKS);
 }
 
-function Network() {
-  const group = useRef<THREE.Group>(null);
-  const pulseRef = useRef<THREE.Points>(null);
+function Network({ count, animate }: { count: number; animate: boolean }) {
+  const cluster = useRef<THREE.Group>(null);
+  const lines = useRef<THREE.LineSegments>(null);
+  const meshes = useRef<(THREE.Mesh | null)[]>([]);
 
-  const { nodes, edges } = useMemo(buildNetwork, []);
+  const nodes = useMemo(() => buildNodes(count), [count]);
+  const links = useMemo(() => buildLinks(nodes), [nodes]);
 
-  /** Edge geometry, coloured per-vertex so connections fade along their run. */
   const { linePositions, lineColors } = useMemo(() => {
-    const linePositions = new Float32Array(edges.length * 6);
-    const lineColors = new Float32Array(edges.length * 6);
+    const linePositions = new Float32Array(links.length * 6);
+    const lineColors = new Float32Array(links.length * 6);
 
-    edges.forEach((edge, i) => {
-      const from = nodes[edge.from];
-      const to = nodes[edge.to];
-
-      linePositions.set([from.position.x, from.position.y, from.position.z], i * 6);
-      linePositions.set([to.position.x, to.position.y, to.position.z], i * 6 + 3);
-      lineColors.set([from.color.r, from.color.g, from.color.b], i * 6);
-      lineColors.set([to.color.r, to.color.g, to.color.b], i * 6 + 3);
+    links.forEach((link, i) => {
+      const a = nodes[link.a];
+      const b = nodes[link.b];
+      linePositions.set([a.base.x, a.base.y, a.base.z], i * 6);
+      linePositions.set([b.base.x, b.base.y, b.base.z], i * 6 + 3);
+      // Fade the link with distance so the near pairs read strongest.
+      const fade = 1 - link.d / LINK_DIST_SQ;
+      lineColors.set([a.color.r * fade, a.color.g * fade, a.color.b * fade], i * 6);
+      lineColors.set([b.color.r * fade, b.color.g * fade, b.color.b * fade], i * 6 + 3);
     });
 
     return { linePositions, lineColors };
-  }, [nodes, edges]);
-
-  /** Signals travelling along edges. Each keeps its own edge and speed. */
-  const pulses = useMemo(() => {
-    const random = mulberry32(99117);
-    return Array.from({ length: PULSE_COUNT }, () => ({
-      edge: Math.floor(random() * edges.length),
-      t: random(),
-      speed: 0.16 + random() * 0.3,
-    }));
-  }, [edges]);
-
-  const pulseData = useMemo(() => {
-    return {
-      positions: new Float32Array(PULSE_COUNT * 3),
-      colors: new Float32Array(PULSE_COUNT * 3),
-    };
-  }, []);
+  }, [nodes, links]);
 
   useFrame((state, delta) => {
-    // Slow drift keeps the scene alive without competing with the headline.
-    if (group.current) {
-      group.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.09) * 0.16;
-      group.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.06) * 0.05;
+    // Reduced motion renders one frame and never subscribes to updates.
+    if (!animate) return;
+
+    const t = state.clock.elapsedTime;
+
+    if (cluster.current) cluster.current.rotation.y += delta * 0.045;
+
+    // Idle drift, sin/cos rather than physics so it is cheap and bounded.
+    for (let i = 0; i < nodes.length; i++) {
+      const mesh = meshes.current[i];
+      if (!mesh) continue;
+      const n = nodes[i];
+      mesh.position.set(
+        n.base.x + Math.sin(t * 0.42 + n.phase.x) * n.driftAmp,
+        n.base.y + Math.cos(t * 0.37 + n.phase.y) * n.driftAmp,
+        n.base.z + Math.sin(t * 0.31 + n.phase.z) * n.driftAmp * 0.7,
+      );
     }
 
-    if (!pulseRef.current) return;
+    // Links follow their endpoints, or they visibly detach as nodes drift.
+    if (lines.current) {
+      const attr = lines.current.geometry.attributes
+        .position as THREE.BufferAttribute;
+      const array = attr.array as Float32Array;
 
-    const { positions, colors } = pulseData;
-
-    for (let i = 0; i < pulses.length; i++) {
-      const pulse = pulses[i];
-      pulse.t += delta * pulse.speed;
-
-      if (pulse.t > 1) {
-        pulse.t = 0;
-        // Re-home the signal so traffic keeps redistributing across the graph.
-        pulse.edge = Math.floor(Math.random() * edges.length);
+      for (let i = 0; i < links.length; i++) {
+        const a = meshes.current[links[i].a];
+        const b = meshes.current[links[i].b];
+        if (!a || !b) continue;
+        array[i * 6] = a.position.x;
+        array[i * 6 + 1] = a.position.y;
+        array[i * 6 + 2] = a.position.z;
+        array[i * 6 + 3] = b.position.x;
+        array[i * 6 + 4] = b.position.y;
+        array[i * 6 + 5] = b.position.z;
       }
-
-      const edge = edges[pulse.edge];
-      const from = nodes[edge.from];
-      const to = nodes[edge.to];
-
-      // Ease the travel so signals accelerate out of a node and settle into
-      // the next one, rather than sliding at constant speed.
-      const eased = pulse.t * pulse.t * (3 - 2 * pulse.t);
-
-      positions[i * 3] = from.position.x + (to.position.x - from.position.x) * eased;
-      positions[i * 3 + 1] = from.position.y + (to.position.y - from.position.y) * eased;
-      positions[i * 3 + 2] = from.position.z + (to.position.z - from.position.z) * eased;
-
-      colors[i * 3] = from.color.r + (to.color.r - from.color.r) * eased;
-      colors[i * 3 + 1] = from.color.g + (to.color.g - from.color.g) * eased;
-      colors[i * 3 + 2] = from.color.b + (to.color.b - from.color.b) * eased;
+      attr.needsUpdate = true;
     }
-
-    const geometry = pulseRef.current.geometry;
-    geometry.attributes.position.needsUpdate = true;
-    geometry.attributes.color.needsUpdate = true;
   });
 
   return (
-    <group ref={group}>
-      {/* Connections */}
-      <lineSegments>
+    <group ref={cluster}>
+      <lineSegments ref={lines}>
         <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            args={[linePositions, 3]}
-          />
+          <bufferAttribute attach="attributes-position" args={[linePositions, 3]} />
           <bufferAttribute attach="attributes-color" args={[lineColors, 3]} />
         </bufferGeometry>
         <lineBasicMaterial
           vertexColors
           transparent
-          opacity={0.17}
+          opacity={0.34}
           blending={THREE.AdditiveBlending}
           depthWrite={false}
+          toneMapped={false}
         />
       </lineSegments>
 
-      {/* Nodes */}
       {nodes.map((node, i) => (
-        <mesh key={i} position={node.position} scale={node.scale}>
-          <sphereGeometry args={[1, 20, 20]} />
+        <Sphere
+          key={i}
+          ref={(mesh) => {
+            meshes.current[i] = mesh;
+          }}
+          args={[1, 14, 14]}
+          position={node.base}
+          scale={node.scale}
+        >
           <meshStandardMaterial
             color={node.color}
             emissive={node.color}
-            emissiveIntensity={2.4}
-            roughness={0.25}
+            emissiveIntensity={node.emissive}
+            roughness={0.3}
             metalness={0.1}
+            // Unclamped so emissive pushes past 1.0 — this is what the bloom
+            // threshold picks up, and what keeps nodes glowing when bloom is
+            // disabled on low-power devices.
             toneMapped={false}
           />
-        </mesh>
+        </Sphere>
       ))}
-
-      {/* Travelling signals */}
-      <points ref={pulseRef}>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            args={[pulseData.positions, 3]}
-          />
-          <bufferAttribute
-            attach="attributes-color"
-            args={[pulseData.colors, 3]}
-          />
-        </bufferGeometry>
-        <pointsMaterial
-          size={0.13}
-          vertexColors
-          transparent
-          opacity={0.95}
-          sizeAttenuation
-          depthWrite={false}
-          blending={THREE.AdditiveBlending}
-          toneMapped={false}
-        />
-      </points>
     </group>
   );
 }
 
-/** Sparse dust well behind the network, for depth only. */
-function Depth({ count = 260 }: { count?: number }) {
-  const ref = useRef<THREE.Points>(null);
-
-  const positions = useMemo(() => {
-    const random = mulberry32(5150);
-    const array = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      array[i * 3] = (random() - 0.5) * 30;
-      array[i * 3 + 1] = (random() - 0.5) * 16;
-      array[i * 3 + 2] = -6 - random() * 16;
-    }
-    return array;
-  }, [count]);
-
-  useFrame((_, delta) => {
-    if (ref.current) ref.current.rotation.y += delta * 0.008;
-  });
-
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.045}
-        color="#6d5ce7"
-        transparent
-        opacity={0.35}
-        sizeAttenuation
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
-      />
-    </points>
-  );
-}
-
-/** Damped pointer parallax — depth cue, not a cursor-follow effect. */
-function ParallaxRig({ children }: { children: React.ReactNode }) {
-  const group = useRef<THREE.Group>(null);
-  const { viewport } = useThree();
+/**
+ * Damped camera parallax. The camera itself lerps toward the pointer rather
+ * than transforming the scene, so near and far nodes shift by different
+ * amounts and the depth actually reads. Not OrbitControls — this is a
+ * background, it must not be draggable.
+ */
+function CameraParallax() {
+  const { camera } = useThree();
+  const target = useRef(new THREE.Vector3(0, 0, 13));
 
   useFrame((state, delta) => {
-    if (!group.current) return;
-    const targetX = (state.pointer.x * viewport.width) / 44;
-    const targetY = (state.pointer.y * viewport.height) / 44;
-    const damp = 1 - Math.pow(0.0015, delta);
-    group.current.position.x += (targetX - group.current.position.x) * damp;
-    group.current.position.y += (targetY - group.current.position.y) * damp;
+    target.current.set(
+      state.pointer.x * 1.35,
+      state.pointer.y * 0.85,
+      13,
+    );
+    camera.position.lerp(target.current, 1 - Math.pow(0.0016, delta));
+    camera.lookAt(0, 0, 0);
   });
 
-  return <group ref={group}>{children}</group>;
+  return null;
 }
 
-export default function HeroScene() {
+export default function HeroScene({
+  density = "full",
+  animate = true,
+  bloom = true,
+}: {
+  density?: "full" | "reduced";
+  animate?: boolean;
+  bloom?: boolean;
+}) {
+  const count = density === "full" ? 92 : 46;
+
   return (
     <Canvas
-      dpr={[1, 1.75]}
-      camera={{ position: [0, 0, 13], fov: 42 }}
+      // "demand" renders a single frame for the reduced-motion case; the
+      // animated path needs the continuous loop.
+      frameloop={animate ? "always" : "demand"}
+      dpr={[1, animate ? 1.75 : 2]}
+      camera={{ position: [0, 0, 13], fov: 46 }}
       gl={{
-        antialias: true,
+        antialias: !bloom, // bloom's own pass supersedes MSAA
         alpha: true,
         powerPreference: "high-performance",
         failIfMajorPerformanceCaveat: false,
       }}
       style={{ background: "transparent" }}
     >
-      <ambientLight intensity={0.6} />
-      <pointLight position={[0, 0, 8]} intensity={30} color="#a78bfa" />
+      <ambientLight intensity={0.5} />
+      <pointLight position={[0, 2, 9]} intensity={26} color="#a78bfa" />
+      <pointLight position={[-7, -3, 5]} intensity={16} color="#f59e0b" />
 
-      <ParallaxRig>
-        <Depth />
-        <Network />
-      </ParallaxRig>
+      <Network count={count} animate={animate} />
+      {animate ? <CameraParallax /> : null}
 
-      <fog attach="fog" args={["#08080c", 14, 34]} />
+      {bloom ? (
+        <EffectComposer multisampling={0}>
+          <Bloom
+            intensity={0.85}
+            luminanceThreshold={0.22}
+            luminanceSmoothing={0.35}
+            mipmapBlur
+            radius={0.62}
+          />
+          <Vignette offset={0.32} darkness={0.62} eskil={false} />
+        </EffectComposer>
+      ) : null}
+
+      <fog attach="fog" args={["#08080c", 14, 30]} />
     </Canvas>
   );
 }
