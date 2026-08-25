@@ -156,17 +156,24 @@ Add an entry to `PATH_ACCENTS` in `lib/accents.ts`. The classes are written out 
 
 ## Deploying to Vercel
 
-The project needs no `vercel.json`. Vercel detects Next.js, reads `output: "export"` from `next.config.ts`, and serves `/out` from its CDN.
+Everything is prerendered at build time. There is no server, no database and no
+runtime code, so nothing here can exceed a function quota — the only free-tier
+limit that applies is bandwidth.
 
-### From the dashboard
+### Connect the repository
 
-1. Push the repository to GitHub, GitLab or Bitbucket.
-2. In Vercel, choose **Add New → Project**, and import the repository.
-3. Leave every build setting at its default — the framework preset, build command and output directory are all detected.
-4. Add an environment variable: `NEXT_PUBLIC_SITE_URL` set to your production domain (for example `https://ai-roadmap.vercel.app`). This is what makes the sitemap, `robots.txt` and Open Graph tags use absolute production URLs. See `.env.example`.
+1. Push this repository to GitHub.
+2. In Vercel choose **Add New → Project** and import it.
+3. Leave every build setting at its default. Vercel detects Next.js and reads
+   `output: "export"` from `next.config.ts` on its own; the build command and
+   output directory do not need overriding.
+4. Set one environment variable — see below.
 5. Deploy.
 
-### From the CLI
+Every push to the default branch redeploys production. Every other branch gets
+its own preview URL.
+
+### From the CLI instead
 
 ```bash
 npm i -g vercel
@@ -174,21 +181,100 @@ vercel            # preview deployment
 vercel --prod     # production
 ```
 
-Every push to the default branch redeploys production; every other branch gets a preview URL.
+### The one environment variable
+
+There is no backend and no database, so nothing needs a secret. One variable
+still matters for SEO:
+
+```
+NEXT_PUBLIC_SITE_URL = https://your-domain.com
+```
+
+Without it the build falls back to `NEXT_PUBLIC_VERCEL_URL`, which is the
+**per-deployment** hostname (`ai-roadmap-a1b2c3.vercel.app`), not your
+production domain. That would put deployment-specific URLs into
+`sitemap.xml`, `robots.txt`, every `rel="canonical"` and every Open Graph
+image URL — so search engines would index a hostname that changes on every
+push. The site works without it; its SEO does not.
+
+Set it in **Project → Settings → Environment Variables** for the Production
+environment. `.env.example` documents it.
+
+### vercel.json
+
+`vercel.json` exists for one reason: `Content-Type` on the generated Open
+Graph images.
+
+Next writes them to paths with no file extension
+(`/paths/ai-engineer/opengraph-image`), and a CDN infers content type from the
+extension. Without an explicit header they can be served as
+`application/octet-stream`, and Facebook, LinkedIn and Twitter all reject a
+share image that is not served as an image. The file pins `image/png` on those
+routes.
+
+It also sets `X-Content-Type-Options`, `Referrer-Policy` and
+`X-Frame-Options`. `headers()` in `next.config.ts` would be the usual place for
+those, but it is a server feature and is ignored under `output: "export"` —
+`vercel.json` is the only thing that applies.
+
+---
+
+## SEO
+
+| Artefact | Source | Notes |
+| --- | --- | --- |
+| `sitemap.xml` | `app/sitemap.ts` | 14 URLs; path entries generated from `content/paths` |
+| `robots.txt` | `app/robots.ts` | Allows everything, points at the sitemap |
+| Canonical URLs | Per-page `metadata.alternates` | Every route has one |
+| Open Graph images | `app/opengraph-image.tsx` and `app/paths/[slug]/opengraph-image.tsx` | 8 PNGs generated at build |
+| FAQ rich results | `components/faq-section.tsx` | `FAQPage` JSON-LD on the homepage |
+
+Both metadata routes set `export const dynamic = "force-static"`. They compile
+to Route Handlers, which are dynamic by default, and `output: "export"` refuses
+to build a dynamic route.
+
+### Open Graph images
+
+`ImageResponse` runs at build time and writes real PNGs to `/out`, so there is
+no runtime image service to pay for. Eight are generated: one per path, plus a
+site-level card used by every other route.
+
+Two constraints, both from satori, the renderer behind `ImageResponse`:
+
+- **Every element with more than one child needs an explicit `display`.** It
+  counts a literal string sitting next to an interpolation as two children, so
+  `Path {letter}` fails where `` {`Path ${letter}`} `` does not. Every `div` in
+  those two files carries `display: "flex"` rather than relying on remembering
+  which ones need it.
+- **No external assets.** No `fetch`, no remote fonts, no images. The cards are
+  typography and colour only, and there are no radial gradients or filters —
+  hence the flat gradient bar instead of a blur.
+
+Editing either file changes nothing until you rebuild.
 
 ### Free-tier notes
 
-- All 18 routes are static files. There are no Serverless or Edge Function invocations, so the function-execution quota is untouched.
-- Image Optimization is disabled (`images.unoptimized: true`) because it is a server feature and cannot run in a static export. Optimize images before committing them, or switch modes as described below.
-- Bandwidth is the only meaningful limit on the free tier.
+- All 20 routes and 8 OG images are static files. Zero Serverless or Edge
+  Function invocations.
+- Image Optimization is off (`images.unoptimized: true`) because it is a server
+  feature and cannot run in a static export. Optimize images before committing.
+- three.js is never in the initial payload, so it does not count against the
+  first load on any page.
 
 ---
 
 ## Static export vs. Vercel-hosted SSG
 
-`next.config.ts` sets `output: "export"`, which emits a plain folder of HTML and assets. This keeps the site portable — it will run on Netlify, Cloudflare Pages, GitHub Pages or S3 unchanged.
+`next.config.ts` sets `output: "export"`, which emits a plain folder of HTML and
+assets. This keeps the site portable — it runs unchanged on Netlify, Cloudflare
+Pages, GitHub Pages or S3.
 
-If you would rather use Vercel's full Next.js support, delete the `output` and `images` lines from `next.config.ts`. You then get `next/image` optimization, ISR, Route Handlers and Middleware. The pages stay statically generated and CDN-served either way, so this costs nothing on the free tier — you only give up portability.
+To use Vercel's full Next.js support instead, delete the `output` and `images`
+lines from `next.config.ts`. You then get `next/image` optimization, ISR, Route
+Handlers and Middleware, and `headers()` in `next.config.ts` starts working so
+`vercel.json` becomes optional. Pages stay statically generated and CDN-served
+either way, so it costs nothing on the free tier — you only give up
+portability.
 
 Nothing else in the codebase depends on the choice.
 
@@ -196,22 +282,46 @@ Nothing else in the codebase depends on the choice.
 
 ## Accessibility and motion
 
-- Every animation is wrapped in a `useReducedMotion` check, and a CSS fallback in `globals.css` catches the rest. With "reduce motion" enabled the site renders its final state immediately, including the hero.
-- The WebGL scene is `aria-hidden` decoration and is never on the critical path.
-- Ordered content — path stages, career levels — uses `<ol>`, so the sequence survives in a screen reader.
-- The role comparison table uses real `<th>` scopes and scrolls inside its own container rather than pushing the page sideways.
+- Every animation is wrapped in a `useReducedMotion` check. With reduce-motion
+  enabled the site renders its final state immediately, and the hero scene
+  renders a single frame with no animation loop.
+- Both WebGL scenes are gated behind a real capability probe, sit inside an
+  error boundary, and fall back to CSS gradients or a 2D list. Losing WebGL
+  costs decoration, never content.
+- Ordered content — path stages, career levels — uses `<ol>`, so sequence
+  survives in a screen reader.
+- Wide tables and the career-ladder strip scroll inside their own containers
+  rather than pushing the page sideways.
+- The career ladder is a real tablist; progress toggles are real checkboxes.
 - There is a skip link on every page.
 
 ## Performance notes
 
-- three.js and `@react-three/drei` sit behind `next/dynamic` with `ssr: false`. They are not in the initial bundle and do not appear in the prerendered HTML — the hero text paints first and the lattice fades in behind it.
-- The scene is deliberately cheap: two draw calls, no textures, no shadows, no post-processing, with the device pixel ratio capped and drei's `AdaptiveDpr` reducing resolution if the frame rate sags.
-- The lattice geometry is generated from a seeded PRNG, so the shape is identical on every load rather than changing between visits.
+- three.js, drei and the postprocessing pass sit behind `next/dynamic` with
+  `ssr: false`. They are absent from the initial bundle and from the
+  prerendered HTML — hero text paints first and the scene fades in behind it.
+- Shared JS is ~99 kB gzipped; the homepage is ~130 kB gzipped including HTML
+  and CSS, before the scene loads.
+- The hero scene is skipped entirely below 768px and the per-path roadmap graph
+  below 1024px, where a 2D fallback renders instead. Bloom is dropped on
+  low-power devices, detected via `deviceMemory` and `hardwareConcurrency`.
+- Both scenes use seeded PRNGs, so layouts are identical on every load rather
+  than changing between visits.
+- Fonts are self-hosted through `next/font` with `display: swap`. There are no
+  external font requests.
 
 ---
 
 ## Notes
 
-- **No salary data.** The v2 content doc excludes it deliberately, and nothing in `/content` or the UI carries compensation figures.
-- **`next-mdx-remote` and `gray-matter` are installed but unused.** The content layer is JSON; nothing imports them. Remove with `npm uninstall next-mdx-remote gray-matter` if you are sure prose sections are not coming back.
-- **Link verification.** 182 unique external URLs. Both source docs instruct re-verifying before publishing, and course platforms restructure access often — check them before you ship.
+- **No salary data.** The v2 content doc excludes it deliberately, and nothing
+  in `/content` or the UI carries compensation figures.
+- **Progress tracking is `localStorage` only.** One key per path, no account,
+  no sync. Every read and write is wrapped in `try/catch` — `localStorage`
+  throws outright where site data is blocked.
+- **The header CTA is a placeholder.** `siteCta` in `lib/site.ts` holds its
+  label, href and an `enabled` flag. Point it at the real offering, or set
+  `enabled: false` to remove the button.
+- **Link verification.** Roughly 180 unique external URLs. Both source docs
+  instruct re-verifying before publishing, and course platforms restructure
+  access often — check them before you ship.
