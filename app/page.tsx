@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import {
   ArrowRight,
   BookOpen,
@@ -21,6 +22,30 @@ import {
   getProjects,
 } from "@/lib/content";
 import { cn } from "@/lib/utils";
+
+export const metadata: Metadata = {
+  // The homepage was the one route inheriting layout defaults with no
+  // canonical of its own, which leaves the root URL open to being indexed
+  // under query-string and trailing-slash variants.
+  title: "Seven routes into AI engineering",
+  description:
+    "Stage-by-stage career roadmaps for AI engineering: AI Engineer, ML Engineer, Agentic AI, GenAI, Full Stack AI and more. What to learn, in what order, with free resources at every stage.",
+  keywords: [
+    "AI engineer roadmap",
+    "ML engineer roadmap",
+    "how to become an AI engineer",
+    "agentic AI engineer",
+    "AI career path",
+  ],
+  openGraph: {
+    type: "website",
+    title: "Seven routes into AI engineering",
+    description:
+      "Stage-by-stage career roadmaps with free resources at every stage.",
+    url: "/",
+  },
+  alternates: { canonical: "/" },
+};
 
 export default function HomePage() {
   const paths = getAllPaths();
@@ -58,7 +83,7 @@ export default function HomePage() {
 
             <h1 className="text-balance text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
               Seven routes into{" "}
-              <span className="bg-gradient-to-br from-violet-300 via-violet-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-br from-violet-200 via-violet-400 to-amber-300 bg-clip-text text-transparent">
                 AI engineering
               </span>
               .
