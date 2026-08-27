@@ -209,7 +209,7 @@ export default function HomePage() {
       >
         <div className="mx-auto max-w-6xl scroll-mt-20 px-4 py-24 sm:px-6">
           <ScrollReveal className="mb-10 max-w-2xl">
-            <p className="mb-3 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-cyan-400">
+            <p className="mb-3 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-amber-400">
               <Target className="size-3.5" aria-hidden />
               Not sure which
             </p>
@@ -356,8 +356,8 @@ export default function HomePage() {
               icon: BookOpen,
               title: "Resource library",
               body: "Every course in one place — and marked clearly where the course is free but the certificate is not.",
-              tint: "text-cyan-400",
-              hover: "hover:border-cyan-500/40",
+              tint: "text-amber-400",
+              hover: "hover:border-amber-500/40",
             },
             {
               href: "/certifications/",
