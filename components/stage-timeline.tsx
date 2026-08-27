@@ -1,6 +1,6 @@
 import { Award, Compass, PenLine } from "lucide-react";
 
-import { Reveal } from "@/components/motion/reveal";
+import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { StageCheckbox } from "@/components/path-progress";
 import { ResourceList } from "@/components/resource-list";
 import { Badge } from "@/components/ui/badge";
@@ -41,30 +41,37 @@ export function StageTimeline({
         aria-hidden
       />
 
-      {stages.map((stage, index) => (
+      {stages.map((stage) => (
         <li
           key={stage.id}
           id={stageAnchorId(stage.id)}
           className="relative scroll-mt-24 pl-12"
         >
-          <Reveal delay={Math.min(index, 6) * 0.04}>
-            <span
-              className={cn(
-                "absolute left-0 top-0.5 flex size-8 items-center justify-center rounded-full border-2 bg-background text-sm font-semibold tabular-nums",
-                stage.needsOriginalContent
-                  ? "border-amber-500/60 text-amber-400"
-                  : cn(a.border, a.text),
-              )}
-              aria-hidden
-            >
-              {stage.kind === "certification" ? (
-                <Award className="size-4" />
-              ) : stage.kind === "architect" ? (
-                <Compass className="size-4" />
-              ) : (
-                stage.order
-              )}
-            </span>
+          {/* Outside the reveal on purpose. GSAP leaves a transform on the
+              wrapper, and a transformed element becomes the containing block
+              for absolutely positioned descendants — this badge would resolve
+              left-0 against the wrapper (inset by pl-12) instead of the li,
+              and land on top of the title. It is rail furniture, not card
+              content, so it should not animate with the card anyway. */}
+          <span
+            className={cn(
+              "absolute left-0 top-0.5 flex size-8 items-center justify-center rounded-full border-2 bg-background text-sm font-semibold tabular-nums",
+              stage.needsOriginalContent
+                ? "border-amber-500/60 text-amber-400"
+                : cn(a.border, a.text),
+            )}
+            aria-hidden
+          >
+            {stage.kind === "certification" ? (
+              <Award className="size-4" />
+            ) : stage.kind === "architect" ? (
+              <Compass className="size-4" />
+            ) : (
+              stage.order
+            )}
+          </span>
+
+          <ScrollReveal distance={28}>
 
             <div className="space-y-4">
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
@@ -86,12 +93,27 @@ export function StageTimeline({
                 {stage.description}
               </p>
 
+              {/* The plain-language explanation. Rendered only when written —
+                  the field ships empty and is filled in later, and an empty
+                  paragraph would leave a gap in the card. */}
+              {stage.overview ? (
+                <p className="text-[15px] leading-relaxed text-foreground/90">
+                  {stage.overview}
+                </p>
+              ) : null}
+
+              {/* One line, from one field. The stage reference used to live in
+                  `description` as prose and get rendered again from
+                  `sharedWith`, so the same fact appeared twice in a row. */}
               {stage.sharedWith && stage.sharedWith.length > 0 ? (
                 <p className="text-xs text-muted-foreground">
                   Shared with{" "}
                   {stage.sharedWith
-                    .map((slug) => pathTitles?.[slug] ?? slug)
-                    .join(", ")}
+                    .map((ref) => {
+                      const title = pathTitles?.[ref.slug] ?? ref.slug;
+                      return ref.stages ? `${title}, ${ref.stages}` : title;
+                    })
+                    .join("; ")}
                   .
                 </p>
               ) : null}
@@ -111,14 +133,27 @@ export function StageTimeline({
               {stage.topics.length > 0 ? (
                 <div>
                   <h4 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    Topics
+                    What this covers
                   </h4>
-                  <ul className="mt-2 flex flex-wrap gap-1.5">
+
+                  <ul className="mt-3 space-y-4">
                     {stage.topics.map((topic) => (
-                      <li key={topic}>
-                        <Badge variant="secondary" className="font-normal">
-                          {topic}
-                        </Badge>
+                      <li
+                        key={topic.term}
+                        className="border-l-2 border-border/60 pl-4"
+                      >
+                        <h5 className="text-sm font-medium">{topic.term}</h5>
+
+                        {topic.definition ? (
+                          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                            {topic.definition}
+                          </p>
+                        ) : null}
+
+                        <ResourceList
+                          resources={topic.resources}
+                          className="mt-2"
+                        />
                       </li>
                     ))}
                   </ul>
@@ -128,7 +163,10 @@ export function StageTimeline({
               {stage.resources.length > 0 ? (
                 <div>
                   <h4 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    Resources ({stage.resources.length})
+                    {/* Named apart from the per-topic links, which sit above.
+                        These are whole-stage recommendations: courses, vendor
+                        certifications, video series. */}
+                    Courses and certifications
                   </h4>
                   <ResourceList resources={stage.resources} className="mt-2" />
                 </div>
@@ -140,7 +178,7 @@ export function StageTimeline({
                 </p>
               ) : null}
             </div>
-          </Reveal>
+          </ScrollReveal>
         </li>
       ))}
     </ol>
