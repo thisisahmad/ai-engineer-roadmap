@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { messageText } from "@/lib/chat/types";
-import type { ChatEvent, ChatMessage } from "@/lib/chat/types";
+import type { ChatError, ChatEvent, ChatMessage } from "@/lib/chat/types";
 
 /**
  * The conversation, shared by the floating widget and the /chat page.
@@ -14,6 +14,9 @@ import type { ChatEvent, ChatMessage } from "@/lib/chat/types";
  */
 
 const STORAGE_KEY = "ai-roadmap:chat";
+
+/** Shown whenever the advisor cannot be reached, whatever the cause. */
+const UNREACHABLE = "Having trouble reaching the advisor right now.";
 
 /**
  * Shown as the first assistant turn but never sent back as history — the
@@ -62,7 +65,7 @@ function write(messages: ChatMessage[]) {
 export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [streaming, setStreaming] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ChatError | null>(null);
   /** False until the stored transcript has been read, so nothing flashes. */
   const [ready, setReady] = useState(false);
 
@@ -132,7 +135,18 @@ export function useChat() {
 
         if (!response.ok || !response.body) {
           const payload = await response.json().catch(() => null);
-          throw new Error(payload?.error ?? "The assistant is unavailable.");
+          // Thrown so one catch handles both a failed response and a dropped
+          // connection; offerQuiz rides along so the UI can offer the quiz.
+          const failure = new Error(
+            payload?.error ?? UNREACHABLE,
+          ) as Error & { offerQuiz?: boolean; friendly?: boolean };
+          // A response that never arrived is the advisor being unreachable,
+          // which is exactly when the quiz is the useful alternative.
+          failure.offerQuiz = payload?.offerQuiz ?? true;
+          // Marks the message as ours and safe to show. Anything without this
+          // is a raw runtime error and gets replaced below.
+          failure.friendly = true;
+          throw failure;
         }
 
         const reader = response.body.getReader();
@@ -186,15 +200,26 @@ export function useChat() {
                 ],
               }));
             } else if (event.type === "error") {
-              setError(event.message);
+              setError({ message: event.message, offerQuiz: event.offerQuiz });
             }
           }
         }
       } catch (cause) {
         if ((cause as Error)?.name === "AbortError") return;
-        setError(
-          cause instanceof Error ? cause.message : "Something went wrong.",
-        );
+        const failure = cause as Error & {
+          offerQuiz?: boolean;
+          friendly?: boolean;
+        };
+        setError({
+          // Only our own copy reaches the user. A raw fetch rejection reads
+          // "Failed to fetch", "NetworkError" or "Load failed" depending on
+          // the browser — developer jargon, and not something to show someone
+          // asking for career advice.
+          message: failure?.friendly ? failure.message : UNREACHABLE,
+          // A network-level throw means the request never completed, so the
+          // advisor is unreachable rather than merely unhappy.
+          offerQuiz: failure?.offerQuiz ?? true,
+        });
         // Drop the empty assistant turn rather than leaving a blank bubble.
         setMessages((current) =>
           current.at(-1)?.role === "assistant" &&

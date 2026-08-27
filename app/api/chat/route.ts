@@ -1,4 +1,5 @@
-import { headers } from "next/headers";
+import { randomUUID } from "node:crypto";
+import { cookies, headers } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 
@@ -43,33 +44,94 @@ const bodySchema = z.object({
 });
 
 /**
- * In-memory throttle, keyed by IP.
+ * Two limits, because they stop different things.
  *
- * Honest about its limits: serverless instances do not share memory, so this
- * slows casual abuse rather than stopping a distributed attack. It matters
- * more here than on the auth routes because every request costs inference.
+ * Per session: a lifetime cap on how many messages one conversation may send.
+ * This is the one that protects the Ollama endpoint from a single person
+ * looping, and it is keyed to a cookie rather than an IP — an office, a
+ * university or a mobile carrier shares one IP between many real people, and
+ * capping them collectively would lock out everybody after the first user.
+ *
+ * Per IP: a short burst window, which catches scripted abuse that discards the
+ * cookie between requests.
+ *
+ * Both live in process memory, which is worth being honest about: serverless
+ * instances do not share it, so a request landing on a fresh instance starts
+ * from zero, and clearing the cookie resets the session count. This raises the
+ * cost of abuse rather than making it impossible. Moving the counters to Turso
+ * or Vercel Edge Config would make them authoritative; that is a deliberate
+ * later step, not an oversight.
  */
-const hits = new Map<string, { count: number; resetAt: number }>();
-const WINDOW_MS = 60_000;
-const MAX_PER_WINDOW = 12;
+const SESSION_COOKIE = "roadmap_chat";
+const MAX_PER_SESSION = 20;
+/** Sessions idle this long are dropped, so the map cannot grow forever. */
+const SESSION_TTL_MS = 6 * 60 * 60 * 1000;
 
-async function rateLimited(): Promise<boolean> {
+const sessions = new Map<string, { count: number; seenAt: number }>();
+
+const BURST_WINDOW_MS = 60_000;
+const MAX_PER_BURST = 12;
+const bursts = new Map<string, { count: number; resetAt: number }>();
+
+/** Drops expired entries. Called on write, so there is no timer to leak. */
+function sweep(now: number) {
+  if (sessions.size < 500) return;
+  for (const [key, value] of sessions) {
+    if (now - value.seenAt > SESSION_TTL_MS) sessions.delete(key);
+  }
+}
+
+type LimitVerdict =
+  | { ok: true; sessionId: string; isNew: boolean; remaining: number }
+  | { ok: false; status: number; error: string; offerQuiz: boolean };
+
+async function checkLimits(): Promise<LimitVerdict> {
+  const now = Date.now();
+
   const store = await headers();
   const ip =
     store.get("x-forwarded-for")?.split(",")[0]?.trim() ??
     store.get("x-real-ip") ??
     "unknown";
 
-  const now = Date.now();
-  const entry = hits.get(ip);
-
-  if (!entry || entry.resetAt < now) {
-    hits.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return false;
+  const burst = bursts.get(ip);
+  if (!burst || burst.resetAt < now) {
+    bursts.set(ip, { count: 1, resetAt: now + BURST_WINDOW_MS });
+  } else if (++burst.count > MAX_PER_BURST) {
+    return {
+      ok: false,
+      status: 429,
+      error: "That is a lot of messages at once. Wait a minute and try again.",
+      // Transient and self-clearing, so the quiz is not the right suggestion.
+      offerQuiz: false,
+    };
   }
 
-  entry.count += 1;
-  return entry.count > MAX_PER_WINDOW;
+  const jar = await cookies();
+  const existing = jar.get(SESSION_COOKIE)?.value;
+  const sessionId = existing ?? randomUUID();
+
+  const session = sessions.get(sessionId) ?? { count: 0, seenAt: now };
+  if (session.count >= MAX_PER_SESSION) {
+    return {
+      ok: false,
+      status: 429,
+      error: `That is ${MAX_PER_SESSION} messages, which is the limit for one conversation.`,
+      offerQuiz: true,
+    };
+  }
+
+  session.count += 1;
+  session.seenAt = now;
+  sessions.set(sessionId, session);
+  sweep(now);
+
+  return {
+    ok: true,
+    sessionId,
+    isNew: !existing,
+    remaining: MAX_PER_SESSION - session.count,
+  };
 }
 
 const encoder = new TextEncoder();
@@ -88,7 +150,7 @@ export async function POST(request: NextRequest) {
     // server-side, and do not pretend the feature is merely busy.
     console.error("[chat] OLLAMA_BASE_URL is not set");
     return NextResponse.json(
-      { error: "The assistant is not configured yet." },
+      { error: "The advisor is not set up yet.", offerQuiz: true },
       { status: 503 },
     );
   }
@@ -117,10 +179,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (await rateLimited()) {
+  const limit = await checkLimits();
+  if (!limit.ok) {
     return NextResponse.json(
-      { error: "Too many messages. Wait a minute and try again." },
-      { status: 429 },
+      { error: limit.error, offerQuiz: limit.offerQuiz },
+      { status: limit.status },
     );
   }
 
@@ -149,7 +212,10 @@ export async function POST(request: NextRequest) {
   } catch (cause) {
     console.error("[chat] upstream unreachable:", cause);
     return NextResponse.json(
-      { error: "The assistant is unavailable right now." },
+      {
+        error: "Having trouble reaching the advisor right now.",
+        offerQuiz: true,
+      },
       { status: 502 },
     );
   }
@@ -158,7 +224,10 @@ export async function POST(request: NextRequest) {
     const detail = await upstream.text().catch(() => "");
     console.error(`[chat] upstream ${upstream.status}:`, detail.slice(0, 500));
     return NextResponse.json(
-      { error: "The assistant is unavailable right now." },
+      {
+        error: "Having trouble reaching the advisor right now.",
+        offerQuiz: true,
+      },
       { status: 502 },
     );
   }
@@ -228,7 +297,11 @@ export async function POST(request: NextRequest) {
         // The client has partial text already, so tell it in-band rather than
         // just cutting the connection.
         controller.enqueue(
-          frame({ type: "error", message: "The reply was cut short." }),
+          frame({
+            type: "error",
+            message: "Having trouble reaching the advisor right now.",
+            offerQuiz: true,
+          }),
         );
       } finally {
         controller.close();
@@ -237,13 +310,29 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  return new Response(stream, {
+  const response = new Response(stream, {
     headers: {
       "Content-Type": "text/event-stream; charset=utf-8",
       "Cache-Control": "no-cache, no-transform",
       Connection: "keep-alive",
       // Vercel and some proxies buffer streamed responses without this.
       "X-Accel-Buffering": "no",
+      // Lets the client show "3 messages left" without a second round trip.
+      "X-Chat-Remaining": String(limit.remaining),
     },
   });
+
+  if (limit.isNew) {
+    // Not httpOnly on purpose: this identifies a rate-limit bucket, not a
+    // user, and carries nothing worth protecting. Session-scoped so it expires
+    // with the tab, matching where the transcript lives.
+    response.headers.append(
+      "Set-Cookie",
+      `${SESSION_COOKIE}=${limit.sessionId}; Path=/; SameSite=Lax${
+        process.env.NODE_ENV === "production" ? "; Secure" : ""
+      }`,
+    );
+  }
+
+  return response;
 }

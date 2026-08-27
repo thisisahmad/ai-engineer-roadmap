@@ -28,11 +28,24 @@ export type Recommendation =
     }
   | { type: "resource"; title: string; url: string; reason?: string };
 
+/**
+ * A failure the user is shown.
+ *
+ * `offerQuiz` marks the cases where the advisor itself is the problem —
+ * unreachable, unconfigured, out of quota. Those are exactly the cases where
+ * the quiz is a working substitute, so the UI can offer it instead of leaving
+ * someone at a dead end. A malformed request is not one of those.
+ */
+export type ChatError = {
+  message: string;
+  offerQuiz?: boolean;
+};
+
 /** One frame of the SSE stream from POST /api/chat/. */
 export type ChatEvent =
   | { type: "delta"; text: string }
   | { type: "recommendation"; recommendation: Recommendation }
-  | { type: "error"; message: string }
+  | { type: "error"; message: string; offerQuiz?: boolean }
   | { type: "done" };
 
 /**

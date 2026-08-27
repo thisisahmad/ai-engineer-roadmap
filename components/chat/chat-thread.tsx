@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, RotateCcw } from "lucide-react";
+import Link from "next/link";
+import { ArrowUp, Compass, RotateCcw } from "lucide-react";
 
 import { RecommendationCard } from "@/components/chat/recommendation-card";
 import { Button } from "@/components/ui/button";
 import { GREETING } from "@/lib/chat/use-chat";
 import { cn } from "@/lib/utils";
-import type { ChatMessage } from "@/lib/chat/types";
+import type { ChatError, ChatMessage } from "@/lib/chat/types";
 
 /**
  * Transcript and composer, shared by the floating widget and the /chat page.
@@ -50,7 +51,7 @@ export function ChatThread({
 }: {
   messages: ChatMessage[];
   streaming: boolean;
-  error: string | null;
+  error: ChatError | null;
   ready: boolean;
   onSend: (text: string) => void;
   onReset: () => void;
@@ -153,13 +154,32 @@ export function ChatThread({
           </div>
         ))}
 
+        {/* A dead end is worse than a wrong answer. When the advisor itself
+            is the problem, offer the quiz — it answers the same question
+            without needing the model at all. */}
         {error ? (
-          <p
+          <div
             role="alert"
-            className="rounded-lg border border-rose-500/40 bg-rose-500/10 px-3.5 py-2.5 text-sm text-rose-300"
+            className="rounded-xl border border-amber-500/40 bg-amber-500/5 px-4 py-3"
           >
-            {error}
-          </p>
+            <p className="text-sm text-amber-200">{error.message}</p>
+
+            {error.offerQuiz ? (
+              <>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  The path quiz asks a few questions and points you at a real
+                  path — no AI involved.
+                </p>
+                <Link
+                  href="/quiz/"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-amber-500/40 px-3 py-1.5 text-sm font-medium text-amber-200 transition-colors hover:bg-amber-500/10"
+                >
+                  <Compass className="size-3.5" aria-hidden />
+                  Take the path quiz
+                </Link>
+              </>
+            ) : null}
+          </div>
         ) : null}
       </div>
 
@@ -214,6 +234,25 @@ export function ChatThread({
           <ArrowUp className="size-4" aria-hidden />
         </Button>
       </form>
+
+      {/* Sits below the input rather than in the header, so it is next to the
+          thing being acted on and stays on screen while typing. The roadmap
+          content itself is reviewed; this is a model talking about it. */}
+      <p
+        className={cn(
+          "border-t border-border/60 text-center text-[11px] leading-relaxed text-muted-foreground/80",
+          compact ? "px-3 pb-2.5 pt-2" : "px-4 pb-3 pt-2.5",
+        )}
+      >
+        AI-generated guidance — verify against the actual{" "}
+        <Link
+          href="/#paths"
+          className="underline underline-offset-2 hover:text-foreground"
+        >
+          path pages
+        </Link>
+        .
+      </p>
     </>
   );
 }
