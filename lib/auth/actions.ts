@@ -70,12 +70,27 @@ function isInfrastructureError(cause: unknown): boolean {
     text.includes("fetch failed") ||
     text.includes("UNAUTHORIZED") ||
     text.includes("SQLITE_") ||
+    text.includes("no such table") ||
     text.includes("MODULE_NOT_FOUND")
   );
 }
 
-const UNAVAILABLE =
-  "Accounts are temporarily unavailable. Please try again shortly.";
+/**
+ * A schema that was never applied is a setup step, not an outage.
+ *
+ * Telling somebody to "try again shortly" when the tables do not exist sends
+ * them into a loop that can never succeed, so the two cases get different
+ * wording. The detail stays server-side either way.
+ */
+function unavailableMessage(cause: unknown): string {
+  const text = String(cause);
+  const notSetUp =
+    text.includes("no such table") || text.includes("TURSO_DATABASE_URL");
+
+  return notSetUp
+    ? "Accounts are not available yet — this site is still being set up."
+    : "Accounts are temporarily unavailable. Please try again shortly.";
+}
 
 function flatten(error: z.ZodError): Record<string, string> {
   const out: Record<string, string> = {};
@@ -188,7 +203,7 @@ export async function signUp(
   } catch (cause) {
     if (isInfrastructureError(cause)) {
       console.error("[signUp] database unavailable:", cause);
-      return { error: UNAVAILABLE, values };
+      return { error: unavailableMessage(cause), values };
     }
     throw cause;
   }
@@ -240,7 +255,7 @@ export async function signIn(
   } catch (cause) {
     if (isInfrastructureError(cause)) {
       console.error("[signIn] database unavailable:", cause);
-      return { error: UNAVAILABLE, values };
+      return { error: unavailableMessage(cause), values };
     }
     throw cause;
   }
