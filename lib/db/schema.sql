@@ -48,3 +48,39 @@ CREATE TABLE IF NOT EXISTS progress (
 );
 
 CREATE INDEX IF NOT EXISTS progress_user_path_idx ON progress (user_id, path_slug);
+
+-- --------------------------------------------------- chat conversations ----
+-- Chat requires an account, so every conversation belongs to a user and is
+-- removed with them.
+CREATE TABLE IF NOT EXISTS chat_conversations (
+  id         TEXT PRIMARY KEY,
+  user_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  -- Derived from the first user message, so the history list is readable
+  -- without loading every conversation.
+  title      TEXT NOT NULL,
+  created_at INTEGER NOT NULL,
+  -- Ordering key for the history list, bumped on every new message.
+  updated_at INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS chat_conversations_user_idx
+  ON chat_conversations (user_id, updated_at DESC);
+
+-- -------------------------------------------------------- chat messages ----
+CREATE TABLE IF NOT EXISTS chat_messages (
+  id              TEXT PRIMARY KEY,
+  conversation_id TEXT NOT NULL
+                    REFERENCES chat_conversations(id) ON DELETE CASCADE,
+  role            TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
+  -- The full parts array as JSON, not flattened text: an assistant turn
+  -- interleaves prose with recommendation cards, and the order is the
+  -- content. Flattening would lose where each card belonged.
+  parts           TEXT NOT NULL,
+  created_at      INTEGER NOT NULL,
+  -- Ties messages to their order within a conversation independently of
+  -- timestamp collisions, which happen when a turn is written in one batch.
+  position        INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS chat_messages_conversation_idx
+  ON chat_messages (conversation_id, position);

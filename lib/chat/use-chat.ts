@@ -2,88 +2,89 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { useSession } from "@/components/auth/session-provider";
 import { messageText } from "@/lib/chat/types";
 import type { ChatError, ChatEvent, ChatMessage } from "@/lib/chat/types";
 
 /**
  * The conversation, shared by the floating widget and the /chat page.
  *
- * One hook rather than two copies of the streaming loop: they differ only in
- * shell, and a fix to reconnect or error handling should not need applying
- * twice.
+ * Transcripts live in the database against the signed-in user, so they follow
+ * an account across devices. sessionStorage is gone with them: chat now
+ * requires an account, which makes a browser-local copy both redundant and a
+ * second source of truth to keep in sync.
  */
 
-const STORAGE_KEY = "ai-roadmap:chat";
+export const GREETING =
+  "Not sure which AI path fits you? Tell me what you enjoy or what you are trying to build, and I will point you somewhere real.";
 
 /** Shown whenever the advisor cannot be reached, whatever the cause. */
 const UNREACHABLE = "Having trouble reaching the advisor right now.";
 
-/**
- * Shown as the first assistant turn but never sent back as history — the
- * model did not say it, and feeding it back would have the model treat its own
- * greeting as something it had already decided.
- */
-export const GREETING =
-  "Not sure which AI path fits you? Tell me what you enjoy or what you are trying to build, and I will point you somewhere real.";
-
-/**
- * sessionStorage, not localStorage.
- *
- * The conversation should survive navigating between pages in one visit and
- * be gone on the next. Every access is wrapped: storage throws outright in
- * some contexts (private windows, embedded webviews, browsers set to block
- * site data) and a transcript is not worth breaking a page over.
- */
-function read(): ChatMessage[] {
-  try {
-    const raw = window.sessionStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed: unknown = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    // Shape-check rather than trust: a stale entry from an older build would
-    // otherwise crash the render it is read into.
-    return parsed.filter(
-      (m): m is ChatMessage =>
-        !!m &&
-        typeof m === "object" &&
-        (m.role === "user" || m.role === "assistant") &&
-        Array.isArray(m.parts),
-    );
-  } catch {
-    return [];
-  }
-}
-
-function write(messages: ChatMessage[]) {
-  try {
-    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-  } catch {
-    // Full or blocked. The in-memory conversation still works for this visit.
-  }
-}
+export type ConversationSummary = {
+  id: string;
+  title: string;
+  updatedAt: number;
+};
 
 export function useChat() {
+  const { user, loading: sessionLoading } = useSession();
+
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<ChatError | null>(null);
-  /** False until the stored transcript has been read, so nothing flashes. */
-  const [ready, setReady] = useState(false);
+  const [loadingHistory, setLoadingHistory] = useState(false);
 
   const abortRef = useRef<AbortController | null>(null);
+  /*
+   * Mirrors `messages` so the sender can read the transcript synchronously.
+   *
+   * An earlier version assigned the history from inside a setMessages updater
+   * and read it on the next line. React only guarantees updaters run during
+   * render, so that variable was usually still empty and the request went out
+   * with no messages at all. It appeared to work intermittently because React
+   * sometimes evaluates an updater eagerly when the queue is empty — which is
+   * why clicking a starter chip failed while typing the same text worked.
+   */
+  const messagesRef = useRef<ChatMessage[]>([]);
 
-  // Restored in an effect because sessionStorage does not exist on the server;
-  // reading it during render would produce markup that disagrees with the
-  // prerendered HTML.
   useEffect(() => {
-    setMessages(read());
-    setReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (ready) write(messages);
-  }, [messages, ready]);
+    messagesRef.current = messages;
+  }, [messages]);
 
   useEffect(() => () => abortRef.current?.abort(), []);
+
+  const refreshConversations = useCallback(async () => {
+    if (!user) {
+      setConversations([]);
+      return;
+    }
+    try {
+      const response = await fetch("/api/chat/conversations/", {
+        cache: "no-store",
+      });
+      if (!response.ok) return;
+      const data = await response.json();
+      setConversations(data.conversations ?? []);
+    } catch {
+      // History is a convenience; failing to list it should not break chat.
+    }
+  }, [user]);
+
+  useEffect(() => {
+    void refreshConversations();
+  }, [refreshConversations]);
+
+  // Signing out must not leave the previous user's transcript on screen.
+  useEffect(() => {
+    if (!user && !sessionLoading) {
+      setMessages([]);
+      messagesRef.current = [];
+      setConversationId(null);
+    }
+  }, [user, sessionLoading]);
 
   const appendToLast = useCallback(
     (update: (message: ChatMessage) => ChatMessage) => {
@@ -103,42 +104,40 @@ export function useChat() {
       const trimmed = text.trim();
       if (!trimmed || streaming) return;
 
+      if (!user) {
+        setError({ message: "Sign in to use the advisor.", requiresAuth: true });
+        return;
+      }
+
       setError(null);
 
-      let history: ChatMessage[] = [];
-      setMessages((current) => {
-        history = [
-          ...current,
-          { role: "user", parts: [{ type: "text", text: trimmed }] },
-        ];
-        return [...history, { role: "assistant", parts: [] }];
-      });
+      const history: ChatMessage[] = [
+        ...messagesRef.current,
+        { role: "user", parts: [{ type: "text", text: trimmed }] },
+      ];
+      // Kept current immediately: two sends in quick succession would
+      // otherwise both read the pre-send transcript.
+      messagesRef.current = history;
+      setMessages([...history, { role: "assistant", parts: [] }]);
 
       setStreaming(true);
       const controller = new AbortController();
       abortRef.current = controller;
 
-      // Tracked so the `finally` block can tell "finished with nothing" apart
-      // from "already failed and reported".
+      // Lets `finally` tell "finished with nothing" from "already failed".
       let produced = false;
       let failed = false;
 
       try {
-        // Trailing slash matters: `trailingSlash: true` would 308 this, and a
-        // redirected POST silently loses its body.
         const response = await fetch("/api/chat/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: controller.signal,
           body: JSON.stringify({
-            // Empty turns are dropped rather than sent.
-            //
-            // An assistant turn flattens to "" in two real cases: the model
-            // spent its whole token budget on reasoning and emitted no
-            // content, or it replied with a recommendation block and no
-            // prose. Either one poisons the history — the server rejects a
-            // blank message, so every later send fails with "Invalid request"
-            // and the conversation is stuck until it is reset.
+            conversationId,
+            // Blank turns are dropped rather than sent. An assistant turn
+            // flattens to "" when the model returns only reasoning or only a
+            // recommendation block, and a blank message wedges the request.
             messages: history
               .map((message) => ({
                 role: message.role,
@@ -150,14 +149,13 @@ export function useChat() {
 
         if (!response.ok || !response.body) {
           const payload = await response.json().catch(() => null);
-          // Thrown so one catch handles both a failed response and a dropped
-          // connection; offerQuiz rides along so the UI can offer the quiz.
-          const failure = new Error(
-            payload?.error ?? UNREACHABLE,
-          ) as Error & { offerQuiz?: boolean; friendly?: boolean };
-          // A response that never arrived is the advisor being unreachable,
-          // which is exactly when the quiz is the useful alternative.
+          const failure = new Error(payload?.error ?? UNREACHABLE) as Error & {
+            offerQuiz?: boolean;
+            requiresAuth?: boolean;
+            friendly?: boolean;
+          };
           failure.offerQuiz = payload?.offerQuiz ?? true;
+          failure.requiresAuth = payload?.requiresAuth ?? false;
           // Marks the message as ours and safe to show. Anything without this
           // is a raw runtime error and gets replaced below.
           failure.friendly = true;
@@ -192,8 +190,6 @@ export function useChat() {
               appendToLast((message) => {
                 const parts = [...message.parts];
                 const last = parts.at(-1);
-                // Merge into the trailing text part, so a turn is not split
-                // into one part per token.
                 if (last?.type === "text") {
                   parts[parts.length - 1] = {
                     type: "text",
@@ -216,6 +212,11 @@ export function useChat() {
                   },
                 ],
               }));
+            } else if (event.type === "saved") {
+              // Adopt the id so the next turn appends rather than starting a
+              // second conversation for the same exchange.
+              setConversationId(event.conversationId);
+              void refreshConversations();
             } else if (event.type === "error") {
               failed = true;
               setError({ message: event.message, offerQuiz: event.offerQuiz });
@@ -227,43 +228,34 @@ export function useChat() {
         failed = true;
         const failure = cause as Error & {
           offerQuiz?: boolean;
+          requiresAuth?: boolean;
           friendly?: boolean;
         };
         setError({
           // Only our own copy reaches the user. A raw fetch rejection reads
-          // "Failed to fetch", "NetworkError" or "Load failed" depending on
-          // the browser — developer jargon, and not something to show someone
-          // asking for career advice.
+          // "Failed to fetch" or "Load failed" depending on the browser.
           message: failure?.friendly ? failure.message : UNREACHABLE,
-          // A network-level throw means the request never completed, so the
-          // advisor is unreachable rather than merely unhappy.
-          offerQuiz: failure?.offerQuiz ?? true,
+          offerQuiz: failure?.requiresAuth
+            ? false
+            : (failure?.offerQuiz ?? true),
+          requiresAuth: failure?.requiresAuth,
         });
-        // Drop the empty assistant turn rather than leaving a blank bubble.
-        setMessages((current) =>
-          current.at(-1)?.role === "assistant" &&
-          current.at(-1)?.parts.length === 0
-            ? current.slice(0, -1)
-            : current,
-        );
       } finally {
         setStreaming(false);
         abortRef.current = null;
 
-        // A stream can finish cleanly having produced nothing the user can
-        // see — gpt-oss streams its reasoning in a separate field, and if that
-        // exhausts max_tokens no content ever arrives. Leaving the blank
-        // bubble in place is what corrupted the history, so drop it and say
-        // what happened.
+        // A stream can finish cleanly having produced nothing visible, since
+        // gpt-oss streams reasoning in a separate field. Leaving the blank
+        // bubble is what corrupted transcripts before, so drop it.
         setMessages((current) => {
           const last = current.at(-1);
-          if (last?.role !== "assistant" || last.parts.length > 0) return current;
+          if (last?.role !== "assistant" || last.parts.length > 0) {
+            return current;
+          }
           return current.slice(0, -1);
         });
 
         if (!produced && !failed) {
-          // Silence is not success. Say so rather than leaving someone
-          // staring at a conversation that appears to have ignored them.
           setError({
             message: "The advisor did not manage a reply. Try asking again.",
             offerQuiz: false,
@@ -271,19 +263,76 @@ export function useChat() {
         }
       }
     },
-    [appendToLast, streaming],
+    [appendToLast, conversationId, refreshConversations, streaming, user],
   );
 
-  const reset = useCallback(() => {
+  const newChat = useCallback(() => {
     abortRef.current?.abort();
+    messagesRef.current = [];
     setMessages([]);
+    setConversationId(null);
     setError(null);
+  }, []);
+
+  const openConversation = useCallback(async (id: string) => {
+    abortRef.current?.abort();
+    setError(null);
+    setLoadingHistory(true);
     try {
-      window.sessionStorage.removeItem(STORAGE_KEY);
+      const response = await fetch(
+        `/api/chat/conversations/?id=${encodeURIComponent(id)}`,
+        { cache: "no-store" },
+      );
+      if (!response.ok) throw new Error("Could not open that conversation.");
+      const data = await response.json();
+      const loaded: ChatMessage[] = data.conversation?.messages ?? [];
+      messagesRef.current = loaded;
+      setMessages(loaded);
+      setConversationId(id);
     } catch {
-      /* nothing to clear */
+      setError({
+        message: "Could not open that conversation.",
+        offerQuiz: false,
+      });
+    } finally {
+      setLoadingHistory(false);
     }
   }, []);
 
-  return { messages, send, reset, streaming, error, ready };
+  const removeConversation = useCallback(
+    async (id: string) => {
+      // Optimistic: the row leaving the list immediately is the point of a
+      // delete button, and it is restored below if the request fails.
+      const previous = conversations;
+      setConversations((current) => current.filter((c) => c.id !== id));
+      if (id === conversationId) newChat();
+
+      try {
+        const response = await fetch(
+          `/api/chat/conversations/?id=${encodeURIComponent(id)}`,
+          { method: "DELETE" },
+        );
+        if (!response.ok) throw new Error();
+      } catch {
+        setConversations(previous);
+        setError({ message: "Could not delete that chat.", offerQuiz: false });
+      }
+    },
+    [conversationId, conversations, newChat],
+  );
+
+  return {
+    messages,
+    conversations,
+    conversationId,
+    send,
+    newChat,
+    openConversation,
+    removeConversation,
+    streaming,
+    error,
+    loadingHistory,
+    signedIn: !!user,
+    ready: !sessionLoading,
+  };
 }

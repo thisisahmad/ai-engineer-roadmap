@@ -39,6 +39,8 @@ export type Recommendation =
 export type ChatError = {
   message: string;
   offerQuiz?: boolean;
+  /** Set when the failure is "not signed in", so the UI can offer sign-in. */
+  requiresAuth?: boolean;
 };
 
 /** One frame of the SSE stream from POST /api/chat/. */
@@ -46,6 +48,8 @@ export type ChatEvent =
   | { type: "delta"; text: string }
   | { type: "recommendation"; recommendation: Recommendation }
   | { type: "error"; message: string; offerQuiz?: boolean }
+  /** Emitted once the exchange has been filed, so the client can adopt the id. */
+  | { type: "saved"; conversationId: string; title: string }
   | { type: "done" };
 
 /**

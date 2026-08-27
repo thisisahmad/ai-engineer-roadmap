@@ -7,11 +7,12 @@ import { useChat } from "@/lib/chat/use-chat";
  * The /chat page conversation.
  *
  * Same hook and same thread UI as the floating widget — only the shell
- * differs. They also share one sessionStorage key, so a conversation started
- * in the widget continues here and the reverse.
+ * differs. Both read the same account-scoped transcripts, so a conversation
+ * started in the widget continues here and the reverse.
  */
 export function ChatPanel() {
-  const { messages, send, reset, streaming, error, ready } = useChat();
+  const { messages, send, newChat, streaming, error, ready, signedIn } =
+    useChat();
 
   return (
     <div className="flex h-[min(72vh,42rem)] flex-col rounded-2xl border border-border/60 bg-card/30 backdrop-blur-sm">
@@ -21,7 +22,8 @@ export function ChatPanel() {
         error={error}
         ready={ready}
         onSend={send}
-        onReset={reset}
+        onReset={newChat}
+        signedIn={signedIn}
       />
     </div>
   );

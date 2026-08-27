@@ -2,7 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { MessageCircle, X } from "lucide-react";
+import {
+  History,
+  Maximize2,
+  MessageCircle,
+  Minimize2,
+  Plus,
+  Trash2,
+  X,
+} from "lucide-react";
 
 import { ChatThread } from "@/components/chat/chat-thread";
 import { useChat } from "@/lib/chat/use-chat";
@@ -24,7 +32,23 @@ export function ChatWidget() {
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  const { messages, send, reset, streaming, error, ready } = useChat();
+  const {
+    messages,
+    conversations,
+    conversationId,
+    send,
+    newChat,
+    openConversation,
+    removeConversation,
+    streaming,
+    error,
+    ready,
+    signedIn,
+  } = useChat();
+
+  /** Desktop only. The phone sheet is already the whole screen. */
+  const [expanded, setExpanded] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   // Escape closes, and focus goes back to the button that opened it rather
   // than to the top of the document.
@@ -78,7 +102,11 @@ export function ChatWidget() {
             // unusable, so it takes the whole viewport instead.
             "inset-0 rounded-none border-0",
             // Desktop: a panel anchored above the button.
-            "sm:inset-auto sm:bottom-24 sm:right-6 sm:h-[min(34rem,calc(100dvh-9rem))] sm:w-[26rem]",
+            expanded
+              ? // Expanded: as much room as the viewport sensibly allows,
+                // still anchored so the trigger stays put.
+                "sm:inset-auto sm:bottom-24 sm:right-6 sm:h-[calc(100dvh-8rem)] sm:w-[min(52rem,calc(100vw-3rem))]"
+              : "sm:inset-auto sm:bottom-24 sm:right-6 sm:h-[min(34rem,calc(100dvh-9rem))] sm:w-[26rem]",
             "sm:rounded-2xl sm:border sm:border-violet-500/25",
             "sm:shadow-2xl sm:shadow-violet-950/40",
           )}
@@ -96,6 +124,51 @@ export function ChatWidget() {
                 Only recommends what is on this site
               </p>
             </div>
+            {signedIn && conversations.length > 0 ? (
+              <button
+                type="button"
+                onClick={() => setShowHistory((value) => !value)}
+                aria-label="Previous chats"
+                aria-pressed={showHistory}
+                className={cn(
+                  "rounded-md p-1.5 transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/40",
+                  showHistory
+                    ? "text-violet-300"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <History className="size-4" aria-hidden />
+              </button>
+            ) : null}
+
+            {signedIn && messages.length > 0 ? (
+              <button
+                type="button"
+                onClick={() => {
+                  newChat();
+                  setShowHistory(false);
+                }}
+                aria-label="New chat"
+                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/40"
+              >
+                <Plus className="size-4" aria-hidden />
+              </button>
+            ) : null}
+
+            {/* Hidden on phones, where the panel is already full-screen. */}
+            <button
+              type="button"
+              onClick={() => setExpanded((value) => !value)}
+              aria-label={expanded ? "Shrink chat" : "Expand chat"}
+              className="hidden rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/40 sm:block"
+            >
+              {expanded ? (
+                <Minimize2 className="size-4" aria-hidden />
+              ) : (
+                <Maximize2 className="size-4" aria-hidden />
+              )}
+            </button>
+
             <button
               type="button"
               onClick={() => {
@@ -109,15 +182,57 @@ export function ChatWidget() {
             </button>
           </header>
 
-          <ChatThread
-            compact
-            messages={messages}
-            streaming={streaming}
-            error={error}
-            ready={ready}
-            onSend={send}
-            onReset={reset}
-          />
+          <div className="flex min-h-0 flex-1">
+            {showHistory ? (
+              <nav
+                aria-label="Previous chats"
+                className="w-44 shrink-0 overflow-y-auto border-r border-border/60 p-2 sm:w-52"
+              >
+                <ul className="space-y-0.5">
+                  {conversations.map((conversation) => (
+                    <li key={conversation.id} className="group relative">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          void openConversation(conversation.id);
+                          setShowHistory(false);
+                        }}
+                        className={cn(
+                          "w-full truncate rounded-md py-1.5 pl-2 pr-7 text-left text-xs transition-colors",
+                          conversation.id === conversationId
+                            ? "bg-violet-500/15 text-foreground"
+                            : "text-muted-foreground hover:bg-white/5 hover:text-foreground",
+                        )}
+                      >
+                        {conversation.title}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void removeConversation(conversation.id)}
+                        aria-label={`Delete ${conversation.title}`}
+                        className="absolute right-1 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground opacity-0 transition-opacity hover:text-rose-400 focus-visible:opacity-100 group-hover:opacity-100"
+                      >
+                        <Trash2 className="size-3" aria-hidden />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ) : null}
+
+            <div className="flex min-w-0 flex-1 flex-col">
+              <ChatThread
+                compact
+                messages={messages}
+                streaming={streaming}
+                error={error}
+                ready={ready}
+                onSend={send}
+                onReset={newChat}
+                signedIn={signedIn}
+              />
+            </div>
+          </div>
         </div>
       ) : null}
 

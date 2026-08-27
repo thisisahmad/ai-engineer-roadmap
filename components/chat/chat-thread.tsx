@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowUp, Compass, RotateCcw } from "lucide-react";
+import { ArrowUp, Compass, LogIn, Plus } from "lucide-react";
 
 import { RecommendationCard } from "@/components/chat/recommendation-card";
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,7 @@ export function ChatThread({
   ready,
   onSend,
   onReset,
+  signedIn,
   compact = false,
 }: {
   messages: ChatMessage[];
@@ -55,6 +56,7 @@ export function ChatThread({
   ready: boolean;
   onSend: (text: string) => void;
   onReset: () => void;
+  signedIn: boolean;
   /** Tighter spacing for the floating widget. */
   compact?: boolean;
 }) {
@@ -164,6 +166,15 @@ export function ChatThread({
           >
             <p className="text-sm text-amber-200">{error.message}</p>
 
+            {error.requiresAuth ? (
+              <Button asChild size="sm" className="mt-3">
+                <Link href="/sign-in/">
+                  <LogIn className="size-3.5" aria-hidden />
+                  Sign in
+                </Link>
+              </Button>
+            ) : null}
+
             {error.offerQuiz ? (
               <>
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -183,7 +194,43 @@ export function ChatThread({
         ) : null}
       </div>
 
+      {/* Signed out: the composer is replaced rather than disabled. A
+          disabled input invites someone to type and then discard it, and the
+          transcript is stored against an account, so there is nowhere to put a
+          message from nobody. */}
+      {ready && !signedIn ? (
+        <div className="border-t border-border/60 p-4 text-center">
+          <p className="text-sm font-medium">Sign in to use the advisor</p>
+          <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-muted-foreground">
+            Your conversations are saved to your account, so you can pick them
+            up on any device.
+          </p>
+          <div className="mt-3 flex justify-center gap-2">
+            <Button asChild size="sm">
+              <Link href="/sign-in/">
+                <LogIn className="size-3.5" aria-hidden />
+                Sign in
+              </Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/sign-up/">Create account</Link>
+            </Button>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Or{" "}
+            <Link
+              href="/quiz/"
+              className="underline underline-offset-2 hover:text-foreground"
+            >
+              take the path quiz
+            </Link>{" "}
+            without an account.
+          </p>
+        </div>
+      ) : null}
+
       <form
+        hidden={ready && !signedIn}
         onSubmit={(event) => {
           event.preventDefault();
           submit();
@@ -218,10 +265,10 @@ export function ChatThread({
             type="button"
             variant="ghost"
             size="icon"
-            aria-label="Start over"
+            aria-label="New chat"
             onClick={onReset}
           >
-            <RotateCcw className="size-4" aria-hidden />
+            <Plus className="size-4" aria-hidden />
           </Button>
         ) : null}
 

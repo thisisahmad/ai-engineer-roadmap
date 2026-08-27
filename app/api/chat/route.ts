@@ -1,9 +1,11 @@
-import { randomUUID } from "node:crypto";
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 
+import { getCurrentUser } from "@/lib/auth/session";
 import { buildSystemPrompt } from "@/lib/chat/context";
+import { appendExchange } from "@/lib/chat/store";
+import type { MessagePart } from "@/lib/chat/types";
 import { drainBuffer, flushBuffer } from "@/lib/chat/recommendations";
 
 /**
@@ -32,6 +34,8 @@ const MAX_CHARS_PER_MESSAGE = 4000;
 const MAX_TOTAL_CHARS = 24000;
 
 const bodySchema = z.object({
+  /** Null starts a new conversation; a string appends to an existing one. */
+  conversationId: z.string().uuid().nullish(),
   messages: z
     .array(
       z.object({
@@ -64,7 +68,6 @@ const bodySchema = z.object({
  * or Vercel Edge Config would make them authoritative; that is a deliberate
  * later step, not an oversight.
  */
-const SESSION_COOKIE = "roadmap_chat";
 const MAX_PER_SESSION = 20;
 /** Sessions idle this long are dropped, so the map cannot grow forever. */
 const SESSION_TTL_MS = 6 * 60 * 60 * 1000;
@@ -87,7 +90,7 @@ type LimitVerdict =
   | { ok: true; sessionId: string; isNew: boolean; remaining: number }
   | { ok: false; status: number; error: string; offerQuiz: boolean };
 
-async function checkLimits(): Promise<LimitVerdict> {
+async function checkLimits(userId: string): Promise<LimitVerdict> {
   const now = Date.now();
 
   const store = await headers();
@@ -109,9 +112,10 @@ async function checkLimits(): Promise<LimitVerdict> {
     };
   }
 
-  const jar = await cookies();
-  const existing = jar.get(SESSION_COOKIE)?.value;
-  const sessionId = existing ?? randomUUID();
+  // Keyed on the account now that chat requires one. A cookie could simply be
+  // cleared to reset the count; an account cannot, without registering again.
+  const sessionId = userId;
+  const existing = sessionId;
 
   const session = sessions.get(sessionId) ?? { count: 0, seenAt: now };
   if (session.count >= MAX_PER_SESSION) {
@@ -169,6 +173,20 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Chat is account-only. Checked before parsing or calling upstream, so an
+  // anonymous request costs nothing and cannot reach the model.
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json(
+      {
+        error: "Sign in to use the advisor.",
+        requiresAuth: true,
+        offerQuiz: false,
+      },
+      { status: 401 },
+    );
+  }
+
   let parsed;
   try {
     parsed = bodySchema.safeParse(await request.json());
@@ -194,6 +212,7 @@ export async function POST(request: NextRequest) {
    * recommendation block. Rejecting the whole conversation for it meant one
    * such turn wedged the chat permanently behind "Invalid request".
    */
+  const { conversationId } = parsed.data;
   const messages = parsed.data.messages.filter(
     (message) => message.content.trim().length > 0,
   );
@@ -213,7 +232,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const limit = await checkLimits();
+  const limit = await checkLimits(user.id);
   if (!limit.ok) {
     return NextResponse.json(
       { error: limit.error, offerQuiz: limit.offerQuiz },
@@ -278,6 +297,15 @@ export async function POST(request: NextRequest) {
       // complete or ruled out, so a half-written block is never emitted as
       // prose and never reaches the browser as raw JSON.
       let pending = "";
+      // Assembled server-side so the stored transcript matches what was sent,
+      // rather than trusting the client to report its own history back.
+      const assistantParts: MessagePart[] = [];
+
+      const pushText = (text: string) => {
+        const last = assistantParts.at(-1);
+        if (last?.type === "text") last.text += text;
+        else assistantParts.push({ type: "text", text });
+      };
 
       try {
         while (true) {
@@ -310,9 +338,11 @@ export async function POST(request: NextRequest) {
               pending = drained.rest;
 
               if (drained.text) {
+                pushText(drained.text);
                 controller.enqueue(frame({ type: "delta", text: drained.text }));
               }
               for (const recommendation of drained.recommendations) {
+                assistantParts.push({ type: "recommendation", recommendation });
                 controller.enqueue(
                   frame({ type: "recommendation", recommendation }),
                 );
@@ -326,7 +356,46 @@ export async function POST(request: NextRequest) {
         // Anything still buffered is either ordinary trailing text or an
         // unterminated block; flushBuffer keeps the first and drops the second.
         const tail = flushBuffer(pending);
-        if (tail) controller.enqueue(frame({ type: "delta", text: tail }));
+        if (tail) {
+          pushText(tail);
+          controller.enqueue(frame({ type: "delta", text: tail }));
+        }
+
+        // Saved only once a reply actually exists. A turn that produced
+        // nothing is not worth storing, and storing it would put the same
+        // empty-turn corruption into the database that broke sessionStorage.
+        if (assistantParts.length > 0) {
+          try {
+            // The request carries flat {role, content}; storage keeps parts.
+            // Rebuild rather than cast, so a card-bearing assistant turn and a
+            // plain user turn are both stored in the shape they load back in.
+            const lastUser = messages.at(-1);
+            const saved = await appendExchange({
+              conversationId: conversationId ?? null,
+              userMessage: {
+                role: "user",
+                parts: [{ type: "text", text: lastUser?.content ?? "" }],
+              },
+              assistantMessage: {
+                role: "assistant",
+                parts: assistantParts as MessagePart[],
+              },
+            });
+            if (saved) {
+              controller.enqueue(
+                frame({
+                  type: "saved",
+                  conversationId: saved.conversationId,
+                  title: saved.title,
+                }),
+              );
+            }
+          } catch (cause) {
+            // The reply is already on screen; failing to file it should not
+            // turn a good answer into an error.
+            console.error("[chat] could not save conversation:", cause);
+          }
+        }
 
         controller.enqueue(frame({ type: "done" }));
       } catch (cause) {
@@ -359,17 +428,7 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  if (limit.isNew) {
-    // Not httpOnly on purpose: this identifies a rate-limit bucket, not a
-    // user, and carries nothing worth protecting. Session-scoped so it expires
-    // with the tab, matching where the transcript lives.
-    response.headers.append(
-      "Set-Cookie",
-      `${SESSION_COOKIE}=${limit.sessionId}; Path=/; SameSite=Lax${
-        process.env.NODE_ENV === "production" ? "; Secure" : ""
-      }`,
-    );
-  }
-
+  // No cookie to set any more: the limit is keyed on the account, which is a
+  // sturdier identity than something the browser can clear.
   return response;
 }
