@@ -44,3 +44,13 @@ next-env.d.ts
 
 # internal build notes, not part of the published project
 /docs/Claude-Code-Build-Prompts.md
+
+# Local libSQL database (dev only)
+local.db
+local.db-*
+
+# Alternate build dir used to verify a build without disturbing `next dev`
+.next-verify
+
+# Playwright screenshots from local verification
+shot-*.png

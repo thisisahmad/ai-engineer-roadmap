@@ -10,10 +10,15 @@ Every page is prerendered at build time from typed JSON in `/content`. There is 
 
 ```bash
 npm install
+npm run db:migrate   # creates ./local.db with the schema
 npm run dev
 ```
 
 Open <http://localhost:3000>.
+
+You do **not** need a Turso account to run locally. With `TURSO_DATABASE_URL`
+unset the app falls back to a `./local.db` file, so sign-up and progress work
+offline out of the box.
 
 > **Note on `npm install`** — npm 12 blocks package install scripts by default. This project needs two of them (`sharp` and `unrs-resolver`, both native binaries used by Next.js and ESLint). They are pre-approved in `package.json` under `allowScripts`, so a normal install works. If you ever see them reported as blocked, run `npm install-scripts approve sharp unrs-resolver`.
 
@@ -22,12 +27,28 @@ Open <http://localhost:3000>.
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Dev server with hot reload on port 3000 |
-| `npm run build` | Production build; writes a static site to `/out` |
-| `npm run preview` | Serves `/out` exactly as a static host would |
+| `npm run build` | Production build |
+| `npm run start` | Serves the production build |
+| `npm run db:migrate` | Applies `lib/db/schema.sql`. Idempotent — safe to re-run |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |
 
-`npm run build` followed by `npm run preview` is the closest local approximation to production — it serves the real exported artifact rather than the dev server.
+**Building while `npm run dev` is running** corrupts the dev server, because
+both own `.next`. It surfaces as `Cannot find module for page: /x` or a missing
+webpack chunk, which looks like a source error and is not. Build somewhere else
+instead:
+
+```bash
+NEXT_DIST_DIR=.next-verify npm run build
+```
+
+To exercise the production build locally, the database URL must be explicit —
+the app refuses a fallback file in production so a real deploy can never
+silently write to disk that is about to vanish:
+
+```bash
+TURSO_DATABASE_URL="file:./local.db" npm run start
+```
 
 ---
 
@@ -181,24 +202,49 @@ vercel            # preview deployment
 vercel --prod     # production
 ```
 
-### The one environment variable
+### Environment variables
 
-There is no backend and no database, so nothing needs a secret. One variable
-still matters for SEO:
+| Variable | Required | What it does |
+| --- | --- | --- |
+| `TURSO_DATABASE_URL` | in production | libSQL connection. Unset locally → `./local.db` |
+| `TURSO_AUTH_TOKEN` | with a remote URL | Turso database token |
+| `NEXT_PUBLIC_SITE_URL` | for correct SEO | Canonical origin |
 
+**`TURSO_DATABASE_URL`** is mandatory in production and the app refuses to
+start without it. That is deliberate: falling back to a local SQLite file on a
+serverless host would appear to work and then lose every account, because the
+filesystem is ephemeral and not shared between invocations.
+
+**`NEXT_PUBLIC_SITE_URL`** — without it the build falls back to
+`NEXT_PUBLIC_VERCEL_URL`, which is the **per-deployment** hostname
+(`ai-roadmap-a1b2c3.vercel.app`), not your production domain. That would put
+deployment-specific URLs into `sitemap.xml`, `robots.txt`, every
+`rel="canonical"` and every Open Graph image URL — so search engines would
+index a hostname that changes on every push. The site works without it; its
+SEO does not.
+
+Set all three in **Project → Settings → Environment Variables** for the
+Production environment. `.env.example` documents them.
+
+### Setting up the database
+
+```bash
+npm i -g turso
+turso auth signup
+turso db create ai-roadmap
+
+turso db show ai-roadmap --url        # -> TURSO_DATABASE_URL
+turso db tokens create ai-roadmap     # -> TURSO_AUTH_TOKEN
 ```
-NEXT_PUBLIC_SITE_URL = https://your-domain.com
+
+Then apply the schema to it:
+
+```bash
+TURSO_DATABASE_URL="libsql://..." TURSO_AUTH_TOKEN="..." npm run db:migrate
 ```
 
-Without it the build falls back to `NEXT_PUBLIC_VERCEL_URL`, which is the
-**per-deployment** hostname (`ai-roadmap-a1b2c3.vercel.app`), not your
-production domain. That would put deployment-specific URLs into
-`sitemap.xml`, `robots.txt`, every `rel="canonical"` and every Open Graph
-image URL — so search engines would index a hostname that changes on every
-push. The site works without it; its SEO does not.
-
-Set it in **Project → Settings → Environment Variables** for the Production
-environment. `.env.example` documents it.
+Re-run that after any change to `lib/db/schema.sql`. Every statement is
+`IF NOT EXISTS`, so it never destroys existing data.
 
 ### vercel.json
 
@@ -263,20 +309,80 @@ Editing either file changes nothing until you rebuild.
 
 ---
 
-## Static export vs. Vercel-hosted SSG
+## Rendering model
 
-`next.config.ts` sets `output: "export"`, which emits a plain folder of HTML and
-assets. This keeps the site portable — it runs unchanged on Netlify, Cloudflare
-Pages, GitHub Pages or S3.
+The site was a pure static export. Adding accounts removed that: a static
+bundle has nowhere to run a Server Action or read a session cookie. What
+replaced it is a hybrid, and the split is deliberate.
 
-To use Vercel's full Next.js support instead, delete the `output` and `images`
-lines from `next.config.ts`. You then get `next/image` optimization, ISR, Route
-Handlers and Middleware, and `headers()` in `next.config.ts` starts working so
-`vercel.json` becomes optional. Pages stay statically generated and CDN-served
-either way, so it costs nothing on the free tier — you only give up
-portability.
+| Route | Mode | Why |
+| --- | --- | --- |
+| `/`, `/compare`, `/resources`, `/certifications`, `/career-ladder`, `/foundation`, `/quiz` | Static | Identical for everyone; served from the CDN |
+| `/paths/[slug]` | SSG | Prerendered from `/content` at build time |
+| `/sign-in`, `/sign-up`, `/account` | Dynamic | Depend on the session |
+| `/api/me` | Dynamic | Reads the session cookie |
 
-Nothing else in the codebase depends on the choice.
+**Session state is read on the client, not the server.** That looks backwards
+and is the single most important decision here. Reading the session inside the
+shared header — a server component calling `cookies()` — opts *every page that
+renders the header* out of static generation. The first version of this did
+exactly that and turned the entire site dynamic, throwing away CDN caching on
+content that never varies between visitors.
+
+So `/api/me` serves session and progress, `SessionProvider` fetches it once
+after hydration, and the content pages stay static. The cost is one frame where
+sign-in state is unknown, which the header covers with a placeholder rather
+than by guessing.
+
+---
+
+## Accounts and progress
+
+Stage completion works signed out or signed in:
+
+- **Signed out** — `localStorage`, per browser. No account required to use the
+  checklist.
+- **Signed in** — the database, via Server Actions, so progress follows the
+  account to any device.
+
+Signing in **merges** anonymous localStorage progress into the account, once
+per browser. It is a union, never a subtraction: ticking things off before
+registering never loses them.
+
+Writes are optimistic. The checkbox flips immediately and rolls back if the
+server rejects it, because a checklist that waits on a round trip feels broken.
+
+### Security
+
+- Passwords are hashed with **scrypt** (`N=2^15`, ~32MB, ~65ms per hash).
+  scrypt is memory-hard and in Node's standard library, so there is no native
+  module to compile — argon2 and bcrypt both pull binaries that are awkward on
+  serverless.
+- Cost parameters are stored **with** each hash (`scrypt$N$r$p$salt$hash`), so
+  raising them later does not invalidate existing passwords.
+- Session cookies are `httpOnly`, `Secure` in production, `SameSite=Lax`.
+- The database stores only the **SHA-256 of the session token**, never the
+  token. A leaked database cannot be replayed as a login.
+- Sign-in burns equivalent time on a nonexistent email as on a wrong password,
+  so timing does not reveal which addresses are registered.
+- Deleting a user cascades to their sessions and progress.
+
+**Rate limiting is in-memory and per-instance.** Serverless instances do not
+share memory, so it slows casual credential stuffing rather than stopping a
+distributed attack. If this site attracts real abuse, move the counter to a
+shared store or put Vercel WAF in front of it.
+
+**Not built yet:** password reset and email verification. Both need an email
+provider (Resend, Postmark) wired up. Until then, a forgotten password needs a
+manual `password_hash` update.
+
+### Personal data
+
+Sign-up collects name, email and — optionally — a phone number. Phone is
+optional on purpose: requiring it is the single largest drop-off point on a
+signup form. If you market to these people, that is personal data under GDPR
+and similar regimes, so it needs a privacy policy and a deletion route. Neither
+exists yet.
 
 ---
 

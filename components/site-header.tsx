@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Route } from "lucide-react";
 
+import { AuthNav } from "@/components/auth/auth-nav";
 import { SiteNav } from "@/components/site-nav";
 import { getPathSummaries } from "@/lib/content";
 import { brand } from "@/lib/site";
@@ -32,6 +33,8 @@ export function SiteHeader() {
         </Link>
 
         <SiteNav paths={paths} />
+
+        <AuthNav />
       </div>
     </header>
   );
