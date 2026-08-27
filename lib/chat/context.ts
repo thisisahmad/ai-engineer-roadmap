@@ -13,23 +13,6 @@ import { getAllPaths, getCertifications, getFoundation } from "@/lib/content";
  * while the process is alive. It is still generated rather than hardcoded.
  */
 
-/**
- * The marker the model must emit when it recommends a path.
- *
- * Chosen to survive streaming: it is a single inline token, so the frontend
- * can detect it in a partial response without waiting for the message to
- * finish, which a trailing JSON block would require.
- *
- * If the agreed format differs, change it here and in SYSTEM_PROMPT below —
- * those are the only two places that know about it.
- */
-export const PATH_MARKER = {
-  /** What the model writes, e.g. [[path:ai-engineer]] */
-  format: "[[path:SLUG]]",
-  /** What the frontend parses out of the stream. */
-  pattern: /\[\[path:([a-z0-9-]+)\]\]/g,
-} as const;
-
 let cached: string | null = null;
 
 export function buildSiteContext(): string {
@@ -130,18 +113,33 @@ export function buildSystemPrompt(): string {
     "  products with existing models or train their own; web background or not.",
     "- Ask one question at a time. Never interrogate.",
     "",
-    "## Recommending a path",
+    "## Recommending something",
     "",
-    `When you recommend a path, include its slug as ${PATH_MARKER.format}`,
-    "immediately after naming it, using the exact slug from the content below.",
-    "The interface turns that marker into a clickable card, so it must be",
-    "exact and must only ever contain a slug that appears below.",
+    "When you recommend a path or a resource, emit a fenced block on its own",
+    "lines, immediately after the sentence that introduces it:",
     "",
-    "Example: I would start with the AI Engineer path [[path:ai-engineer]]",
-    "since you want to ship products rather than train models.",
+    "```recommend",
+    '{"type": "path", "slug": "ai-engineer", "reason": "one sentence on why this fits what they described"}',
+    "```",
     "",
-    "Recommend at most two paths in one reply. Do not emit the marker when you",
-    "are only asking a question or discussing a path in passing.",
+    "or, for a specific resource:",
+    "",
+    "```recommend",
+    '{"type": "resource", "title": "LangChain RAG Tutorial", "url": "https://python.langchain.com/docs/tutorials/rag/", "reason": "..."}',
+    "```",
+    "",
+    "Rules for these blocks:",
+    "",
+    "- The slug and the URL must appear verbatim in the content below. A value",
+    "  you invent is discarded and the person sees no card, so guessing costs",
+    "  them the recommendation.",
+    "- One JSON object per block, valid JSON, no trailing commas or comments.",
+    "- `reason` is one sentence, specific to what this person told you. Not a",
+    "  restatement of the path summary.",
+    "- Keep writing normally around the block. The sentence introducing it",
+    "  should read naturally on its own, because the block renders as a card.",
+    "- At most two blocks in a reply, and none at all when you are only asking",
+    "  a clarifying question.",
     "",
     buildSiteContext(),
   ].join("\n");

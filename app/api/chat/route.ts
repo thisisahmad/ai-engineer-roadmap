@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 
 import { buildSystemPrompt } from "@/lib/chat/context";
+import { drainBuffer, flushBuffer } from "@/lib/chat/recommendations";
 
 /**
  * Chat endpoint, backed by an Ollama-hosted model over its OpenAI-compatible
@@ -167,6 +168,10 @@ export async function POST(request: NextRequest) {
       const reader = upstream.body!.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
+      // Model output accumulates here until a recommendation block is either
+      // complete or ruled out, so a half-written block is never emitted as
+      // prose and never reaches the browser as raw JSON.
+      let pending = "";
 
       try {
         while (true) {
@@ -192,14 +197,30 @@ export async function POST(request: NextRequest) {
             try {
               const json = JSON.parse(data);
               const delta = json.choices?.[0]?.delta?.content;
-              if (typeof delta === "string" && delta.length > 0) {
-                controller.enqueue(frame({ type: "delta", text: delta }));
+              if (typeof delta !== "string" || delta.length === 0) continue;
+
+              pending += delta;
+              const drained = drainBuffer(pending);
+              pending = drained.rest;
+
+              if (drained.text) {
+                controller.enqueue(frame({ type: "delta", text: drained.text }));
+              }
+              for (const recommendation of drained.recommendations) {
+                controller.enqueue(
+                  frame({ type: "recommendation", recommendation }),
+                );
               }
             } catch {
               // A malformed frame is not worth killing the stream over.
             }
           }
         }
+
+        // Anything still buffered is either ordinary trailing text or an
+        // unterminated block; flushBuffer keeps the first and drops the second.
+        const tail = flushBuffer(pending);
+        if (tail) controller.enqueue(frame({ type: "delta", text: tail }));
 
         controller.enqueue(frame({ type: "done" }));
       } catch (cause) {
