@@ -142,7 +142,19 @@ function frame(payload: Record<string, unknown>): Uint8Array {
 }
 
 export async function POST(request: NextRequest) {
-  const baseUrl = process.env.OLLAMA_BASE_URL?.replace(/\/+$/, "");
+  /*
+   * Accept both forms of base URL.
+   *
+   * `https://ollama.com/v1` is what Ollama documents and what every OpenAI
+   * SDK expects, so that is what people paste in. Requiring the bare origin
+   * instead produced /v1/v1/chat/completions and a 404 that looked like a
+   * broken chatbot rather than a config mistake. Strip a trailing /v1 and
+   * append it ourselves, so either form works.
+   */
+  const baseUrl = process.env.OLLAMA_BASE_URL?.replace(/\/+$/, "").replace(
+    /\/v1$/,
+    "",
+  );
   const apiKey = process.env.OLLAMA_API_KEY;
 
   if (!baseUrl) {
