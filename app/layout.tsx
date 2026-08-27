@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 
+import { ChatWidget } from "@/components/chat/chat-widget";
 import { SessionProvider } from "@/components/auth/session-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -106,6 +107,10 @@ export default function RootLayout({
             {children}
           </main>
           <SiteFooter />
+
+          {/* Site-wide advisor. Renders nothing on /chat, where the full page
+              already hosts the same conversation from the same storage key. */}
+          <ChatWidget />
         </div>
         </SessionProvider>
       </body>
