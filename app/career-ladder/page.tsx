@@ -52,7 +52,7 @@ export default function CareerLadderPage() {
               Shared by all {paths.length} paths
             </p>
 
-            <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h1 className="text-balance text-4xl tracking-tight sm:text-5xl">
               {ladder.title}
             </h1>
             <p className="mt-5 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
@@ -67,7 +67,7 @@ export default function CareerLadderPage() {
 
         <Reveal className="mt-16">
           <div className="rounded-2xl border border-amber-400/30 bg-amber-400/5 p-6 sm:p-8">
-            <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+            <h2 className="font-semibold flex items-center gap-2 text-lg tracking-tight">
               <Compass className="size-5 text-amber-400" aria-hidden />
               One architect track, not seven
             </h2>

@@ -182,7 +182,7 @@ export function CareerLadderTimeline({ levels }: { levels: LadderLevel[] }) {
                 className={cn("rounded-2xl border p-6 sm:p-8", s.border, s.bg)}
               >
                 <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5">
-                  <h2 className="text-2xl font-semibold tracking-tight">
+                  <h2 className="font-display text-2xl tracking-tight">
                     {level.title}
                   </h2>
                   <span

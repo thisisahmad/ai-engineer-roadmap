@@ -235,7 +235,7 @@ export function PathQuiz({ paths }: { paths: PathLite[] }) {
           )}
         >
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-2xl font-semibold tracking-tight">
+            <h2 className="font-display text-2xl tracking-tight">
               {top.path.title}
             </h2>
             {top.path.flagship ? (
@@ -361,7 +361,7 @@ export function PathQuiz({ paths }: { paths: PathLite[] }) {
       </div>
 
       <motion.div key={question.id} {...fade} className="mt-8">
-        <h2 className="text-balance text-2xl font-semibold tracking-tight">
+        <h2 className="font-display text-balance text-2xl tracking-tight">
           {question.prompt}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">{question.help}</p>

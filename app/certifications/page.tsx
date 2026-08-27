@@ -75,7 +75,7 @@ export default function CertificationsPage() {
               {items.length} credentials · {freeCount} free
             </p>
 
-            <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h1 className="text-balance text-4xl tracking-tight sm:text-5xl">
               Certifications
             </h1>
             <p className="mt-5 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">

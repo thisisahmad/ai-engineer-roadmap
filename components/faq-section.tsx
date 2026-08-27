@@ -41,7 +41,7 @@ export function FaqSection({ faq }: { faq: Faq }) {
       <Reveal className="mb-10">
         <h2
           id="faq-heading"
-          className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl"
+          className="font-display text-balance text-3xl tracking-tight sm:text-4xl"
         >
           {faq.title}
         </h2>

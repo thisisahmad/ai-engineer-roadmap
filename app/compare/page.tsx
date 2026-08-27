@@ -155,7 +155,7 @@ export default function ComparePage() {
 
         <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-20">
           <Reveal from="none">
-            <h1 className="text-balance text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+            <h1 className="text-balance text-4xl leading-tight tracking-tight sm:text-5xl">
               AI Engineer vs ML Engineer vs Agentic AI vs GenAI Engineer
             </h1>
             <p className="mt-6 text-pretty text-lg leading-relaxed text-muted-foreground">
@@ -173,7 +173,7 @@ export default function ComparePage() {
         {/* ------------------------------------------------ short answer */}
         <Reveal>
           <div className="rounded-2xl border border-violet-500/30 bg-violet-500/5 p-6 sm:p-8">
-            <h2 className="text-lg font-semibold tracking-tight">
+            <h2 className="font-semibold text-lg tracking-tight">
               The short answer
             </h2>
             <dl className="mt-5 space-y-3 text-sm leading-relaxed">
@@ -211,7 +211,7 @@ export default function ComparePage() {
           <Reveal className="mb-6">
             <h2
               id="side-by-side"
-              className="text-2xl font-semibold tracking-tight sm:text-3xl"
+              className="font-display text-2xl tracking-tight sm:text-3xl"
             >
               Side by side
             </h2>
@@ -288,7 +288,7 @@ export default function ComparePage() {
           <Reveal className="mb-8">
             <h2
               id="role-by-role"
-              className="text-2xl font-semibold tracking-tight sm:text-3xl"
+              className="font-display text-2xl tracking-tight sm:text-3xl"
             >
               Role by role
             </h2>
@@ -376,7 +376,7 @@ export default function ComparePage() {
           <Reveal>
             <h2
               id="overlap"
-              className="text-2xl font-semibold tracking-tight sm:text-3xl"
+              className="font-display text-2xl tracking-tight sm:text-3xl"
             >
               What they share
             </h2>
@@ -413,7 +413,7 @@ export default function ComparePage() {
           <Reveal>
             <h2
               id="other-paths"
-              className="text-2xl font-semibold tracking-tight sm:text-3xl"
+              className="font-display text-2xl tracking-tight sm:text-3xl"
             >
               The other three paths
             </h2>
@@ -451,7 +451,7 @@ export default function ComparePage() {
 
         <Reveal className="mt-20">
           <div className="rounded-2xl border border-border/60 bg-card/30 p-6 text-center sm:p-8">
-            <h2 className="text-lg font-semibold tracking-tight">
+            <h2 className="font-semibold text-lg tracking-tight">
               Still not sure?
             </h2>
             <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">

@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <div className="mx-auto flex max-w-md flex-col items-center px-4 py-32 text-center">
       <p className="font-mono text-sm text-violet-500">404</p>
-      <h1 className="mt-3 text-3xl font-semibold tracking-tight">
+      <h1 className="mt-3 text-3xl tracking-tight">
         No path here
       </h1>
       <p className="mt-3 leading-relaxed text-muted-foreground">

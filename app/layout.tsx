@@ -1,19 +1,37 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 
+import { SessionProvider } from "@/components/auth/session-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-sans",
+/**
+ * Three roles, deliberately separated.
+ *
+ *  sans     Inter, for everything that has to be read at small sizes.
+ *  heading  Instrument Serif, for display type only. It carries the brand and
+ *           is never used below ~24px, where its thin strokes fall apart.
+ *  mono     JetBrains Mono, for figures and stage numbers, so tabular data
+ *           lines up in columns.
+ */
+const sans = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const heading = Instrument_Serif({
+  variable: "--font-instrument",
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  variable: "--font-jetbrains",
   subsets: ["latin"],
   display: "swap",
 });
@@ -55,8 +73,24 @@ export default function RootLayout({
     // rather than a toggle. `color-scheme` keeps native form controls and
     // scrollbars consistent with it.
     <html lang="en" className="dark" style={{ colorScheme: "dark" }}>
+      <head>
+        {/*
+          Entrance animations server-render their `initial` state as inline
+          styles — BlurText emits opacity:0 with a 10px blur, ScrollReveal emits
+          opacity:0 and a translate. Both are cleared on hydration, so without
+          JavaScript the headline and every revealed section would stay
+          invisible. This restores them for that case only; it has no effect
+          once JS runs.
+        */}
+        <noscript>
+          <style>{`
+            .blur-text > span { opacity: 1 !important; filter: none !important; transform: none !important; }
+            [data-scroll-reveal] { opacity: 1 !important; visibility: visible !important; transform: none !important; }
+          `}</style>
+        </noscript>
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-dvh antialiased`}
+        className={`${sans.variable} ${heading.variable} ${mono.variable} min-h-dvh antialiased`}
       >
         <a
           href="#main"
@@ -65,6 +99,7 @@ export default function RootLayout({
           Skip to content
         </a>
 
+        <SessionProvider>
         <div className="flex min-h-dvh flex-col">
           <SiteHeader />
           <main id="main" className="flex-1">
@@ -72,6 +107,7 @@ export default function RootLayout({
           </main>
           <SiteFooter />
         </div>
+        </SessionProvider>
       </body>
     </html>
   );

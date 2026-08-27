@@ -51,7 +51,7 @@ export default function QuizPage() {
               Four questions · nothing stored
             </p>
 
-            <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h1 className="text-balance text-4xl tracking-tight sm:text-5xl">
               Which path is right for me?
             </h1>
             <p className="mt-5 text-pretty text-lg leading-relaxed text-muted-foreground">
@@ -71,7 +71,7 @@ export default function QuizPage() {
         <section aria-labelledby="all-paths" className="mt-16 border-t border-border/60 pt-10">
           <h2
             id="all-paths"
-            className="text-xs font-medium uppercase tracking-widest text-muted-foreground"
+            className="font-semibold text-xs font-medium uppercase tracking-widest text-muted-foreground"
           >
             Or skip it — all seven paths
           </h2>
