@@ -18,7 +18,17 @@ export const metadata: Metadata = {
 };
 
 export default async function AccountPage() {
-  const user = await getCurrentUser();
+  // A database problem here should send people to sign-in rather than render
+  // the generic application-error screen.
+  //
+  // Next signals "this route is dynamic" by throwing, and `redirect()` throws
+  // too. Swallowing those would break the framework's own control flow, so
+  // anything carrying a digest is re-thrown and only real failures are caught.
+  const user = await getCurrentUser().catch((cause) => {
+    if (cause && typeof cause === "object" && "digest" in cause) throw cause;
+    console.error("[account] session lookup failed:", cause);
+    return null;
+  });
   if (!user) redirect("/sign-in/");
 
   const paths = getAllPaths();
@@ -81,9 +91,7 @@ export default async function AccountPage() {
                   >
                     <div className="flex items-baseline justify-between gap-3">
                       <span className="font-medium">{path.title}</span>
-                      <span
-                        className={cn("text-sm tabular-nums", a.text)}
-                      >
+                      <span className={cn("text-sm tabular-nums", a.text)}>
                         {completed}/{total}
                       </span>
                     </div>

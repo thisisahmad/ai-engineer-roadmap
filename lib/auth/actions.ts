@@ -53,6 +53,30 @@ const signInSchema = z.object({
   password: z.string().min(1, "Enter your password."),
 });
 
+/**
+ * A database that is unreachable or unconfigured should not crash the page.
+ *
+ * Without this the error propagates out of the Server Action and React renders
+ * the generic "Application error" screen, losing the form and everything the
+ * person typed. They get a message they can act on instead, and the real cause
+ * still goes to the server log for whoever is on call.
+ */
+function isInfrastructureError(cause: unknown): boolean {
+  const text = String(cause);
+  return (
+    text.includes("TURSO_DATABASE_URL") ||
+    text.includes("TURSO_AUTH_TOKEN") ||
+    text.includes("ECONNREFUSED") ||
+    text.includes("fetch failed") ||
+    text.includes("UNAUTHORIZED") ||
+    text.includes("SQLITE_") ||
+    text.includes("MODULE_NOT_FOUND")
+  );
+}
+
+const UNAVAILABLE =
+  "Accounts are temporarily unavailable. Please try again shortly.";
+
 function flatten(error: z.ZodError): Record<string, string> {
   const out: Record<string, string> = {};
   for (const issue of error.issues) {
@@ -116,42 +140,58 @@ export async function signUp(
 
   const { name, email, phone, password } = parsed.data;
 
-  const existing = await db.execute({
-    sql: "SELECT id FROM users WHERE email = ?",
-    args: [email],
-  });
-
-  if (existing.rows.length > 0) {
-    return {
-      fieldErrors: { email: "An account with that email already exists." },
-      values,
-    };
-  }
-
-  const now = Date.now();
-  const id = randomUUID();
-
   try {
-    await db.execute({
-      sql: `INSERT INTO users (id, email, name, phone, password_hash, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      args: [id, email, name, phone ?? null, await hashPassword(password), now, now],
+    const existing = await db.execute({
+      sql: "SELECT id FROM users WHERE email = ?",
+      args: [email],
     });
-  } catch (cause) {
-    // The UNIQUE index is the real guard — the SELECT above races under
-    // concurrent signups and cannot be relied on alone.
-    if (String(cause).includes("UNIQUE")) {
+
+    if (existing.rows.length > 0) {
       return {
         fieldErrors: { email: "An account with that email already exists." },
         values,
       };
     }
+
+    const now = Date.now();
+    const id = randomUUID();
+
+    try {
+      await db.execute({
+        sql: `INSERT INTO users (id, email, name, phone, password_hash, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        args: [
+          id,
+          email,
+          name,
+          phone ?? null,
+          await hashPassword(password),
+          now,
+          now,
+        ],
+      });
+    } catch (cause) {
+      // The UNIQUE index is the real guard — the SELECT above races under
+      // concurrent signups and cannot be relied on alone.
+      if (String(cause).includes("UNIQUE")) {
+        return {
+          fieldErrors: { email: "An account with that email already exists." },
+          values,
+        };
+      }
+      throw cause;
+    }
+
+    const store = await headers();
+    await createSession(id, store.get("user-agent") ?? undefined);
+    return { redirectTo: "/account/" };
+  } catch (cause) {
+    if (isInfrastructureError(cause)) {
+      console.error("[signUp] database unavailable:", cause);
+      return { error: UNAVAILABLE, values };
+    }
     throw cause;
   }
-
-  const store = await headers();
-  await createSession(id, store.get("user-agent") ?? undefined);
-  return { redirectTo: "/account/" };
 }
 
 export async function signIn(
@@ -175,27 +215,35 @@ export async function signIn(
 
   const { email, password } = parsed.data;
 
-  const result = await db.execute({
-    sql: "SELECT id, password_hash FROM users WHERE email = ?",
-    args: [email],
-  });
+  try {
+    const result = await db.execute({
+      sql: "SELECT id, password_hash FROM users WHERE email = ?",
+      args: [email],
+    });
 
-  const row = result.rows[0];
+    const row = result.rows[0];
 
-  if (!row) {
-    // Same work and the same message as a wrong password, so neither timing
-    // nor copy reveals whether the address is registered.
-    await fakeVerify();
-    return { error: "Email or password is incorrect.", values };
+    if (!row) {
+      // Same work and the same message as a wrong password, so neither timing
+      // nor copy reveals whether the address is registered.
+      await fakeVerify();
+      return { error: "Email or password is incorrect.", values };
+    }
+
+    if (!(await verifyPassword(password, String(row.password_hash)))) {
+      return { error: "Email or password is incorrect.", values };
+    }
+
+    const store = await headers();
+    await createSession(String(row.id), store.get("user-agent") ?? undefined);
+    return { redirectTo: "/account/" };
+  } catch (cause) {
+    if (isInfrastructureError(cause)) {
+      console.error("[signIn] database unavailable:", cause);
+      return { error: UNAVAILABLE, values };
+    }
+    throw cause;
   }
-
-  if (!(await verifyPassword(password, String(row.password_hash)))) {
-    return { error: "Email or password is incorrect.", values };
-  }
-
-  const store = await headers();
-  await createSession(String(row.id), store.get("user-agent") ?? undefined);
-  return { redirectTo: "/account/" };
 }
 
 // Sign-out is deliberately NOT an action. See app/api/sign-out/route.ts: an

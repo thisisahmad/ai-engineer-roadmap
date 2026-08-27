@@ -23,30 +23,41 @@ import { db } from "@/lib/db/client";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const user = await getCurrentUser();
+  // A database problem must not break the header on every page. Treat it as
+  // signed out: the checklist falls back to localStorage and the rest of the
+  // site is unaffected.
+  try {
+    const user = await getCurrentUser();
 
-  if (!user) {
+    if (!user) {
+      return NextResponse.json(
+        { user: null, progress: {} },
+        // private: this is per-user, and a shared cache must never serve one
+        // person's session state to another.
+        { headers: { "Cache-Control": "private, no-store" } },
+      );
+    }
+
+    const result = await db.execute({
+      sql: "SELECT path_slug, stage_id FROM progress WHERE user_id = ?",
+      args: [user.id],
+    });
+
+    const progress: Record<string, string[]> = {};
+    for (const row of result.rows) {
+      const slug = String(row.path_slug);
+      (progress[slug] ??= []).push(String(row.stage_id));
+    }
+
+    return NextResponse.json(
+      { user, progress },
+      { headers: { "Cache-Control": "private, no-store" } },
+    );
+  } catch (cause) {
+    console.error("[api/me] session lookup failed:", cause);
     return NextResponse.json(
       { user: null, progress: {} },
-      // private: this is per-user, and a shared cache must never serve one
-      // person's session state to another.
       { headers: { "Cache-Control": "private, no-store" } },
     );
   }
-
-  const result = await db.execute({
-    sql: "SELECT path_slug, stage_id FROM progress WHERE user_id = ?",
-    args: [user.id],
-  });
-
-  const progress: Record<string, string[]> = {};
-  for (const row of result.rows) {
-    const slug = String(row.path_slug);
-    (progress[slug] ??= []).push(String(row.stage_id));
-  }
-
-  return NextResponse.json(
-    { user, progress },
-    { headers: { "Cache-Control": "private, no-store" } },
-  );
 }

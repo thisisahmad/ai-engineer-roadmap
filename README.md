@@ -10,15 +10,21 @@ Every page is prerendered at build time from typed JSON in `/content`. There is 
 
 ```bash
 npm install
-npm run db:migrate   # creates ./local.db with the schema
+npm run db:migrate   # applies the schema to your Turso database
 npm run dev
 ```
 
 Open <http://localhost:3000>.
 
-You do **not** need a Turso account to run locally. With `TURSO_DATABASE_URL`
-unset the app falls back to a `./local.db` file, so sign-up and progress work
-offline out of the box.
+You **do** need a Turso database, including locally. The client uses
+`@libsql/client/web`, which speaks HTTP and carries no native binding — that is
+what makes it work on Vercel, where a platform-specific `.node` binary cannot be
+relied on. The trade is that `file:` URLs are not supported, so create a second
+free database for development rather than sharing the production one.
+
+Without the variables the site still builds and every content page works. Only
+sign-in, sign-up and the account page degrade, showing "Accounts are temporarily
+unavailable" instead of crashing.
 
 > **Note on `npm install`** — npm 12 blocks package install scripts by default. This project needs two of them (`sharp` and `unrs-resolver`, both native binaries used by Next.js and ESLint). They are pre-approved in `package.json` under `allowScripts`, so a normal install works. If you ever see them reported as blocked, run `npm install-scripts approve sharp unrs-resolver`.
 
@@ -206,14 +212,14 @@ vercel --prod     # production
 
 | Variable | Required | What it does |
 | --- | --- | --- |
-| `TURSO_DATABASE_URL` | in production | libSQL connection. Unset locally → `./local.db` |
+| `TURSO_DATABASE_URL` | yes, incl. locally | Turso HTTP URL. `file:` is not supported |
 | `TURSO_AUTH_TOKEN` | with a remote URL | Turso database token |
 | `NEXT_PUBLIC_SITE_URL` | for correct SEO | Canonical origin |
 
-**`TURSO_DATABASE_URL`** is mandatory in production and the app refuses to
-start without it. That is deliberate: falling back to a local SQLite file on a
-serverless host would appear to work and then lose every account, because the
-filesystem is ephemeral and not shared between invocations.
+**`TURSO_DATABASE_URL`** must point at a Turso database over HTTP. A `file:`
+URL is rejected: the native driver that would serve it cannot be relied on in a
+serverless deployment, which is exactly the failure this client is built to
+avoid.
 
 **`NEXT_PUBLIC_SITE_URL`** — without it the build falls back to
 `NEXT_PUBLIC_VERCEL_URL`, which is the **per-deployment** hostname

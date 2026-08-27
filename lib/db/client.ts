@@ -1,24 +1,25 @@
 import "server-only";
 
-import { createClient, type Client } from "@libsql/client";
+import { createClient as createWebClient } from "@libsql/client/web";
+import type { Client } from "@libsql/client/web";
 
 /**
  * The libSQL connection.
  *
- * Turso speaks SQLite over HTTP, so the same client and the same SQL work
- * against a hosted database in production and a plain file in development —
- * which is what lets this run on Vercel at all. A normal SQLite file cannot,
- * because serverless filesystems are ephemeral and not shared between
- * invocations.
+ * Imports `@libsql/client/web`, not `@libsql/client`.
  *
- * Local dev needs no account: leave the env vars unset and it falls back to
- * `file:./local.db`.
+ * The default entry point depends on the `libsql` package, which loads a
+ * native `.node` binary matched to the host platform. That binary is a
+ * platform-specific optional dependency, so a build produced on one machine
+ * and run on another — every serverless deploy — can end up without the one it
+ * needs, and the import fails with MODULE_NOT_FOUND at runtime rather than at
+ * build time. The `/web` entry speaks HTTP and WebSocket only and has no
+ * native dependency at all, which is what a hosted Turso database needs
+ * anyway.
  *
- * Connection setup is deferred to the first query, not done at import. `next
- * build` runs with NODE_ENV=production, so validating eagerly would fail any
- * build performed without database credentials to hand — even though the
- * prerender never issues a query. Pages that touch the database are dynamic
- * and only ever run with real request env.
+ * The cost is that `file:` URLs are not supported, since those are the one
+ * case that genuinely needs the native driver. Development therefore points at
+ * a Turso database too — a separate free one, not the production database.
  */
 
 declare global {
@@ -37,23 +38,31 @@ function getClient(): Client {
   const authToken = process.env.TURSO_AUTH_TOKEN;
 
   if (!url) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        "TURSO_DATABASE_URL is not set. Production must point at a real database — " +
-          "a local file would be wiped on every deploy.",
-      );
-    }
-    client = createClient({ url: "file:./local.db" });
-  } else {
-    // A remote libSQL URL without a token authenticates as nobody and every
-    // query fails at runtime. Better to say so on the first query.
-    if (url.startsWith("libsql://") && !authToken) {
-      throw new Error(
-        "TURSO_DATABASE_URL is remote but TURSO_AUTH_TOKEN is missing.",
-      );
-    }
-    client = createClient({ url, authToken });
+    throw new Error(
+      "TURSO_DATABASE_URL is not set.\n\n" +
+        "Set it and TURSO_AUTH_TOKEN in the Vercel project under " +
+        "Settings -> Environment Variables, then redeploy. Locally, put both " +
+        "in .env.local — see the README for creating a database.",
+    );
   }
+
+  if (url.startsWith("file:")) {
+    throw new Error(
+      `TURSO_DATABASE_URL is "${url}". This client speaks HTTP only, so a ` +
+        "file: URL cannot work. Point it at a Turso database (libsql://...) " +
+        "for development as well as production.",
+    );
+  }
+
+  // A remote libSQL URL without a token authenticates as nobody and every
+  // query fails at runtime. Better to say so on the first query.
+  if (url.startsWith("libsql://") && !authToken) {
+    throw new Error(
+      "TURSO_DATABASE_URL is remote but TURSO_AUTH_TOKEN is missing.",
+    );
+  }
+
+  client = createWebClient({ url, authToken });
 
   if (process.env.NODE_ENV !== "production") globalThis.__libsql = client;
   return client;
@@ -62,6 +71,10 @@ function getClient(): Client {
 /**
  * Proxy so `db.execute(...)` reads as a normal client while construction stays
  * deferred to the first actual call.
+ *
+ * Deferring matters: `next build` evaluates these modules while prerendering,
+ * and validating credentials at import would fail any build run without them
+ * even though the prerender never issues a query.
  */
 export const db: Client = new Proxy({} as Client, {
   get(_target, property, receiver) {

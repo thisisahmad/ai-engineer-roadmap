@@ -43,7 +43,12 @@ const nextConfig: NextConfig = {
   typescript: { ignoreBuildErrors: false },
   eslint: { ignoreDuringBuilds: false },
 
-  serverExternalPackages: ["@libsql/client"],
+  /*
+   * `@libsql/client` was listed here as an external package, which left Next
+   * to rely on file tracing to copy it into the deployment. The client now
+   * imports `@libsql/client/web`, which is pure JavaScript with no native
+   * binding, so it bundles cleanly and there is nothing to trace or miss.
+   */
 };
 
 export default nextConfig;
