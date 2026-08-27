@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 
 import { getAllPaths, getFoundation } from "@/lib/content";
+import { countResources } from "@/lib/stages";
 
 /**
  * Site-level Open Graph card, used by every route that does not define its
@@ -29,9 +30,9 @@ export default async function Image() {
     paths.reduce((n, p) => n + p.stages.length, 0) + foundation.stages.length;
   const resourceTotal =
     paths.reduce(
-      (n, p) => n + p.stages.reduce((m, s) => m + s.resources.length, 0),
+      (n, p) => n + countResources(p.stages),
       0,
-    ) + foundation.stages.reduce((m, s) => m + s.resources.length, 0);
+    ) + countResources(foundation.stages);
 
   const stats = [
     { value: `${paths.length}`, label: "career paths" },

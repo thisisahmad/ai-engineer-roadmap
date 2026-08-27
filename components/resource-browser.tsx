@@ -194,7 +194,7 @@ export function ResourceBrowser({
             >
               <h2
                 id={`category-${category.id}`}
-                className="text-sm font-medium uppercase tracking-wide text-muted-foreground"
+                className="font-semibold text-sm font-medium uppercase tracking-wide text-muted-foreground"
               >
                 {category.label}
                 <span className="ml-2 tabular-nums opacity-60">

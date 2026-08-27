@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 
 import { getAllPathSlugs, getPath } from "@/lib/content";
+import { countResources } from "@/lib/stages";
 
 /**
  * Per-path Open Graph card, generated at build time.
@@ -65,10 +66,7 @@ export default async function Image({
 
   const color = ACCENT[path.accent] ?? "#8b5cf6";
   const stageCount = path.stages.length;
-  const resourceCount = path.stages.reduce(
-    (total, stage) => total + stage.resources.length,
-    0,
-  );
+  const resourceCount = countResources(path.stages);
 
   return new ImageResponse(
     (

@@ -30,6 +30,9 @@ const eslintConfig = [
     ignores: [
       "node_modules/**",
       ".next/**",
+      // Alternate build dir used to verify a build while `next dev` holds
+      // .next — build output, never source.
+      ".next-*/**",
       "out/**",
       "build/**",
       "next-env.d.ts",

@@ -6,6 +6,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { StageTimeline } from "@/components/stage-timeline";
 import { Button } from "@/components/ui/button";
 import { getFoundation, getPathSummaries } from "@/lib/content";
+import { countResources } from "@/lib/stages";
 
 export const metadata: Metadata = {
   title: "Shared Foundation",
@@ -22,10 +23,7 @@ export default function FoundationPage() {
   const foundation = getFoundation();
   const paths = getPathSummaries();
 
-  const resourceCount = foundation.stages.reduce(
-    (total, stage) => total + stage.resources.length,
-    0,
-  );
+  const resourceCount = countResources(foundation.stages);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-20">
@@ -33,7 +31,7 @@ export default function FoundationPage() {
         <p className="text-sm font-medium text-violet-400">
           {foundation.subtitle}
         </p>
-        <h1 className="mt-3 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+        <h1 className="mt-3 text-balance text-4xl tracking-tight sm:text-5xl">
           {foundation.title}
         </h1>
         <p className="mt-5 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">

@@ -50,7 +50,7 @@ export function SiteFooter() {
           <nav aria-labelledby="footer-paths">
             <h2
               id="footer-paths"
-              className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+              className="font-semibold text-xs font-medium uppercase tracking-wide text-muted-foreground"
             >
               Paths
             </h2>
@@ -71,7 +71,7 @@ export function SiteFooter() {
           <nav aria-labelledby="footer-site">
             <h2
               id="footer-site"
-              className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+              className="font-semibold text-xs font-medium uppercase tracking-wide text-muted-foreground"
             >
               Site
             </h2>

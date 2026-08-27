@@ -25,6 +25,25 @@ export type Resource = {
 };
 
 /**
+ * One thing a stage teaches: the term, a plain-language explanation, and the
+ * links that go deeper on it.
+ *
+ * Resources live here rather than in a flat list on the stage, so a reader
+ * sees which links belong to which idea. The pairing comes from the topic and
+ * resource columns of the team lead's original sheet.
+ */
+export type Topic = {
+  term: string;
+  /**
+   * 2-4 sentences, written for a complete beginner.
+   * Empty string until the copy is written.
+   */
+  definition: string;
+  /** May be empty — not every topic has a link paired with it. */
+  resources: Resource[];
+};
+
+/**
  * The four rungs used for grouping and colour.
  *
  * The source doc also uses transitional labels ("Junior → Mid") and "Any" for
@@ -44,11 +63,20 @@ export type Stage = {
   level: Level;
   /** Verbatim from the source doc: "Junior", "Junior → Mid", "Senior+", "Any level". */
   levelLabel: string;
-  /** The "What to Cover" column from the v2 doc. */
+  /** The "What to Cover" column from the v2 doc. One line, for scanning. */
   description: string;
-  /** Topic names, merged from the v2 doc and the matching sheet tab. */
-  topics: string[];
-  /** Curated links first, then team-lead links. Empty only where flagged below. */
+  /**
+   * 2-4 sentences for a complete beginner: what this stage covers and why it
+   * matters. Empty string until the copy is written.
+   */
+  overview: string;
+  /** What the stage teaches, each with its own explanation and links. */
+  topics: Topic[];
+  /**
+   * Stage-level links only — the curated courses, certifications and video
+   * series that are recommendations for the whole stage rather than for one
+   * topic. Per-topic links live on `Topic.resources`.
+   */
   resources: Resource[];
   /**
    * True where the source sheet had no links and no external course covers the
@@ -57,8 +85,16 @@ export type Stage = {
    */
   needsOriginalContent?: boolean;
   kind?: StageKind;
-  /** Slugs of paths this stage is shared with, per the v2 doc. */
-  sharedWith?: string[];
+  /**
+   * Paths this stage is shared with, per the v2 doc.
+   *
+   * `stages` carries the reference into that path ("stages 1-2") where the
+   * source doc gave one. It lives here rather than in `description` because
+   * both were being rendered, producing two lines that said the same thing —
+   * "Shared with the AI Engineer path, stages 1-2." immediately followed by
+   * "Shared with AI Engineer." One field, one rendered line.
+   */
+  sharedWith?: { slug: string; stages?: string }[];
   note?: string;
 };
 

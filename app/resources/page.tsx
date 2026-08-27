@@ -56,7 +56,7 @@ export default function ResourcesPage() {
               {library.items.length} resources · {freeCount} fully free
             </p>
 
-            <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h1 className="text-balance text-4xl tracking-tight sm:text-5xl">
               Resource library
             </h1>
             <p className="mt-5 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">

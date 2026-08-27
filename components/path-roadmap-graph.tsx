@@ -7,6 +7,7 @@ import { WebGLBoundary, hasWebGL } from "@/components/three/webgl-boundary";
 import { LEVEL_STYLES, stageAnchorId } from "@/lib/levels";
 import { cn } from "@/lib/utils";
 import type { Path } from "@/lib/types";
+import { countStageResources } from "@/lib/stages";
 
 /**
  * Path overview graph.
@@ -66,8 +67,8 @@ function VerticalRoadmap({ path }: { path: Path }) {
                 {stage.title}
               </span>
               <span className="mt-0.5 block text-xs text-muted-foreground">
-                {stage.resources.length > 0
-                  ? `${stage.resources.length} resources`
+                {countStageResources(stage) > 0
+                  ? `${countStageResources(stage)} resources`
                   : stage.needsOriginalContent
                     ? "Original content to write"
                     : null}
@@ -113,7 +114,7 @@ export function PathRoadmapGraph({ path }: { path: Path }) {
       className="overflow-hidden rounded-2xl border border-border/60 bg-card/30"
     >
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 px-5 py-3">
-        <h2 className="text-sm font-medium">Roadmap overview</h2>
+        <h2 className="font-semibold text-sm font-medium">Roadmap overview</h2>
 
         {/* Legend doubles as the key for both the 3D and 2D versions. */}
         <ul className="flex flex-wrap gap-x-4 gap-y-1.5">

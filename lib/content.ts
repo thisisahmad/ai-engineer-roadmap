@@ -85,10 +85,16 @@ function assertStages(stages: Stage[], where: string) {
         `${where} stage "${stage.id}" has invalid level "${stage.level}".`,
       );
     }
+    // Links now live in two places: on the stage (whole-stage
+    // recommendations) and on each topic. Count both, or a stage whose links
+    // all nested down would look empty and fail the guard below.
+    const topicResources = stage.topics.flatMap((topic) => topic.resources);
+    const allResources = [...stage.resources, ...topicResources];
+
     // A stage with no links is only legitimate when it is flagged for original
     // content or is the shared architect stage — otherwise a link set was lost.
     if (
-      stage.resources.length === 0 &&
+      allResources.length === 0 &&
       !stage.needsOriginalContent &&
       stage.kind !== "architect"
     ) {
@@ -96,7 +102,28 @@ function assertStages(stages: Stage[], where: string) {
         `${where} stage "${stage.id}" has no resources and is not flagged needsOriginalContent.`,
       );
     }
-    for (const resource of stage.resources) {
+
+    for (const topic of stage.topics) {
+      if (!topic.term) {
+        throw new Error(`${where} stage "${stage.id}" has a topic with no term.`);
+      }
+      // `definition` and `overview` are allowed to be empty: the copy is
+      // written after the structure exists. They must still be strings, so a
+      // missing field fails here rather than rendering "undefined".
+      if (typeof topic.definition !== "string") {
+        throw new Error(
+          `${where} stage "${stage.id}" topic "${topic.term}" is missing a definition string.`,
+        );
+      }
+    }
+
+    if (typeof stage.overview !== "string") {
+      throw new Error(
+        `${where} stage "${stage.id}" is missing an overview string.`,
+      );
+    }
+
+    for (const resource of allResources) {
       if (!SOURCES.has(resource.source)) {
         throw new Error(
           `${where} stage "${stage.id}" has a resource with invalid source "${resource.source}".`,
@@ -128,6 +155,23 @@ function loadPaths(): Path[] {
 
     return { ...doc, stages: doc.stages.map(dedupeResources) };
   });
+
+  // A `sharedWith` slug that matches no path renders as the raw slug —
+  // "Shared with ai-enginer." — which reads as a typo to a visitor and is
+  // easy to miss in review. Cross-check once, here, where every path is known.
+  const known = new Set(docs.map((doc) => doc.slug));
+  for (const doc of docs) {
+    for (const stage of doc.stages) {
+      for (const ref of stage.sharedWith ?? []) {
+        if (!known.has(ref.slug)) {
+          throw new Error(
+            `content/paths/${doc.slug}.json stage "${stage.id}" is shared with ` +
+              `"${ref.slug}", which is not a path.`,
+          );
+        }
+      }
+    }
+  }
 
   pathCache = docs.sort((a, b) => a.order - b.order);
   return pathCache;

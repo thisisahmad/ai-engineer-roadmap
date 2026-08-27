@@ -9,6 +9,7 @@ import * as THREE from "three";
 import { LEVEL_RANK, LEVEL_STYLES, stageAnchorId } from "@/lib/levels";
 import { cn } from "@/lib/utils";
 import type { Stage } from "@/lib/types";
+import { countStageResources } from "@/lib/stages";
 
 /**
  * The per-path roadmap graph.
@@ -106,9 +107,9 @@ function NodeLabel({ node, active }: { node: Placed; active: boolean }) {
         >
           {node.stage.title}
         </p>
-        {node.stage.resources.length > 0 ? (
+        {countStageResources(node.stage) > 0 ? (
           <p className="mt-0.5 text-[9px] leading-none text-muted-foreground">
-            {node.stage.resources.length} resources
+            {countStageResources(node.stage)} resources
           </p>
         ) : node.stage.needsOriginalContent ? (
           <p className="mt-0.5 text-[9px] leading-none text-amber-400/80">
