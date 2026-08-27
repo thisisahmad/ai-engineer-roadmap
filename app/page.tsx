@@ -10,7 +10,10 @@ import {
   Target,
 } from "lucide-react";
 
-import { Reveal, Stagger, StaggerItem } from "@/components/motion/reveal";
+import { HeroHeadline } from "@/components/motion/hero-headline";
+import { ScrollReveal } from "@/components/motion/scroll-reveal";
+import { GridBackdrop } from "@/components/motion/grid-backdrop";
+import { StatCounter } from "@/components/motion/stat-counter";
 import { FaqSection } from "@/components/faq-section";
 import { PathCard } from "@/components/path-card";
 import { HeroVisual } from "@/components/three/hero-visual";
@@ -24,6 +27,7 @@ import {
   getProjects,
 } from "@/lib/content";
 import { cn } from "@/lib/utils";
+import { countResources, countStageResources } from "@/lib/stages";
 
 export const metadata: Metadata = {
   // The homepage was the one route inheriting layout defaults with no
@@ -59,16 +63,14 @@ export default function HomePage() {
   const totalStages =
     paths.reduce((n, p) => n + p.stages.length, 0) + foundation.stages.length;
   const totalResources =
-    paths.reduce(
-      (n, p) => n + p.stages.reduce((m, s) => m + s.resources.length, 0),
-      0,
-    ) + foundation.stages.reduce((m, s) => m + s.resources.length, 0);
+    paths.reduce((n, p) => n + countResources(p.stages), 0) +
+    countResources(foundation.stages);
 
   const heroStats = [
-    { value: `${paths.length}`, label: "career paths" },
-    { value: `${totalStages}`, label: "stages" },
-    { value: `${totalResources}`, label: "resources" },
-    { value: `${projects.items.length}`, label: "projects" },
+    { value: paths.length, label: "career paths" },
+    { value: totalStages, label: "stages" },
+    { value: totalResources, label: "resources" },
+    { value: projects.items.length, label: "projects" },
   ];
 
   return (
@@ -78,19 +80,17 @@ export default function HomePage() {
         <HeroVisual />
 
         <div className="mx-auto max-w-6xl px-4 pb-24 pt-24 sm:px-6 sm:pb-32 sm:pt-32 lg:pb-40 lg:pt-40">
-          <Reveal from="none" className="max-w-3xl">
+          <ScrollReveal className="max-w-3xl">
             <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-3.5 py-1.5 text-xs font-medium text-violet-300 backdrop-blur-sm">
               <Sparkles className="size-3.5" aria-hidden />
               Built from a working team&apos;s roadmap, not a listicle
             </p>
 
-            <h1 className="text-balance text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-              Seven routes into{" "}
-              <span className="bg-gradient-to-br from-violet-200 via-violet-400 to-amber-300 bg-clip-text text-transparent">
-                AI engineering
-              </span>
-              .
-            </h1>
+            <HeroHeadline
+              lead="Seven routes into"
+              accent="AI engineering"
+              className="text-balance text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
+            />
 
             <p className="mt-7 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground sm:text-xl">
               Pick the role you actually want. Every path breaks into ordered
@@ -114,33 +114,37 @@ export default function HomePage() {
             </div>
 
             <dl className="mt-14 grid max-w-lg grid-cols-4 gap-6">
-              {heroStats.map((stat) => (
-                <div key={stat.label}>
-                  <dt className="sr-only">{stat.label}</dt>
-                  <dd className="text-3xl font-semibold tabular-nums tracking-tight">
-                    {stat.value}
-                  </dd>
-                  <dd className="mt-0.5 text-xs text-muted-foreground">
-                    {stat.label}
-                  </dd>
-                </div>
+              {heroStats.map((stat, i) => (
+                <StatCounter
+                  key={stat.label}
+                  value={stat.value}
+                  label={stat.label}
+                  // Starts once the headline has finished resolving, so the
+                  // hero plays one animation at a time rather than three.
+                  delay={0.9 + i * 0.08}
+                  className="text-3xl font-semibold tabular-nums tracking-tight"
+                />
               ))}
             </dl>
-          </Reveal>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* --------------------------------------------------------- Paths */}
       <section
         id="paths"
-        className="relative mx-auto max-w-6xl scroll-mt-20 px-4 py-24 sm:px-6"
+        className="relative isolate scroll-mt-20 px-4 py-24 sm:px-6"
       >
-        <Reveal className="mb-12 max-w-2xl">
+        {/* Pure CSS lattice + bloom: crisp at any DPI, free on mobile. */}
+        <GridBackdrop pattern="dots" bloom="violet" />
+
+        <div className="mx-auto max-w-6xl">
+        <ScrollReveal className="mb-12 max-w-2xl">
           <p className="mb-3 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-violet-400">
             <Route className="size-3.5" aria-hidden />
             The paths
           </p>
-          <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+          <h2 className="font-display text-balance text-3xl tracking-tight sm:text-4xl">
             Choose where you are going.
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
@@ -148,29 +152,29 @@ export default function HomePage() {
             the same material, and each path says so where that is true. Open
             one for the full stage-by-stage breakdown.
           </p>
-        </Reveal>
+        </ScrollReveal>
 
-        <Stagger className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {paths.map((path) => {
             const { stages, ...summary } = path;
             return (
-              <StaggerItem key={path.slug}>
+              <ScrollReveal key={path.slug} className="h-full">
                 <PathCard
                   path={summary}
                   stageCount={stages.length}
                   resourceCount={stages.reduce(
-                    (n, s) => n + s.resources.length,
+                    (n, s) => n + countStageResources(s),
                     0,
                   )}
                   firstStages={stages.slice(0, 3).map((s) => s.title)}
                 />
-              </StaggerItem>
+              </ScrollReveal>
             );
           })}
 
           {/* Seventh slot in a 3-col grid — the foundation, which every path
               assumes, sits naturally at the end of the set. */}
-          <StaggerItem>
+          <ScrollReveal className="h-full">
             <Link
               href="/foundation/"
               className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-dashed border-border/70 bg-card/20 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/50 hover:bg-card/50"
@@ -193,8 +197,9 @@ export default function HomePage() {
                 />
               </span>
             </Link>
-          </StaggerItem>
-        </Stagger>
+          </ScrollReveal>
+        </div>
+        </div>
       </section>
 
       {/* ---------------------------------------------------- Comparison */}
@@ -203,21 +208,21 @@ export default function HomePage() {
         className="relative border-y border-border/60 bg-gradient-to-b from-muted/30 to-transparent"
       >
         <div className="mx-auto max-w-6xl scroll-mt-20 px-4 py-24 sm:px-6">
-          <Reveal className="mb-10 max-w-2xl">
+          <ScrollReveal className="mb-10 max-w-2xl">
             <p className="mb-3 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-cyan-400">
               <Target className="size-3.5" aria-hidden />
               Not sure which
             </p>
-            <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+            <h2 className="font-display text-balance text-3xl tracking-tight sm:text-4xl">
               What each role actually does.
             </h2>
             <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
               The titles are used loosely across the industry. This is the short
               version of the real difference.
             </p>
-          </Reveal>
+          </ScrollReveal>
 
-          <Reveal>
+          <ScrollReveal>
             {/* Scrolls inside its own container so the page body never scrolls
                 sideways on a phone. */}
             <div className="overflow-x-auto rounded-2xl border border-border/60 bg-card/30 backdrop-blur-sm">
@@ -288,27 +293,27 @@ export default function HomePage() {
                 </tbody>
               </table>
             </div>
-          </Reveal>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* ---------------------------------------------------- The ladder */}
       <section className="mx-auto max-w-6xl px-4 py-24 sm:px-6">
-        <Reveal className="mb-12 max-w-2xl">
+        <ScrollReveal className="mb-12 max-w-2xl">
           <p className="mb-3 text-xs font-medium uppercase tracking-widest text-rose-400">
             Progression
           </p>
-          <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+          <h2 className="font-display text-balance text-3xl tracking-tight sm:text-4xl">
             {ladder.title}
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
             {ladder.intro}
           </p>
-        </Reveal>
+        </ScrollReveal>
 
-        <Stagger className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
           {ladder.levels.map((level, i) => (
-            <StaggerItem key={level.id}>
+            <ScrollReveal key={level.id} className="h-full">
               <div className="group relative h-full overflow-hidden rounded-2xl border border-border/60 bg-card/40 p-5 transition-colors hover:border-rose-500/40 hover:bg-card/70">
                 {/* Rung index doubles as the visual progression cue. */}
                 <div
@@ -326,25 +331,25 @@ export default function HomePage() {
                   {level.focus}
                 </p>
               </div>
-            </StaggerItem>
+            </ScrollReveal>
           ))}
-        </Stagger>
+        </div>
 
-        <Reveal className="mt-8">
+        <ScrollReveal className="mt-8">
           <Button asChild variant="outline">
             <Link href="/career-ladder/">
               What changes at each level
               <ArrowRight className="size-4" aria-hidden />
             </Link>
           </Button>
-        </Reveal>
+        </ScrollReveal>
       </section>
 
       <FaqSection faq={faq} />
 
       {/* --------------------------------------------------------- Extras */}
       <section className="mx-auto max-w-6xl px-4 pb-28 sm:px-6">
-        <Stagger className="grid gap-5 sm:grid-cols-2">
+        <div className="grid gap-5 sm:grid-cols-2">
           {[
             {
               href: "/resources/",
@@ -363,7 +368,7 @@ export default function HomePage() {
               hover: "hover:border-amber-500/40",
             },
           ].map((item) => (
-            <StaggerItem key={item.href}>
+            <ScrollReveal key={item.href} className="h-full">
               <Link
                 href={item.href}
                 className={cn(
@@ -391,9 +396,9 @@ export default function HomePage() {
                   />
                 </span>
               </Link>
-            </StaggerItem>
+            </ScrollReveal>
           ))}
-        </Stagger>
+        </div>
       </section>
     </>
   );
