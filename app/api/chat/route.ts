@@ -36,7 +36,9 @@ const bodySchema = z.object({
     .array(
       z.object({
         role: z.enum(["user", "assistant"]),
-        content: z.string().min(1).max(MAX_CHARS_PER_MESSAGE),
+        // Blank is allowed through validation and filtered below; see the
+        // note there. Rejecting it here wedged whole conversations.
+        content: z.string().max(MAX_CHARS_PER_MESSAGE),
       }),
     )
     .min(1)
@@ -176,12 +178,32 @@ export async function POST(request: NextRequest) {
 
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Invalid request." },
+      {
+        error: "That message could not be sent. Try starting a new chat.",
+        offerQuiz: false,
+      },
       { status: 400 },
     );
   }
 
-  const { messages } = parsed.data;
+  /*
+   * Drop blank turns rather than rejecting the request.
+   *
+   * A client that sends one is not attacking anything — an assistant turn
+   * flattens to "" when the model returns only reasoning, or only a
+   * recommendation block. Rejecting the whole conversation for it meant one
+   * such turn wedged the chat permanently behind "Invalid request".
+   */
+  const messages = parsed.data.messages.filter(
+    (message) => message.content.trim().length > 0,
+  );
+
+  if (messages.length === 0) {
+    return NextResponse.json(
+      { error: "Send a message to get started.", offerQuiz: false },
+      { status: 400 },
+    );
+  }
 
   const totalChars = messages.reduce((n, m) => n + m.content.length, 0);
   if (totalChars > MAX_TOTAL_CHARS) {
@@ -217,7 +239,10 @@ export async function POST(request: NextRequest) {
         // Low, because the job is to route people to real content rather than
         // to write imaginatively. Creativity here shows up as invented courses.
         temperature: 0.3,
-        max_tokens: 700,
+        // Generous because gpt-oss bills its reasoning against this budget.
+        // Too low and the whole allowance is spent thinking, leaving no
+        // content at all — which is what produced blank replies.
+        max_tokens: 1200,
         messages: [{ role: "system", content: systemPrompt }, ...messages],
       }),
     });

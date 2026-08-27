@@ -118,6 +118,11 @@ export function useChat() {
       const controller = new AbortController();
       abortRef.current = controller;
 
+      // Tracked so the `finally` block can tell "finished with nothing" apart
+      // from "already failed and reported".
+      let produced = false;
+      let failed = false;
+
       try {
         // Trailing slash matters: `trailingSlash: true` would 308 this, and a
         // redirected POST silently loses its body.
@@ -126,10 +131,20 @@ export function useChat() {
           headers: { "Content-Type": "application/json" },
           signal: controller.signal,
           body: JSON.stringify({
-            messages: history.map((message) => ({
-              role: message.role,
-              content: messageText(message),
-            })),
+            // Empty turns are dropped rather than sent.
+            //
+            // An assistant turn flattens to "" in two real cases: the model
+            // spent its whole token budget on reasoning and emitted no
+            // content, or it replied with a recommendation block and no
+            // prose. Either one poisons the history — the server rejects a
+            // blank message, so every later send fails with "Invalid request"
+            // and the conversation is stuck until it is reset.
+            messages: history
+              .map((message) => ({
+                role: message.role,
+                content: messageText(message).trim(),
+              }))
+              .filter((message) => message.content.length > 0),
           }),
         });
 
@@ -173,6 +188,7 @@ export function useChat() {
             }
 
             if (event.type === "delta") {
+              produced = true;
               appendToLast((message) => {
                 const parts = [...message.parts];
                 const last = parts.at(-1);
@@ -189,6 +205,7 @@ export function useChat() {
                 return { ...message, parts };
               });
             } else if (event.type === "recommendation") {
+              produced = true;
               appendToLast((message) => ({
                 ...message,
                 parts: [
@@ -200,12 +217,14 @@ export function useChat() {
                 ],
               }));
             } else if (event.type === "error") {
+              failed = true;
               setError({ message: event.message, offerQuiz: event.offerQuiz });
             }
           }
         }
       } catch (cause) {
         if ((cause as Error)?.name === "AbortError") return;
+        failed = true;
         const failure = cause as Error & {
           offerQuiz?: boolean;
           friendly?: boolean;
@@ -230,6 +249,26 @@ export function useChat() {
       } finally {
         setStreaming(false);
         abortRef.current = null;
+
+        // A stream can finish cleanly having produced nothing the user can
+        // see — gpt-oss streams its reasoning in a separate field, and if that
+        // exhausts max_tokens no content ever arrives. Leaving the blank
+        // bubble in place is what corrupted the history, so drop it and say
+        // what happened.
+        setMessages((current) => {
+          const last = current.at(-1);
+          if (last?.role !== "assistant" || last.parts.length > 0) return current;
+          return current.slice(0, -1);
+        });
+
+        if (!produced && !failed) {
+          // Silence is not success. Say so rather than leaving someone
+          // staring at a conversation that appears to have ignored them.
+          setError({
+            message: "The advisor did not manage a reply. Try asking again.",
+            offerQuiz: false,
+          });
+        }
       }
     },
     [appendToLast, streaming],
