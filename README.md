@@ -234,8 +234,17 @@ Production environment. `.env.example` documents them.
 
 ### Setting up the database
 
+**Via the dashboard (no CLI, works on Windows):**
+
+1. Sign up at <https://app.turso.tech>
+2. Create a database
+3. From its page, copy the **URL** and **Create Token**
+
+**Via the CLI** — note this needs **WSL on Windows**, and `npm i -g turso`
+installs the SQL shell (`tursodb`), not the CLI:
+
 ```bash
-npm i -g turso
+curl -sSfL https://get.tur.so/install.sh | bash
 turso auth signup
 turso db create ai-roadmap
 
