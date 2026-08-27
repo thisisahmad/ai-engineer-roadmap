@@ -20,39 +20,356 @@
       "title": "LLM Fundamentals + RAG",
       "level": "junior",
       "levelLabel": "Junior",
-      "description": "Shared with the AI Engineer path, stages 1-2.",
+      "description": "Tokens, context windows, function calling, chunking and retrieval.",
+      "overview": "Agents are built out of ordinary model calls, so you need those to be reliable before adding a loop around them. This stage is the same ground the AI Engineer path covers first: what a model does, how to prompt it predictably, and how to feed it your own documents through retrieval. An agent built on shaky fundamentals fails in ways that are very hard to diagnose.",
+      "sharedWith": [
+        {
+          "slug": "ai-engineer",
+          "stages": "stages 1-2"
+        }
+      ],
       "topics": [
-        "What is an LLM?",
-        "Tokens",
-        "Context Window",
-        "System Prompt vs User Prompt",
-        "Clear Task Instruction",
-        "Role Prompting",
-        "Few-Shot Prompting",
-        "Output Formatting",
-        "Structured Outputs",
-        "Function / Tool Calling",
-        "Temperature & Output Control",
-        "Hallucinations",
-        "Prompt Chaining",
-        "Prompt Templates",
-        "Evaluating Prompt Quality",
-        "Embeddings",
-        "Why Embeddings Matter",
-        "Text Embedding Models",
-        "Similarity Search",
-        "Semantic Search",
-        "Vector Database",
-        "Vector Stores",
-        "Metadata Filtering",
-        "Document Chunking",
-        "Retrieval Pipeline",
-        "What is RAG?",
-        "Basic RAG Flow",
-        "RAG vs Fine-Tuning",
-        "Hybrid Retrieval",
-        "Retrieval Agents",
-        "RAG Evaluation"
+        {
+          "term": "What is an LLM?",
+          "definition": "A large language model is a program that predicts the next piece of text given the text before it. It has been trained on an enormous amount of writing, which makes those predictions useful for answering questions, summarising and writing code. It does not look anything up and it does not reason about truth; it produces the continuation its training makes most likely. Everything it does well and everything it gets wrong follows from that single behaviour.",
+          "resources": [
+            {
+              "label": "OpenAI Text Generation",
+              "url": "https://platform.openai.com/docs/guides/text",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Tokens",
+          "definition": "Models do not read characters or words, they read tokens — short chunks of text, roughly three to four characters each. A common word is usually one token, while a rare name might be four or five. This matters in practice because you are billed per token, context limits are counted in tokens, and response time scales with how many the model has to produce.",
+          "resources": [
+            {
+              "label": "OpenAI Prompt Guidance",
+              "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Context Window",
+          "definition": "The context window is the maximum number of tokens a model can consider at once, counting your input and its reply together. Anything outside it does not exist as far as the model is concerned. When a conversation or a document grows past that limit you have to summarise, truncate, or retrieve only the relevant parts — which is what the next stage is about.",
+          "resources": [
+            {
+              "label": "OpenAI Models Docs",
+              "url": "https://platform.openai.com/docs/models",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "System Prompt vs User Prompt",
+          "definition": "The system prompt holds standing instructions: what role the model is playing, what format to use, what it must refuse. The user prompt is the specific request. Keeping them apart means you can change the request without restating the rules every time, and models are trained to give system instructions more weight.",
+          "resources": [
+            {
+              "label": "OpenAI Prompt Guidance",
+              "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Clear Task Instruction",
+          "definition": "Models follow literal instructions far better than implied ones. State what output you want, in what format, and what to do at the edges, rather than trusting the model to infer it. A surprising share of “the model is bad at this” turns out to be a prompt that never said what “this” meant.",
+          "resources": [
+            {
+              "label": "Gemini Prompt Design",
+              "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Role Prompting",
+          "definition": "Telling the model to answer as a particular kind of expert shifts its vocabulary, level of detail and default assumptions. It is a cheap way to set register and depth for an audience. It does not give the model knowledge it lacks — it only changes how it draws on what it already has.",
+          "resources": [
+            {
+              "label": "Claude Prompt Engineering Overview",
+              "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Few-Shot Prompting",
+          "definition": "Rather than describing the output you want, show two or three worked examples in the prompt and let the model infer the pattern. For anything with a consistent shape — classification labels, a particular formatting style — this is usually more reliable than a written description. Choose examples that cover the awkward cases, not just the obvious ones.",
+          "resources": [
+            {
+              "label": "Claude Prompt Engineering Overview",
+              "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Output Formatting",
+          "definition": "Asking for a specific shape — a bullet list, a table, JSON — makes a response easier for both people and code to use. Be explicit about the exact headings or keys you expect rather than describing them loosely. Format instructions placed in the system prompt tend to hold up better across a long conversation.",
+          "resources": [
+            {
+              "label": "OpenAI Structured Outputs",
+              "url": "https://platform.openai.com/docs/guides/structured-outputs",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Structured Outputs",
+          "definition": "Structured outputs make the model return data conforming to a schema you supply, so you get valid JSON rather than JSON wrapped in an apology. The provider enforces the shape instead of you parsing and hoping. Use it any time the response feeds code rather than a person.",
+          "resources": [
+            {
+              "label": "OpenAI Structured Outputs",
+              "url": "https://platform.openai.com/docs/guides/structured-outputs",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Function / Tool Calling",
+          "definition": "Tool calling lets you describe functions the model may invoke — search a database, fetch a price, send an email. The model does not run them: it returns the name and arguments it wants, your code executes it, and you pass the result back. This is the mechanism that turns a text generator into something that can act, and stage 3 is built entirely on it.",
+          "resources": [
+            {
+              "label": "OpenAI Function Calling",
+              "url": "https://platform.openai.com/docs/guides/function-calling",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Temperature & Output Control",
+          "definition": "Temperature controls how much randomness goes into choosing each next token. Low values give consistent, repeatable text; higher values give more variety. For extraction, classification, or anything you intend to parse, keep it near zero — there is no setting that makes the model more correct, only less predictable.",
+          "resources": [
+            {
+              "label": "OpenAI Prompt Guidance",
+              "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Hallucinations",
+          "definition": "A hallucination is output that is stated confidently and is simply wrong — an invented citation, a function that does not exist. It happens because the model generates plausible continuations, and plausible is not the same as true. You reduce it by supplying the facts in the prompt, asking for sources, and verifying anything that matters; you do not eliminate it.",
+          "resources": [
+            {
+              "label": "Gemini Prompt Design",
+              "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Prompt Chaining",
+          "definition": "Instead of one prompt doing five things, break the work into steps and feed each result into the next. Every step becomes easier to test, cheaper to retry and far easier to debug when the output is wrong. It is the simplest version of the multi-step pattern you meet again with agents.",
+          "resources": [
+            {
+              "label": "Claude Prompt Engineering Overview",
+              "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Prompt Templates",
+          "definition": "A template is a prompt with typed slots — the user's question, the retrieved documents, today's date — filled in at runtime. Keeping templates in version control rather than scattered through the code means changes get reviewed and can be rolled back. Treat prompts as source code, because that is what they are.",
+          "resources": [
+            {
+              "label": "Gemini Prompt Design",
+              "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Evaluating Prompt Quality",
+          "definition": "Judging a prompt by trying it once is how bad prompts reach production. Keep a small set of representative inputs with known good answers and re-run them whenever you change the wording. This is a manual habit at this stage and becomes automated testing in stage 6.",
+          "resources": [
+            {
+              "label": "Gemini Prompt Design",
+              "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Embeddings",
+          "definition": "An embedding turns a piece of text into a list of numbers that represents its meaning. Texts about similar things end up with similar numbers even when they share no words at all. That property is what makes it possible to search by meaning rather than by matching characters.",
+          "resources": [
+            {
+              "label": "OpenAI Embeddings Guide",
+              "url": "https://platform.openai.com/docs/guides/embeddings",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Why Embeddings Matter",
+          "definition": "Keyword search fails whenever the user's words differ from the document's — “how do I cancel” against a page titled “ending your subscription”. Comparing embeddings compares meaning, so that match succeeds. This is what lets you retrieve the right passage without having anticipated the exact phrasing.",
+          "resources": [
+            {
+              "label": "OpenAI Embeddings Guide",
+              "url": "https://platform.openai.com/docs/guides/embeddings",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Text Embedding Models",
+          "definition": "Embeddings are produced by their own models, separate from the ones that generate text. Each produces vectors of a fixed size, and vectors from different models are not comparable with one another. Pick one deliberately, because changing it later means re-embedding everything you have stored.",
+          "resources": [
+            {
+              "label": "OpenAI Embeddings Guide",
+              "url": "https://platform.openai.com/docs/guides/embeddings",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Similarity Search",
+          "definition": "Once text is embedded, finding related content becomes arithmetic: which stored vectors sit closest to the query vector. Closeness is normally cosine similarity, which compares direction rather than distance. What comes back is a ranked list of candidates, not a single correct answer.",
+          "resources": [
+            {
+              "label": "Qdrant Vectors Docs",
+              "url": "https://qdrant.tech/documentation/concepts/vectors/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Semantic Search",
+          "definition": "Semantic search is the whole pipeline: embed the query, find the nearest stored vectors, return the original text. It is the retrieval half of RAG and a useful feature in its own right. Its quality depends far more on how you split the documents than on which embedding model you picked.",
+          "resources": [
+            {
+              "label": "OpenAI Retrieval Guide",
+              "url": "https://platform.openai.com/docs/guides/retrieval",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Vector Database",
+          "definition": "A vector database stores embeddings and finds the nearest ones quickly. Comparing against every vector is fine for a few thousand and hopeless for millions, so these use approximate indexes that trade a little accuracy for a large speed gain. Qdrant, Pinecone and pgvector inside Postgres are all common choices.",
+          "resources": [
+            {
+              "label": "Qdrant Overview",
+              "url": "https://qdrant.tech/documentation/overview/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Vector Stores",
+          "definition": "“Vector store” is the framework-level abstraction over whichever database you chose — the same add, search and delete calls whether the backend is Qdrant, Pinecone or a local file. Writing against it keeps your application from being welded to one vendor. Start with the simplest option that works and swap later if you need to.",
+          "resources": [
+            {
+              "label": "OpenAI Retrieval Guide",
+              "url": "https://platform.openai.com/docs/guides/retrieval",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Metadata Filtering",
+          "definition": "Alongside each vector you can store ordinary fields — author, date, customer id, document type — and restrict a search to matching records. This is how you stop one customer retrieving another's documents, and how you keep answers to current policy rather than last year's. Decide on these fields before you index, because adding them afterwards means re-indexing.",
+          "resources": [
+            {
+              "label": "Pinecone Vector Search",
+              "url": "https://docs.pinecone.io/guides/get-started/overview",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Document Chunking",
+          "definition": "Documents are too long to embed whole, so they get split into passages. Chunks that are too large dilute the meaning and waste context; chunks that are too small lose the surrounding sense. A few hundred tokens with a little overlap is a reasonable starting point, and tuning this improves retrieval more than almost anything else you can change.",
+          "resources": [
+            {
+              "label": "LangChain Retrieval Docs",
+              "url": "https://python.langchain.com/docs/concepts/retrieval/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Retrieval Pipeline",
+          "definition": "The retrieval pipeline is the full path from raw file to prompt-ready text: load, clean, chunk, embed, store, then at query time embed and search. Each stage quietly degrades the next — a poor PDF extraction produces poor chunks, which produce poor matches. Inspect the intermediate output, not only the final answer.",
+          "resources": [
+            {
+              "label": "LangChain Retrieval Docs",
+              "url": "https://python.langchain.com/docs/concepts/retrieval/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "What is RAG?",
+          "definition": "Retrieval-augmented generation means finding relevant text first and including it in the prompt, so the model answers from your documents rather than from memory. It addresses two problems at once: the model not knowing your data, and the model inventing answers when it does not. The model still writes the reply — you are controlling what it has to work from.",
+          "resources": [
+            {
+              "label": "LangChain RAG Tutorial",
+              "url": "https://python.langchain.com/docs/tutorials/rag/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Basic RAG Flow",
+          "definition": "The minimal loop is four steps: take the question, retrieve the top few matching chunks, put them in the prompt with an instruction to answer only from them, return the result. Everything more elaborate is a refinement of those four. Build this version first and measure it before adding anything on top.",
+          "resources": [
+            {
+              "label": "LangChain RAG Tutorial",
+              "url": "https://python.langchain.com/docs/tutorials/rag/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "RAG vs Fine-Tuning",
+          "definition": "RAG changes what the model knows; fine-tuning changes how it behaves. If the answer lives in documents that change, retrieve them. If you need a consistent tone, format or task-specific skill, fine-tune. Reaching for fine-tuning to teach facts is the common and expensive mistake.",
+          "resources": [
+            {
+              "label": "OpenAI Retrieval Guide",
+              "url": "https://platform.openai.com/docs/guides/retrieval",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Hybrid Retrieval",
+          "definition": "Semantic search misses exact strings — part numbers, error codes, surnames — because those carry little meaning to embed. Hybrid retrieval runs keyword search alongside vector search and merges the results. It is the usual fix when retrieval looks fine in testing and falls over on real queries containing identifiers.",
+          "resources": [
+            {
+              "label": "Qdrant Hybrid Queries",
+              "url": "https://qdrant.tech/documentation/concepts/hybrid-queries/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Retrieval Agents",
+          "definition": "Instead of retrieving once and answering, the model decides whether to search, judges whether the results are good enough, and searches again with a better query. This handles questions that need several lookups to answer. It costs more calls and more time, so use it where one-shot retrieval demonstrably falls short.",
+          "resources": [
+            {
+              "label": "LangGraph Agentic RAG Tutorial",
+              "url": "https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "RAG Evaluation",
+          "definition": "A RAG system can fail at retrieval or at generation, and the two have to be measured separately. Ask first whether the right passages were found, then whether the answer actually followed them. Without a fixed test set you are guessing, and changes that feel like improvements frequently are not.",
+          "resources": [
+            {
+              "label": "LangSmith RAG Evaluation Tutorial",
+              "url": "https://docs.smith.langchain.com/evaluation/tutorials/rag",
+              "source": "team-lead"
+            }
+          ]
+        }
       ],
       "resources": [
         {
@@ -71,93 +388,8 @@
           "source": "curated"
         },
         {
-          "label": "OpenAI Text Generation",
-          "url": "https://platform.openai.com/docs/guides/text",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Prompt Guidance",
-          "url": "https://platform.openai.com/docs/guides/prompt-engineering",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Models Docs",
-          "url": "https://platform.openai.com/docs/models",
-          "source": "team-lead"
-        },
-        {
-          "label": "Gemini Prompt Design",
-          "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
-          "source": "team-lead"
-        },
-        {
-          "label": "Claude Prompt Engineering Overview",
-          "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Structured Outputs",
-          "url": "https://platform.openai.com/docs/guides/structured-outputs",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Function Calling",
-          "url": "https://platform.openai.com/docs/guides/function-calling",
-          "source": "team-lead"
-        },
-        {
           "label": "Hands-On Large Language Models (GitHub)",
           "url": "https://github.com/HandsOnLLM/Hands-On-Large-Language-Models",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Embeddings Guide",
-          "url": "https://platform.openai.com/docs/guides/embeddings",
-          "source": "team-lead"
-        },
-        {
-          "label": "Qdrant Vectors Docs",
-          "url": "https://qdrant.tech/documentation/concepts/vectors/",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Retrieval Guide",
-          "url": "https://platform.openai.com/docs/guides/retrieval",
-          "source": "team-lead"
-        },
-        {
-          "label": "Qdrant Overview",
-          "url": "https://qdrant.tech/documentation/overview/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Pinecone Vector Search",
-          "url": "https://docs.pinecone.io/guides/get-started/overview",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangChain Retrieval Docs",
-          "url": "https://python.langchain.com/docs/concepts/retrieval/",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangChain RAG Tutorial",
-          "url": "https://python.langchain.com/docs/tutorials/rag/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Qdrant Hybrid Queries",
-          "url": "https://qdrant.tech/documentation/concepts/hybrid-queries/",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangGraph Agentic RAG Tutorial",
-          "url": "https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag/",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangSmith RAG Evaluation Tutorial",
-          "url": "https://docs.smith.langchain.com/evaluation/tutorials/rag",
           "source": "team-lead"
         },
         {
@@ -165,9 +397,6 @@
           "url": "https://www.youtube.com/watch?v=fZM3oX4xEyg&list=PLZoTAELRMXVM8Pf4U67L4UuDRgV4TNX9D",
           "source": "team-lead"
         }
-      ],
-      "sharedWith": [
-        "ai-engineer"
       ]
     },
     {
@@ -177,11 +406,28 @@
       "level": "junior",
       "levelLabel": "Junior → Mid",
       "description": "asyncio — agents wait on tool responses constantly.",
+      "overview": "An agent spends most of its life waiting — for a model, for an API, for a database. Written synchronously, that waiting is dead time and everything runs one step after another. This stage covers Python's asyncio, which lets a program wait on many things at once, and it is the difference between an agent that handles one user and one that handles hundreds.",
       "topics": [
-        "Coroutines and the event loop",
-        "Concurrent tool calls",
-        "Timeouts and cancellation",
-        "Backpressure and rate limiting"
+        {
+          "term": "Coroutines and the event loop",
+          "definition": "A coroutine is a function that can pause at an `await` and let other work run while it waits. The event loop is what schedules them, resuming each one as the thing it was waiting for completes. This is concurrency without threads: nothing runs in parallel, but nothing sits idle either, which is exactly right for work dominated by network calls.",
+          "resources": []
+        },
+        {
+          "term": "Concurrent tool calls",
+          "definition": "When an agent needs three independent lookups, running them one after another costs the sum of their times; running them together costs the slowest. `asyncio.gather` is the usual way to do that. The judgement is knowing which calls are genuinely independent — anything where one result feeds the next has to stay sequential.",
+          "resources": []
+        },
+        {
+          "term": "Timeouts and cancellation",
+          "definition": "Any call that crosses a network can hang, and without a timeout an agent will wait indefinitely. Set one on every external call, and make sure that cancelling a task actually stops the work rather than leaving it running unobserved. Agents amplify this: one stuck step blocks a loop that may be holding a user's request open.",
+          "resources": []
+        },
+        {
+          "term": "Backpressure and rate limiting",
+          "definition": "Concurrency makes it easy to send more requests than a provider will accept, which returns errors instead of results. Backpressure means limiting how much work is in flight — a semaphore around your calls — rather than launching everything and retrying the failures. This becomes essential the moment several agents run at once.",
+          "resources": []
+        }
       ],
       "resources": [
         {
@@ -198,23 +444,189 @@
       "level": "mid",
       "levelLabel": "Mid",
       "description": "State, memory, guardrails, LangGraph, MCP.",
+      "overview": "This is the core of the path: how an agent holds state between steps, remembers across sessions, is constrained by guardrails, and is built on a framework rather than from scratch. LangGraph and the OpenAI Agents SDK are the two worth knowing properly. Frameworks matter here more than elsewhere, because the loop, the state and the recovery are genuinely hard to get right yourself.",
       "topics": [
-        "What is an AI Agent?",
-        "Agent Workflow",
-        "Tool / Function Calling",
-        "Tool Design",
-        "Agent State",
-        "Memory in Agents",
-        "Human-in-the-Loop",
-        "Guardrails",
-        "Orchestration & Handoffs",
-        "Multi-Agent Systems",
-        "OpenAI Agents SDK",
-        "LangChain Agents",
-        "LangGraph",
-        "Persistence & Checkpoints",
-        "MCP Basics",
-        "Agent Evaluation & Tracing"
+        {
+          "term": "What is an AI Agent?",
+          "definition": "An agent is a model in a loop with tools: it takes a goal, decides on an action, sees the result, and decides again until the goal is met or it gives up. The model supplies the decisions and your code supplies the tools and the stopping conditions. What separates it from a plain prompt is that the number of steps is not fixed in advance.",
+          "resources": [
+            {
+              "label": "OpenAI Agents SDK",
+              "url": "https://openai.github.io/openai-agents-python/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Agent Workflow",
+          "definition": "A typical run goes: read the goal, choose a tool, your code executes it, the result is appended to the conversation, the model chooses again. The loop ends when the model returns a final answer or hits a limit you imposed. Always impose one — without a cap, a confused agent will keep calling tools and spending money.",
+          "resources": [
+            {
+              "label": "Running Agents",
+              "url": "https://openai.github.io/openai-agents-python/running_agents/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Tool / Function Calling",
+          "definition": "You met this in stage 1 as a way to get structured actions out of a model; here it is the mechanism the entire loop runs on. You supply a name, a description and a parameter schema for each tool, and the model returns which one to call with what arguments. The description does most of the work, because that is what the model chooses from.",
+          "resources": [
+            {
+              "label": "OpenAI Function Calling",
+              "url": "https://platform.openai.com/docs/guides/function-calling",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Tool Design",
+          "definition": "Tools work best when they are few, clearly named and hard to misuse. Prefer one tool with an obvious purpose over three with overlapping ones, validate arguments before acting, and return errors as readable text the model can recover from. Most agent misbehaviour is a tool design problem rather than a model problem.",
+          "resources": [
+            {
+              "label": "Define Agents",
+              "url": "https://openai.github.io/openai-agents-python/agents/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Agent State",
+          "definition": "State is what an agent knows right now: the goal, the steps taken, the results so far. It has to be explicit and serialisable, because a run may be paused, resumed, or recovered after a crash. Keeping state in local variables is what makes an agent impossible to run anywhere but one process.",
+          "resources": [
+            {
+              "label": "LangGraph Persistence",
+              "url": "https://langchain-ai.github.io/langgraph/concepts/persistence/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Memory in Agents",
+          "definition": "Memory is what persists beyond a single run — earlier conversations, learned preferences, accumulated facts. It is distinct from state, which is scoped to the current task. The hard part is retrieval rather than storage: deciding what is worth recalling now, since you cannot put everything in the context window.",
+          "resources": [
+            {
+              "label": "LangGraph Memory",
+              "url": "https://langchain-ai.github.io/langgraph/concepts/memory/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Human-in-the-Loop",
+          "definition": "Human-in-the-loop means the agent pauses and waits for a person before continuing. That requires the run to be suspendable and resumable, which is a design decision rather than something added later. Put it in front of anything expensive, irreversible, or visible to someone outside your organisation.",
+          "resources": [
+            {
+              "label": "Guardrails and Human Review",
+              "url": "https://openai.github.io/openai-agents-python/guardrails/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Guardrails",
+          "definition": "Guardrails are the checks around the model: what it may call, what it must never output, what requires a human to approve. They belong in your code rather than the prompt, because a prompt is a request and a guardrail is a rule. Anything expensive, destructive or irreversible belongs behind one.",
+          "resources": [
+            {
+              "label": "OpenAI Guardrails",
+              "url": "https://platform.openai.com/docs/guides/guardrails",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Orchestration & Handoffs",
+          "definition": "Orchestration is deciding which agent or step runs next. A handoff passes control, plus the relevant context, from one agent to another — a triage agent to a specialist, for instance. The recurring difficulty is what context travels with the handoff: too little and the next agent repeats work, too much and you pay for it every step.",
+          "resources": [
+            {
+              "label": "OpenAI Orchestration and Handoffs",
+              "url": "https://openai.github.io/openai-agents-python/handoffs/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Multi-Agent Systems",
+          "definition": "A multi-agent system splits work across several agents with distinct roles and tools, rather than giving one agent everything. The benefit is focus: fewer tools per agent means better tool selection. The cost is coordination, and a single agent with well-designed tools beats a badly coordinated committee more often than people expect.",
+          "resources": [
+            {
+              "label": "OpenAI Orchestration and Handoffs",
+              "url": "https://openai.github.io/openai-agents-python/handoffs/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "OpenAI Agents SDK",
+          "definition": "OpenAI's framework for building agents, covering the loop, tool definitions, handoffs and guardrails. It is deliberately small and close to the underlying API, which makes it quick to learn and easy to read. Worth knowing alongside LangGraph because the two make opposite trade-offs between simplicity and control.",
+          "resources": [
+            {
+              "label": "OpenAI Agents SDK",
+              "url": "https://openai.github.io/openai-agents-python/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "LangChain Agents",
+          "definition": "LangChain was the first widely used framework here and still carries the largest set of integrations. Its agent abstractions have been through several redesigns, so check which version any tutorial you find is written against. For new work, most teams now use LangGraph for the loop and LangChain for the connectors.",
+          "resources": [
+            {
+              "label": "LangChain Overview",
+              "url": "https://python.langchain.com/docs/introduction/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "LangGraph",
+          "definition": "LangGraph models an agent as an explicit graph of nodes and edges rather than an implicit loop, so the control flow is something you define and can inspect. That makes branching, cycles and stopping conditions visible instead of emergent. It is the tool of choice when an agent is complicated enough that you need to see its shape.",
+          "resources": [
+            {
+              "label": "LangGraph Overview",
+              "url": "https://langchain-ai.github.io/langgraph/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Persistence & Checkpoints",
+          "definition": "Checkpointing saves agent state after each step, so a run can survive a crash, a deploy, or a pause for human approval. Without it, any interruption means starting over and paying for every step again. It is also what makes a long-running agent possible at all, since nothing guarantees one process stays alive for an hour.",
+          "resources": [
+            {
+              "label": "LangGraph Persistence",
+              "url": "https://langchain-ai.github.io/langgraph/concepts/persistence/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "MCP Basics",
+          "definition": "The Model Context Protocol is an open standard for exposing tools and data to models, so a capability written once works with any client that speaks it. Instead of wiring every integration into every application, you run an MCP server and connect to it. Its value grows with the number of tools and applications you maintain.",
+          "resources": [
+            {
+              "label": "MCP Introduction",
+              "url": "https://modelcontextprotocol.io/introduction",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Agent Evaluation & Tracing",
+          "definition": "Evaluating an agent means judging the path as well as the destination — the right answer reached by six wasteful steps is still a problem. Tracing records every step, tool call and model response so that path can be examined afterwards. Instrument it from the first day, because an agent failure you did not record is close to undebuggable.",
+          "resources": [
+            {
+              "label": "LangSmith Evaluation",
+              "url": "https://docs.smith.langchain.com/evaluation",
+              "source": "team-lead"
+            },
+            {
+              "label": "LangSmith Observability",
+              "url": "https://docs.smith.langchain.com/observability",
+              "source": "team-lead"
+            }
+          ]
+        }
       ],
       "resources": [
         {
@@ -231,76 +643,6 @@
           "label": "Anthropic Academy — MCP course",
           "url": "https://www.anthropic.com/learn",
           "source": "curated"
-        },
-        {
-          "label": "OpenAI Agents SDK",
-          "url": "https://openai.github.io/openai-agents-python/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Running Agents",
-          "url": "https://openai.github.io/openai-agents-python/running_agents/",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Function Calling",
-          "url": "https://platform.openai.com/docs/guides/function-calling",
-          "source": "team-lead"
-        },
-        {
-          "label": "Define Agents",
-          "url": "https://openai.github.io/openai-agents-python/agents/",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangGraph Persistence",
-          "url": "https://langchain-ai.github.io/langgraph/concepts/persistence/",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangGraph Memory",
-          "url": "https://langchain-ai.github.io/langgraph/concepts/memory/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Guardrails and Human Review",
-          "url": "https://openai.github.io/openai-agents-python/guardrails/",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Guardrails",
-          "url": "https://platform.openai.com/docs/guides/guardrails",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Orchestration and Handoffs",
-          "url": "https://openai.github.io/openai-agents-python/handoffs/",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangChain Overview",
-          "url": "https://python.langchain.com/docs/introduction/",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangGraph Overview",
-          "url": "https://langchain-ai.github.io/langgraph/",
-          "source": "team-lead"
-        },
-        {
-          "label": "MCP Introduction",
-          "url": "https://modelcontextprotocol.io/introduction",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangSmith Evaluation",
-          "url": "https://docs.smith.langchain.com/evaluation",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangSmith Observability",
-          "url": "https://docs.smith.langchain.com/observability",
-          "source": "team-lead"
         },
         {
           "label": "MCP (video series)",
@@ -326,30 +668,53 @@
       "level": "mid",
       "levelLabel": "Mid",
       "description": "Self-correcting retrieval, query rewriting.",
+      "overview": "Ordinary retrieval searches once and answers. Agentic retrieval lets the model judge whether what came back is good enough, rewrite the query, and search again. This handles the questions that need several lookups to answer properly, at the cost of more calls and more latency — a trade worth making deliberately rather than by default.",
       "topics": [
-        "Retrieval Agents",
-        "Query rewriting",
-        "Self-correcting retrieval loops",
-        "Hybrid Retrieval",
-        "RAG Evaluation"
-      ],
-      "resources": [
         {
-          "label": "LangGraph Agentic RAG Tutorial",
-          "url": "https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag/",
-          "source": "curated"
+          "term": "Retrieval Agents",
+          "definition": "Instead of retrieving once and answering, the model decides whether to search, judges whether the results are good enough, and searches again with a better query. This handles questions that need several lookups to answer. It costs more calls and more time, so use it where one-shot retrieval demonstrably falls short.",
+          "resources": [
+            {
+              "label": "LangGraph Agentic RAG Tutorial",
+              "url": "https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag/",
+              "source": "curated"
+            }
+          ]
         },
         {
-          "label": "Qdrant Hybrid Queries",
-          "url": "https://qdrant.tech/documentation/concepts/hybrid-queries/",
-          "source": "team-lead"
+          "term": "Query rewriting",
+          "definition": "A user's question is often a poor search query — too short, full of pronouns, or assuming earlier conversation. Query rewriting has the model turn it into something retrievable first, resolving references and adding the terms a document would actually contain. It is one of the cheapest reliable improvements to retrieval quality.",
+          "resources": []
         },
         {
-          "label": "LangSmith RAG Evaluation Tutorial",
-          "url": "https://docs.smith.langchain.com/evaluation/tutorials/rag",
-          "source": "team-lead"
+          "term": "Self-correcting retrieval loops",
+          "definition": "Rather than trusting the first set of results, the agent grades them for relevance and searches again if they fall short. That may mean rewriting the query, widening the search, or concluding that the answer is not in the corpus at all. Cap the number of attempts, or a question with no answer will loop until something stops it.",
+          "resources": []
+        },
+        {
+          "term": "Hybrid Retrieval",
+          "definition": "Semantic search misses exact strings — part numbers, error codes, surnames — because those carry little meaning to embed. Hybrid retrieval runs keyword search alongside vector search and merges the results. It is the usual fix when retrieval looks fine in testing and falls over on real queries containing identifiers.",
+          "resources": [
+            {
+              "label": "Qdrant Hybrid Queries",
+              "url": "https://qdrant.tech/documentation/concepts/hybrid-queries/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "RAG Evaluation",
+          "definition": "A RAG system can fail at retrieval or at generation, and the two have to be measured separately. Ask first whether the right passages were found, then whether the answer actually followed them. Without a fixed test set you are guessing, and changes that feel like improvements frequently are not.",
+          "resources": [
+            {
+              "label": "LangSmith RAG Evaluation Tutorial",
+              "url": "https://docs.smith.langchain.com/evaluation/tutorials/rag",
+              "source": "team-lead"
+            }
+          ]
         }
-      ]
+      ],
+      "resources": []
     },
     {
       "id": "multi-agent-orchestration-at-scale",
@@ -358,21 +723,62 @@
       "level": "senior",
       "levelLabel": "Senior",
       "description": "Agent handshake and comms, queue systems, microservice vs monolith, KV cache optimization.",
-      "topics": [
-        "Transformers internals",
-        "Generative modeling paradigm",
-        "KV cache optimization in transformers",
-        "Agent memory",
-        "Agent orchestration scalability (thousands of users)",
-        "Agent orchestration design patterns",
-        "Scalable microservice architecture",
-        "Monolith design",
-        "Agent handshake mechanism (intra-agent communication)",
-        "Queue systems"
-      ],
-      "resources": [],
+      "overview": "This is the stage that separates people who have built an agent demo from people who have run agents in production. Everything here appears once you have real concurrent users: memory that cannot be held in context, orchestration that has to survive restarts, and cost that scales with steps rather than requests. The topic definitions below are a starting point — this section is meant to carry your own production experience, which is what no external course covers.",
       "needsOriginalContent": true,
-      "note": "Flagged for original content. These topics had zero links in the team lead's sheet and no external course covers them well — write this section from production experience rather than linking out. This is the strongest differentiator on the site."
+      "note": "Flagged for original content. These topics had zero links in the team lead's sheet and no external course covers them well — write this section from production experience rather than linking out. This is the strongest differentiator on the site.",
+      "topics": [
+        {
+          "term": "Transformers internals",
+          "definition": "The transformer is the architecture behind essentially every current language model. Its central mechanism is attention: when producing each token, the model weighs every previous token by how relevant it is. Knowing this is what makes the cost and latency behaviour in the rest of this stage make sense rather than seem arbitrary.",
+          "resources": []
+        },
+        {
+          "term": "Generative modeling paradigm",
+          "definition": "Generative models produce new output rather than choosing among fixed options, which is what makes them flexible and what makes them unpredictable. There is no correct answer to check against, only output that is more or less acceptable. Every hard problem in this stage — evaluation, guardrails, cost — traces back to that single property.",
+          "resources": []
+        },
+        {
+          "term": "KV cache optimization in transformers",
+          "definition": "Generating each token requires the model's internal representation of every previous token, and recomputing that each time would be enormously wasteful, so it is cached. That cache grows with conversation length and is held in GPU memory, which makes it the main constraint on how many conversations one machine can serve. Managing it — reuse, eviction, sharing a common prefix — is where most of the achievable saving in agent serving is found.",
+          "resources": []
+        },
+        {
+          "term": "Agent memory",
+          "definition": "At scale, memory stops being a feature and becomes a storage problem: what is written, what is retrieved, what is forgotten, and who can see it. Everything cannot go in the context window, so memory becomes a retrieval system with its own relevance and privacy questions. Multi-tenant systems make this sharper, because leaking one user's memory into another's context is a serious failure.",
+          "resources": []
+        },
+        {
+          "term": "Agent orchestration scalability (thousands of users)",
+          "definition": "One agent for one user is straightforward; thousands of concurrent agents, each mid-run and holding state, is a different system. Runs must be resumable, state must live outside the process, and provider rate limits become a shared resource to allocate. This is the point at which agent work becomes distributed systems work.",
+          "resources": []
+        },
+        {
+          "term": "Agent orchestration design patterns",
+          "definition": "Recurring shapes: a supervisor delegating to specialists, a pipeline where each stage refines the last, a router choosing one path, and parallel workers whose results get merged. Each has different failure and cost characteristics. Choosing deliberately, rather than letting a shape emerge, is most of what makes a multi-agent system maintainable.",
+          "resources": []
+        },
+        {
+          "term": "Scalable microservice architecture",
+          "definition": "Splitting agent capabilities into separate services lets them scale, fail and deploy independently — the tool that calls a slow API need not hold up everything else. The price is network calls between components, distributed tracing, and considerably more operational surface. It earns its place when parts of the system have genuinely different scaling needs.",
+          "resources": []
+        },
+        {
+          "term": "Monolith design",
+          "definition": "A single well-structured service is easier to build, deploy, trace and reason about, and it is the right starting point for almost every agent system. The usual mistake is splitting into services before knowing where the real boundaries are, which produces a distributed system with a monolith's coupling. Split when a specific pressure demands it, not in anticipation.",
+          "resources": []
+        },
+        {
+          "term": "Agent handshake mechanism (intra-agent communication)",
+          "definition": "When one agent passes work to another, both need agreement on what is being asked, what context travels with it, and what a completed reply looks like. Left implicit, this is where multi-agent systems quietly break: the receiving agent lacks something it needed and improvises. Treating it as a defined contract, versioned like any other interface, is what keeps it reliable.",
+          "resources": []
+        },
+        {
+          "term": "Queue systems",
+          "definition": "A queue puts requests in durable storage and lets workers take them when capacity allows, rather than doing everything inside the original request. For agents this is close to essential: runs take minutes, must survive a deploy, and need retrying without duplicating side effects. It also gives you a natural place to enforce concurrency limits and priority.",
+          "resources": []
+        }
+      ],
+      "resources": []
     },
     {
       "id": "graph-theory-basics",
@@ -381,11 +787,28 @@
       "level": "mid",
       "levelLabel": "Mid",
       "description": "Agents operate in loops and networks, not linear chains.",
+      "overview": "Agents do not run in straight lines. They loop, branch, revisit earlier steps and hand off to one another, which is a graph rather than a sequence. This stage covers just enough graph vocabulary to reason about that clearly, and to explain why termination has to be designed in rather than assumed.",
       "topics": [
-        "Nodes, edges and directed graphs",
-        "Cycles and termination",
-        "Traversal and shortest paths",
-        "Why agent graphs are not DAGs"
+        {
+          "term": "Nodes, edges and directed graphs",
+          "definition": "A graph is nodes connected by edges; in a directed graph those edges have a direction. An agent is naturally a directed graph — each step is a node, each possible next step an edge. Once you see it that way, framework documentation that talks about nodes and edges stops being metaphorical.",
+          "resources": []
+        },
+        {
+          "term": "Cycles and termination",
+          "definition": "A cycle is a path that returns to a node it already visited, which for an agent means retrying or reconsidering. Cycles are what make agents useful and also what make them capable of running forever. Every cycle needs an explicit exit: a step limit, a budget, or a condition that must eventually be met.",
+          "resources": []
+        },
+        {
+          "term": "Traversal and shortest paths",
+          "definition": "Traversal is the order in which you visit nodes — breadth-first explores every option one level at a time, depth-first follows one line to its end. That maps directly onto whether an agent tries several approaches shallowly or commits to one. Shortest-path thinking is a useful frame for asking whether a task really needs the number of steps it is taking.",
+          "resources": []
+        },
+        {
+          "term": "Why agent graphs are not DAGs",
+          "definition": "A DAG — a directed acyclic graph — has no cycles, which is what makes ordinary data pipelines predictable and easy to schedule. Agent graphs deliberately contain cycles, because reconsidering is the point. That single difference is why agent orchestration needs different tooling from pipeline orchestration, and why termination has to be designed rather than assumed.",
+          "resources": []
+        }
       ],
       "resources": [
         {
@@ -402,28 +825,51 @@
       "level": "senior",
       "levelLabel": "Senior",
       "description": "Approval flows, safety checks.",
+      "overview": "An autonomous system doing something expensive or irreversible needs a person in the way. This stage covers where to place approval gates, how to validate output before acting on it, and how to contain a failure so one bad step does not cascade. This is the work that makes agents acceptable to a business rather than merely impressive.",
       "topics": [
-        "Human-in-the-Loop",
-        "Guardrails",
-        "Approval gates and escalation",
-        "Output validation",
-        "Failure containment"
+        {
+          "term": "Human-in-the-Loop",
+          "definition": "Human-in-the-loop means the agent pauses and waits for a person before continuing. That requires the run to be suspendable and resumable, which is a design decision rather than something added later. Put it in front of anything expensive, irreversible, or visible to someone outside your organisation.",
+          "resources": [
+            {
+              "label": "Guardrails and Human Review",
+              "url": "https://openai.github.io/openai-agents-python/guardrails/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Guardrails",
+          "definition": "Guardrails are the checks around the model: what it may call, what it must never output, what requires a human to approve. They belong in your code rather than the prompt, because a prompt is a request and a guardrail is a rule. Anything expensive, destructive or irreversible belongs behind one.",
+          "resources": [
+            {
+              "label": "OpenAI Guardrails",
+              "url": "https://platform.openai.com/docs/guides/guardrails",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Approval gates and escalation",
+          "definition": "An approval gate pauses a run until a person confirms a specific action; escalation is what happens when nobody responds or the agent is out of its depth. Both need the run to be suspendable, and both need a defined timeout behaviour — waiting forever is its own failure. Decide in advance who approves what, and what happens when they do not.",
+          "resources": []
+        },
+        {
+          "term": "Output validation",
+          "definition": "Before acting on model output, check it: does it match the schema, are the values in range, does the referenced record exist. This is ordinary input validation, applied to a source that is confident and occasionally wrong. It belongs in code rather than in the prompt, because a prompt is a request and validation is a rule.",
+          "resources": []
+        },
+        {
+          "term": "Failure containment",
+          "definition": "In a multi-step system one bad step should not take down the run, and one bad run should not take down the service. That means bounded retries, circuit breakers around failing dependencies, and defined fallback behaviour when a step cannot complete. Decide too what a partially completed run leaves behind, because that is what someone will have to clean up.",
+          "resources": []
+        }
       ],
       "resources": [
         {
           "label": "OpenAI Guardrails Docs",
           "url": "https://platform.openai.com/docs/guides/guardrails",
           "source": "curated"
-        },
-        {
-          "label": "Guardrails and Human Review",
-          "url": "https://openai.github.io/openai-agents-python/guardrails/",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Guardrails",
-          "url": "https://platform.openai.com/docs/guides/guardrails",
-          "source": "team-lead"
         }
       ]
     },
@@ -434,27 +880,45 @@
       "level": "senior",
       "levelLabel": "Senior",
       "description": "Tool-call inspection, failure analysis.",
+      "overview": "When an agent gets something wrong, the final answer rarely tells you where it went wrong — the mistake was usually several steps earlier. This stage covers recording the full trajectory, scoring individual steps rather than only outcomes, and classifying failures so you can tell which kind is getting worse. Without it you are tuning prompts on anecdote.",
       "topics": [
-        "Agent Evaluation & Tracing",
-        "Tool-call inspection",
-        "Trajectory and step-level scoring",
-        "Failure taxonomies"
+        {
+          "term": "Agent Evaluation & Tracing",
+          "definition": "Evaluating an agent means judging the path as well as the destination — the right answer reached by six wasteful steps is still a problem. Tracing records every step, tool call and model response so that path can be examined afterwards. Instrument it from the first day, because an agent failure you did not record is close to undebuggable.",
+          "resources": [
+            {
+              "label": "LangSmith Evaluation",
+              "url": "https://docs.smith.langchain.com/evaluation",
+              "source": "team-lead"
+            },
+            {
+              "label": "LangSmith Observability",
+              "url": "https://docs.smith.langchain.com/observability",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Tool-call inspection",
+          "definition": "Most agent failures are tool failures: the wrong tool chosen, malformed arguments, or a result the model then misread. Inspecting each call — what was chosen, with what arguments, what came back — is how you tell which. This is usually the fastest route from a bad outcome to a specific cause.",
+          "resources": []
+        },
+        {
+          "term": "Trajectory and step-level scoring",
+          "definition": "A trajectory is the full sequence of steps a run took. Scoring it means asking not only whether the answer was right but whether the path was sensible: necessary steps, no loops, no wasted calls. An agent that reaches the right answer expensively is a problem that outcome-only scoring will never show you.",
+          "resources": []
+        },
+        {
+          "term": "Failure taxonomies",
+          "definition": "Group failures into named categories — wrong tool, bad arguments, retrieval miss, hallucinated result, timeout, loop — and count them over time. Aggregate accuracy tells you something is wrong; a taxonomy tells you what to fix first. It also makes it obvious when a change traded one failure mode for another rather than removing it.",
+          "resources": []
+        }
       ],
       "resources": [
         {
           "label": "LangSmith Docs",
           "url": "https://docs.smith.langchain.com/",
           "source": "curated"
-        },
-        {
-          "label": "LangSmith Evaluation",
-          "url": "https://docs.smith.langchain.com/evaluation",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangSmith Observability",
-          "url": "https://docs.smith.langchain.com/observability",
-          "source": "team-lead"
         },
         {
           "label": "MLflow LLM & Agent Evaluation",
@@ -470,6 +934,9 @@
       "level": "mid",
       "levelLabel": "Any level",
       "description": "Vendor or framework credential.",
+      "overview": "A certification will not get you hired on its own, but it supplies a syllabus and a deadline if self-directed study has stalled. Both credentials here are free and framework-focused, which suits a path where the frameworks move quickly. Take one whenever it is useful rather than treating it as a gate.",
+      "kind": "certification",
+      "note": "Certification checkpoints are not tied to a level — take one whenever it is useful. `level` is set to mid only so the stage groups sensibly in the UI.",
       "topics": [],
       "resources": [
         {
@@ -484,9 +951,7 @@
           "source": "curated",
           "note": "Free, ~20 courses with completion certificates."
         }
-      ],
-      "kind": "certification",
-      "note": "Certification checkpoints are not tied to a level — take one whenever it is useful. `level` is set to mid only so the stage groups sensibly in the UI."
+      ]
     },
     {
       "id": "senior-to-architect",
@@ -495,16 +960,37 @@
       "level": "architect",
       "levelLabel": "Senior+",
       "description": "Multi-agent system architecture at scale.",
-      "topics": [
-        "Model and provider selection across the whole system",
-        "Scaling strategy and cost ceilings",
-        "Governance, risk and reliability ownership",
-        "Design docs and decision records over code",
-        "Tying AI investment to business value"
-      ],
-      "resources": [],
+      "overview": "Multi-agent systems fail in ways single services do not: partially, expensively, and often silently. At this level the questions are what the system is permitted to do unsupervised, what it costs at full load, and who answers for a decision it made at three in the morning. The output shifts from code to design documents and the reasoning behind them.",
       "kind": "architect",
-      "note": "One architect track sits above all seven paths — the job becomes system-level judgement rather than language or framework specifics. See the career ladder."
+      "note": "One architect track sits above all seven paths — the job becomes system-level judgement rather than language or framework specifics. See the career ladder.",
+      "topics": [
+        {
+          "term": "Model and provider selection across the whole system",
+          "definition": "Different parts of a system justify different models, and the choice turns on cost, latency, data residency, licensing and how much you want to depend on one vendor. Making it once for the organisation, with the reasoning written down, saves every team re-litigating it. It also means you can move when the market shifts, which it does.",
+          "resources": []
+        },
+        {
+          "term": "Scaling strategy and cost ceilings",
+          "definition": "Deciding in advance what the system must handle and what it is allowed to cost turns architecture into a set of constraints rather than a matter of taste. Cost per request multiplied by projected volume is the number that decides whether a design is viable at all. Set the ceiling before building, because retrofitting one means redesigning.",
+          "resources": []
+        },
+        {
+          "term": "Governance, risk and reliability ownership",
+          "definition": "Somebody has to own what happens when the system is confidently wrong, leaks data, or simply stops. That means defined approval paths, audit trails, retention rules, and a named owner for each. It is unglamorous, and it is what allows AI systems to be used for anything that matters.",
+          "resources": []
+        },
+        {
+          "term": "Design docs and decision records over code",
+          "definition": "At this level the durable output is a written argument: the problem, the options considered, the choice, and why. A decision record tells whoever arrives in two years why the system is shaped this way, which is the difference between maintaining it and rewriting it. Writing clearly becomes a core technical skill rather than a soft one.",
+          "resources": []
+        },
+        {
+          "term": "Tying AI investment to business value",
+          "definition": "Every system needs an answer to what it is worth — time saved, revenue enabled, risk reduced — measured against what it costs to run. Without that, AI spend is a line item that gets cut in the first difficult quarter. Being able to make the argument is what makes this a business role as much as a technical one.",
+          "resources": []
+        }
+      ],
+      "resources": []
     }
   ],
   "note": "Flagship path — the deepest coverage on the site, and the one where stage 5 is original production content rather than curated links."

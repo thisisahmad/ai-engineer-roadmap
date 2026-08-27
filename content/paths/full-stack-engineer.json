@@ -20,12 +20,33 @@
       "level": "junior",
       "levelLabel": "Junior",
       "description": "HTML, CSS, JS, DOM, responsive design.",
+      "overview": "The frontend is everything the user actually sees and touches. This stage covers the three technologies every browser runs — HTML for structure, CSS for appearance, JavaScript for behaviour — and how a page responds to being resized or interacted with. Frameworks come next, and they are far easier to learn once you know what they are doing on your behalf.",
       "topics": [
-        "HTML structure",
-        "CSS layout and responsive design",
-        "JavaScript fundamentals",
-        "The DOM and events",
-        "Browser DevTools"
+        {
+          "term": "HTML structure",
+          "definition": "HTML describes what the content of a page is — a heading, a list, a form, a button — rather than how it looks. Using the element that matches the meaning is what makes a page work with screen readers, keyboards and search engines. A page built from unlabelled containers looks identical and is far worse in every way that is not visual.",
+          "resources": []
+        },
+        {
+          "term": "CSS layout and responsive design",
+          "definition": "CSS controls presentation, and its two layout systems, flexbox and grid, handle almost every arrangement you will need. Responsive design means the same page working on a phone and a wide monitor, usually by letting content reflow rather than designing separate versions. Start from the small screen, because widening a simple layout is easier than shrinking a complicated one.",
+          "resources": []
+        },
+        {
+          "term": "JavaScript fundamentals",
+          "definition": "JavaScript is the language browsers run, and it is what makes a page do anything after it loads. Beyond the basics you share with Python, the parts that matter here are that code is often asynchronous — waiting on a network response — and that functions are values you pass around. Promises and async/await are worth understanding properly before touching a framework.",
+          "resources": []
+        },
+        {
+          "term": "The DOM and events",
+          "definition": "The DOM is the browser's live representation of the page, which JavaScript can read and change. Events are how the page tells your code that something happened — a click, a keypress, a form submission. Frameworks hide most of this, and knowing it is underneath is what lets you debug them when they misbehave.",
+          "resources": []
+        },
+        {
+          "term": "Browser DevTools",
+          "definition": "Every browser ships with tools to inspect the page structure, read console output, and watch each network request with its headers and response. This is where frontend problems get diagnosed rather than guessed at. Learning the elements and network panels early will save you more time than almost anything else in this stage.",
+          "resources": []
+        }
       ],
       "resources": [
         {
@@ -52,11 +73,28 @@
       "level": "junior",
       "levelLabel": "Junior",
       "description": "React or similar, component design.",
+      "overview": "Building a large interface out of raw DOM manipulation becomes unmanageable quickly. A framework such as React lets you describe the interface as components that re-render when their data changes, rather than updating the page by hand. This stage is about thinking in components, which is the shift that makes complex interfaces tractable.",
       "topics": [
-        "Components and props",
-        "State and effects",
-        "Client-side routing",
-        "Component composition patterns"
+        {
+          "term": "Components and props",
+          "definition": "A component is a reusable piece of interface that takes inputs, called props, and returns what should be rendered. Building from components means writing a button or a card once and using it everywhere. Props flow downwards only, which is a constraint that makes it possible to reason about where data came from.",
+          "resources": []
+        },
+        {
+          "term": "State and effects",
+          "definition": "State is data that changes over time and causes the interface to re-render when it does. Effects are for things that reach outside the component — fetching data, subscribing, setting a timer — and they need to clean up after themselves. Most framework bugs come from state being kept in the wrong place, or an effect running more often than intended.",
+          "resources": []
+        },
+        {
+          "term": "Client-side routing",
+          "definition": "Routing maps a URL to a view without the browser reloading the whole page, which keeps navigation instant. It also means you are now responsible for things the browser used to handle: the back button, deep links, and what happens on an unknown URL. Every route should be shareable as a link.",
+          "resources": []
+        },
+        {
+          "term": "Component composition patterns",
+          "definition": "Composition is building complex interfaces by nesting simple components rather than adding options to one large one. Passing components as children, keeping shared logic in custom hooks, and lifting state only as high as it needs to go are the recurring patterns. A component that has grown ten props is usually several components that have not been separated yet.",
+          "resources": []
+        }
       ],
       "resources": [
         {
@@ -73,52 +111,107 @@
       "level": "junior",
       "levelLabel": "Junior → Mid",
       "description": "Node.js/Python backend, REST APIs.",
+      "overview": "The backend is the part users never see: it holds the logic, talks to the database, and decides who is allowed to do what. This stage covers building an HTTP API that your frontend can call. The language matters less than the concepts, which transfer between Node and Python almost unchanged.",
       "topics": [
-        "What is an API?",
-        "REST API Basics",
-        "API Endpoint",
-        "Request & Response",
-        "Path Parameters",
-        "Query Parameters",
-        "Backend Framework Basics",
-        "API Documentation",
-        "OpenAPI / Swagger"
+        {
+          "term": "What is an API?",
+          "definition": "An API is a defined way for one program to use another's capabilities without knowing how they work inside. When you call a model provider you are using theirs; when you build a backend you are offering your own. It is essentially a contract: given this request, expect this response.",
+          "resources": [
+            {
+              "label": "OpenAPI Introduction",
+              "url": "https://www.openapis.org/what-is-openapi",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "REST API Basics",
+          "definition": "REST is the usual convention for HTTP APIs: resources have URLs, and HTTP methods say what to do with them. It is a set of conventions rather than a strict standard, which is why implementations differ in the details. Following it makes your API predictable to anyone who has used another.",
+          "resources": []
+        },
+        {
+          "term": "API Endpoint",
+          "definition": "An endpoint is one URL your API responds to, usually paired with a method — `GET /users` and `POST /users` are different endpoints on the same path. Each has its own inputs, outputs and rules. Designing an API is largely the work of deciding what the endpoints should be.",
+          "resources": [
+            {
+              "label": "FastAPI Path Parameters",
+              "url": "https://fastapi.tiangolo.com/tutorial/path-params/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Request & Response",
+          "definition": "The request is what the client sends: a method, a path, headers, and often a JSON body. The response is what comes back: a status code, headers, and usually JSON. Being able to inspect both is how an API problem gets debugged in minutes rather than hours.",
+          "resources": [
+            {
+              "label": "FastAPI Request Body",
+              "url": "https://fastapi.tiangolo.com/tutorial/body/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Path Parameters",
+          "definition": "Path parameters are values embedded in the URL itself, as in `/users/42`, and they identify which resource you mean. Because they are part of the address they are always required. Use them for identity, not for options.",
+          "resources": [
+            {
+              "label": "FastAPI Path Parameters",
+              "url": "https://fastapi.tiangolo.com/tutorial/path-params/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Query Parameters",
+          "definition": "Query parameters follow a `?` in the URL and usually modify a request rather than identify a resource — filtering, sorting, paging. They are optional by nature and need sensible defaults. Never put anything secret in one; they end up in server logs and browser history.",
+          "resources": [
+            {
+              "label": "FastAPI Query Parameters",
+              "url": "https://fastapi.tiangolo.com/tutorial/query-params/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Backend Framework Basics",
+          "definition": "A framework such as FastAPI or Express handles the repetitive parts of serving HTTP — routing, parsing, validation, documentation — so that you write the logic. Learning one well transfers to the others, because the concepts are shared. FastAPI appears throughout this site because it is Python and validates input by default.",
+          "resources": [
+            {
+              "label": "FastAPI Tutorial",
+              "url": "https://fastapi.tiangolo.com/tutorial/",
+              "source": "curated"
+            }
+          ]
+        },
+        {
+          "term": "API Documentation",
+          "definition": "Documentation is what makes an API usable by anyone who did not write it, including you in six months. It should state each endpoint, its inputs, its outputs and its errors. Generated documentation stays accurate as the code changes; handwritten documentation drifts almost immediately.",
+          "resources": [
+            {
+              "label": "OpenAPI Specification",
+              "url": "https://spec.openapis.org/oas/latest.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "OpenAPI / Swagger",
+          "definition": "OpenAPI is a standard format for describing an HTTP API in a machine-readable way. From that description you get interactive documentation, generated client libraries and request validation without extra work. FastAPI produces it automatically from your code, which is much of why it is recommended here.",
+          "resources": [
+            {
+              "label": "OpenAPI Specification",
+              "url": "https://spec.openapis.org/oas/latest.html",
+              "source": "team-lead"
+            }
+          ]
+        }
       ],
       "resources": [
         {
           "label": "Node.js Docs",
           "url": "https://nodejs.org/en/docs/",
           "source": "curated"
-        },
-        {
-          "label": "FastAPI Tutorial",
-          "url": "https://fastapi.tiangolo.com/tutorial/",
-          "source": "curated"
-        },
-        {
-          "label": "OpenAPI Introduction",
-          "url": "https://www.openapis.org/what-is-openapi",
-          "source": "team-lead"
-        },
-        {
-          "label": "FastAPI Path Parameters",
-          "url": "https://fastapi.tiangolo.com/tutorial/path-params/",
-          "source": "team-lead"
-        },
-        {
-          "label": "FastAPI Query Parameters",
-          "url": "https://fastapi.tiangolo.com/tutorial/query-params/",
-          "source": "team-lead"
-        },
-        {
-          "label": "FastAPI Request Body",
-          "url": "https://fastapi.tiangolo.com/tutorial/body/",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAPI Specification",
-          "url": "https://spec.openapis.org/oas/latest.html",
-          "source": "team-lead"
         }
       ]
     },
@@ -129,39 +222,80 @@
       "level": "mid",
       "levelLabel": "Mid",
       "description": "SQL plus one NoSQL option.",
+      "overview": "Data has to live somewhere that survives a restart and can be searched efficiently. This stage covers relational databases and SQL, which is what most applications use, plus one document database for the cases where a rigid schema gets in the way. Knowing when each is appropriate is more valuable than deep expertise in either.",
       "topics": [
-        "What is a Database?",
-        "Relational Database Basics",
-        "SQL Basics",
-        "CRUD Operations",
-        "SELECT, INSERT, UPDATE, DELETE",
-        "Database Connection from Backend"
+        {
+          "term": "What is a Database?",
+          "definition": "A database stores data so that it survives your program restarting, and lets you query it efficiently. Files are fine until you need to search, update safely, or have several things writing at once. Almost every application you build will have one behind it.",
+          "resources": [
+            {
+              "label": "PostgreSQL Tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial.html",
+              "source": "curated"
+            }
+          ]
+        },
+        {
+          "term": "Relational Database Basics",
+          "definition": "A relational database stores data in tables of rows and columns, with relationships between tables expressed through shared keys. That structure is enforced, which prevents entire categories of inconsistent data. PostgreSQL is the usual default and will handle nearly anything you need.",
+          "resources": [
+            {
+              "label": "PostgreSQL Tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial.html",
+              "source": "curated"
+            }
+          ]
+        },
+        {
+          "term": "SQL Basics",
+          "definition": "SQL is the language for querying relational databases, and it is declarative: you describe the result you want rather than how to fetch it. `SELECT`, `WHERE`, `JOIN` and `GROUP BY` cover most day-to-day work. Learn it directly rather than only through a library that generates it for you.",
+          "resources": [
+            {
+              "label": "PostgreSQL SQL Tutorial",
+              "url": "https://www.postgresql.org/docs/current/sql.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "CRUD Operations",
+          "definition": "Create, read, update and delete are the four things you do to stored data, and they map onto both SQL statements and HTTP methods. Nearly every backend feature is some combination of them. Recognising that pattern makes an unfamiliar codebase much faster to read.",
+          "resources": [
+            {
+              "label": "PostgreSQL Tutorial",
+              "url": "https://www.postgresql.org/docs/current/tutorial.html",
+              "source": "curated"
+            }
+          ]
+        },
+        {
+          "term": "SELECT, INSERT, UPDATE, DELETE",
+          "definition": "These are the four SQL statements behind CRUD. The dangerous detail is that `UPDATE` and `DELETE` without a `WHERE` clause apply to every row in the table. Test the `WHERE` with a `SELECT` first, and take a backup before running either by hand against real data.",
+          "resources": [
+            {
+              "label": "PostgreSQL SELECT",
+              "url": "https://www.postgresql.org/docs/current/sql-select.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Database Connection from Backend",
+          "definition": "Your backend connects using a driver and a connection string containing host, port, database, user and password. Opening a connection is expensive, so applications keep a pool of them open and reuse them. Keep that string in an environment variable, never in the code.",
+          "resources": [
+            {
+              "label": "PostgreSQL Getting Started",
+              "url": "https://www.postgresql.org/docs/current/tutorial-start.html",
+              "source": "team-lead"
+            }
+          ]
+        }
       ],
       "resources": [
-        {
-          "label": "PostgreSQL Tutorial",
-          "url": "https://www.postgresql.org/docs/current/tutorial.html",
-          "source": "curated"
-        },
         {
           "label": "MongoDB University",
           "url": "https://learn.mongodb.com/",
           "source": "curated"
-        },
-        {
-          "label": "PostgreSQL SQL Tutorial",
-          "url": "https://www.postgresql.org/docs/current/sql.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "PostgreSQL SELECT",
-          "url": "https://www.postgresql.org/docs/current/sql-select.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "PostgreSQL Getting Started",
-          "url": "https://www.postgresql.org/docs/current/tutorial-start.html",
-          "source": "team-lead"
         },
         {
           "label": "DBeaver Docs",
@@ -182,51 +316,87 @@
       "level": "mid",
       "levelLabel": "Mid",
       "description": "Sessions/JWT, CI/CD, Docker.",
+      "overview": "Two things separate a project from a product: knowing who your users are, and being able to ship. This stage covers sessions and tokens, the security basics that protect an API, and the pipeline that gets your code onto a server without a manual checklist. It is the point at which what you build becomes something other people can use.",
       "topics": [
-        "API Authentication",
-        "API Authorization",
-        "API Security Basics",
-        "CI/CD Basics",
-        "Secrets in Deployment",
-        "Docker Basics",
-        "Dockerfile"
+        {
+          "term": "API Authentication",
+          "definition": "Authentication answers who you are, usually with an API key, a token or a session. Every AI provider requires it, which is why you were issued a key. Send credentials in headers rather than in the URL, and never commit them to a repository.",
+          "resources": [
+            {
+              "label": "OWASP Authentication Cheat Sheet",
+              "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "API Authorization",
+          "definition": "Authorization answers what you are allowed to do, which is a separate question from who you are. A logged-in user is not automatically permitted to read another user's records. Check permissions on the server for every request — hiding a button in the interface is not a control.",
+          "resources": [
+            {
+              "label": "OWASP Authorization Cheat Sheet",
+              "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "API Security Basics",
+          "definition": "The essentials are: HTTPS everywhere, authenticate every endpoint that is not deliberately public, validate all input, rate limit, and never return internal error details to a caller. Most breaches exploit a missing basic rather than anything sophisticated. The OWASP list is the standard checklist and is worth reading through once properly.",
+          "resources": [
+            {
+              "label": "OWASP API Security Project",
+              "url": "https://owasp.org/www-project-api-security/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "CI/CD Basics",
+          "definition": "Continuous integration runs your tests on every push; continuous deployment ships whatever passes. Together they remove the manual steps people skip when they are in a hurry. Even a pipeline that only runs a linter and a build is worth setting up on the first day.",
+          "resources": [
+            {
+              "label": "GitHub Actions Docs",
+              "url": "https://docs.github.com/en/actions",
+              "source": "curated"
+            }
+          ]
+        },
+        {
+          "term": "Secrets in Deployment",
+          "definition": "API keys belong in environment variables or a secrets manager, never in the repository. Rotate them on a schedule, use a different key per environment, and make certain they cannot end up in logs. A leaked provider key is billed to you until somebody notices.",
+          "resources": [
+            {
+              "label": "GitHub Actions Secrets",
+              "url": "https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Docker Basics",
+          "definition": "Docker packages your application together with its dependencies into an image that runs identically anywhere. It removes the entire class of failure where code works on your machine but not on the server. For AI work, where Python and native library versions are unusually brittle, this matters more than it does for most software.",
+          "resources": [
+            {
+              "label": "Docker Get Started",
+              "url": "https://docs.docker.com/get-started/",
+              "source": "curated"
+            }
+          ]
+        },
+        {
+          "term": "Dockerfile",
+          "definition": "A Dockerfile is the recipe for an image: the base, the dependencies, your code, and the command that starts it. Order the steps so the parts that rarely change come first, because Docker caches by layer and rebuilds everything after the first thing that changed. Never bake secrets into it.",
+          "resources": [
+            {
+              "label": "Dockerfile Overview",
+              "url": "https://docs.docker.com/reference/dockerfile/",
+              "source": "team-lead"
+            }
+          ]
+        }
       ],
       "resources": [
-        {
-          "label": "Docker Get Started",
-          "url": "https://docs.docker.com/get-started/",
-          "source": "curated"
-        },
-        {
-          "label": "GitHub Actions Docs",
-          "url": "https://docs.github.com/en/actions",
-          "source": "curated"
-        },
-        {
-          "label": "OWASP Authentication Cheat Sheet",
-          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "OWASP Authorization Cheat Sheet",
-          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "OWASP API Security Project",
-          "url": "https://owasp.org/www-project-api-security/",
-          "source": "team-lead"
-        },
-        {
-          "label": "GitHub Actions Secrets",
-          "url": "https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions",
-          "source": "team-lead"
-        },
-        {
-          "label": "Dockerfile Overview",
-          "url": "https://docs.docker.com/reference/dockerfile/",
-          "source": "team-lead"
-        },
         {
           "label": "Docker Compose Docs",
           "url": "https://docs.docker.com/compose/",
@@ -241,28 +411,51 @@
       "level": "mid",
       "levelLabel": "Mid → Senior",
       "description": "Caching, load balancing, scaling.",
+      "overview": "Once an application has real traffic, the questions change from “does it work” to “does it still work at ten times this”. This stage covers the standard answers: cache what is expensive to compute, spread load across more than one machine, and know which of those to reach for first. These are the concepts interviews probe and production eventually demands.",
       "topics": [
-        "Caching strategies",
-        "Load balancing",
-        "Horizontal vs vertical scaling",
-        "Workers & Scaling",
-        "Kubernetes Basics"
+        {
+          "term": "Caching strategies",
+          "definition": "Caching stores the result of expensive work so the next request can skip it, and it is the cheapest large performance gain available. The difficulty is never storing things — it is deciding when a cached copy has become wrong, and how long stale data is acceptable. Decide expiry deliberately for each thing you cache rather than picking one number globally.",
+          "resources": []
+        },
+        {
+          "term": "Load balancing",
+          "definition": "A load balancer sits in front of several identical servers and distributes requests between them. It is what lets you handle more traffic than one machine can, and it removes any single server as a point of failure. It also forces your application to be stateless, because consecutive requests from one user may land on different machines.",
+          "resources": []
+        },
+        {
+          "term": "Horizontal vs vertical scaling",
+          "definition": "Vertical scaling means a bigger machine — simple, immediate, and eventually capped by the largest one available. Horizontal scaling means more machines behind a load balancer, which has no ceiling but requires the application to be built for it. Start vertical because it is simpler, and design so that going horizontal later does not mean a rewrite.",
+          "resources": []
+        },
+        {
+          "term": "Workers & Scaling",
+          "definition": "One process handles one request at a time unless you run several workers. You scale up with more workers on a machine and out with more machines behind a load balancer. Calls to a language model are mostly spent waiting on the network, so concurrency helps far more here than raw processing power.",
+          "resources": [
+            {
+              "label": "FastAPI Server Workers",
+              "url": "https://fastapi.tiangolo.com/deployment/server-workers/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Kubernetes Basics",
+          "definition": "Kubernetes runs containers across a fleet of machines, restarting and rescheduling them as needed. It solves real problems at scale and adds substantial complexity underneath you. Understand what it does and why teams adopt it, but do not reach for it until something simpler has actually stopped being enough.",
+          "resources": [
+            {
+              "label": "Kubernetes Overview",
+              "url": "https://kubernetes.io/docs/concepts/overview/",
+              "source": "team-lead"
+            }
+          ]
+        }
       ],
       "resources": [
         {
           "label": "System Design Primer (GitHub)",
           "url": "https://github.com/donnemartin/system-design-primer",
           "source": "curated"
-        },
-        {
-          "label": "FastAPI Server Workers",
-          "url": "https://fastapi.tiangolo.com/deployment/server-workers/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Kubernetes Overview",
-          "url": "https://kubernetes.io/docs/concepts/overview/",
-          "source": "team-lead"
         }
       ]
     },
@@ -273,6 +466,9 @@
       "level": "mid",
       "levelLabel": "Any level",
       "description": "Vendor credential.",
+      "overview": "A certification will not get you hired on its own, but it supplies a syllabus and a deadline when self-directed study has stalled. The credential here covers frontend development at roughly the level of stages 1 and 2. Treat it as a checkpoint available at any time rather than a gate you have to clear.",
+      "kind": "certification",
+      "note": "Certification checkpoints are not tied to a level — take one whenever it is useful. `level` is set to mid only so the stage groups sensibly in the UI.",
       "topics": [],
       "resources": [
         {
@@ -281,9 +477,7 @@
           "source": "curated",
           "note": "Audit free; certificate is paid."
         }
-      ],
-      "kind": "certification",
-      "note": "Certification checkpoints are not tied to a level — take one whenever it is useful. `level` is set to mid only so the stage groups sensibly in the UI."
+      ]
     },
     {
       "id": "senior-to-architect",
@@ -292,16 +486,37 @@
       "level": "architect",
       "levelLabel": "Senior+",
       "description": "Full-stack system architecture — or branch into Full Stack AI Engineer.",
-      "topics": [
-        "Model and provider selection across the whole system",
-        "Scaling strategy and cost ceilings",
-        "Governance, risk and reliability ownership",
-        "Design docs and decision records over code",
-        "Tying AI investment to business value"
-      ],
-      "resources": [],
+      "overview": "At this level the work becomes deciding how a system should be shaped and defending that decision — what to build, what to buy, what it costs to run, who owns it when it breaks. This is also a genuine branch point: the same seniority applied to AI features is the Full Stack AI Engineer path, which assumes everything you have just learned. Either way the output shifts from code to design documents.",
       "kind": "architect",
-      "note": "One architect track sits above all seven paths — the job becomes system-level judgement rather than language or framework specifics. See the career ladder."
+      "note": "One architect track sits above all seven paths — the job becomes system-level judgement rather than language or framework specifics. See the career ladder.",
+      "topics": [
+        {
+          "term": "Model and provider selection across the whole system",
+          "definition": "Different parts of a system justify different models, and the choice turns on cost, latency, data residency, licensing and how much you want to depend on one vendor. Making it once for the organisation, with the reasoning written down, saves every team re-litigating it. It also means you can move when the market shifts, which it does.",
+          "resources": []
+        },
+        {
+          "term": "Scaling strategy and cost ceilings",
+          "definition": "Deciding in advance what the system must handle and what it is allowed to cost turns architecture into a set of constraints rather than a matter of taste. Cost per request multiplied by projected volume is the number that decides whether a design is viable at all. Set the ceiling before building, because retrofitting one means redesigning.",
+          "resources": []
+        },
+        {
+          "term": "Governance, risk and reliability ownership",
+          "definition": "Somebody has to own what happens when the system is confidently wrong, leaks data, or simply stops. That means defined approval paths, audit trails, retention rules, and a named owner for each. It is unglamorous, and it is what allows AI systems to be used for anything that matters.",
+          "resources": []
+        },
+        {
+          "term": "Design docs and decision records over code",
+          "definition": "At this level the durable output is a written argument: the problem, the options considered, the choice, and why. A decision record tells whoever arrives in two years why the system is shaped this way, which is the difference between maintaining it and rewriting it. Writing clearly becomes a core technical skill rather than a soft one.",
+          "resources": []
+        },
+        {
+          "term": "Tying AI investment to business value",
+          "definition": "Every system needs an answer to what it is worth — time saved, revenue enabled, risk reduced — measured against what it costs to run. Without that, AI spend is a line item that gets cut in the first difficult quarter. Being able to make the argument is what makes this a business role as much as a technical one.",
+          "resources": []
+        }
+      ],
+      "resources": []
     }
   ],
   "note": "The architect stage here can also be a branch point: complete this path, then move to Full Stack AI Engineer rather than continuing up."

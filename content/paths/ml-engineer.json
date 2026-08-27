@@ -20,11 +20,28 @@
       "level": "junior",
       "levelLabel": "Junior",
       "description": "Linear algebra, probability, calculus basics.",
+      "overview": "This is the path where you train models rather than call them, and training is applied mathematics. You do not need to derive proofs, but you do need to read a formula, know what a gradient is, and understand what a probability distribution describes. Skipping this makes everything later a matter of copying code you cannot debug.",
       "topics": [
-        "Vectors, matrices and matrix calculus",
-        "Probability distributions",
-        "Derivatives and gradients",
-        "Descriptive and inferential statistics"
+        {
+          "term": "Vectors, matrices and matrix calculus",
+          "definition": "A vector is an ordered list of numbers and a matrix is a grid of them; nearly all data in machine learning is represented as one or the other. Training is mostly matrix multiplication repeated at enormous scale, which is why GPUs matter. You need to be comfortable reading these operations rather than able to perform them by hand.",
+          "resources": []
+        },
+        {
+          "term": "Probability distributions",
+          "definition": "A distribution describes how likely each possible value is — where results cluster and how far they spread. Models output distributions far more often than single answers, and a classifier reporting 90% confidence is reporting one. Knowing what normal, uniform and long-tailed distributions look like tells you when your data is behaving oddly.",
+          "resources": []
+        },
+        {
+          "term": "Derivatives and gradients",
+          "definition": "A derivative measures how much an output changes when you nudge an input. A gradient is that measurement across every parameter at once, pointing in the direction that increases error fastest. Training is repeatedly stepping the opposite way, which is why this idea sits underneath every model you will train.",
+          "resources": []
+        },
+        {
+          "term": "Descriptive and inferential statistics",
+          "definition": "Descriptive statistics summarise the data you have — averages, spread, correlations. Inferential statistics tell you how much of that pattern is likely to hold on data you have not seen. The second is what stops you shipping a model whose apparent accuracy was an artefact of a small or unrepresentative sample.",
+          "resources": []
+        }
       ],
       "resources": [
         {
@@ -46,24 +63,195 @@
       "level": "junior",
       "levelLabel": "Junior",
       "description": "NumPy, Pandas, supervised/unsupervised.",
+      "overview": "Classical machine learning — the techniques that predict a number or a category from tabular data — is still the majority of what production ML actually does. This stage covers handling data in Python and the core supervised and unsupervised methods. It also teaches the habits that keep results honest, which matter more here than any particular algorithm.",
       "topics": [
-        "NumPy Basics",
-        "Pandas Basics",
-        "Data Cleaning",
-        "Features and Labels",
-        "Supervised Learning",
-        "Unsupervised Learning",
-        "Classification",
-        "Regression",
-        "Train / Test Split",
-        "Validation & Cross-Validation",
-        "Data Preprocessing",
-        "Feature Engineering",
-        "Overfitting vs Underfitting",
-        "Evaluation Metrics",
-        "Accuracy, Precision, Recall, F1",
-        "Confusion Matrix",
-        "ML Pipelines"
+        {
+          "term": "NumPy Basics",
+          "definition": "NumPy provides the array type that essentially every Python data and ML library is built on. Its value is that operations run over whole arrays at once in compiled code, rather than element by element in a Python loop, which is often a hundred times faster. Learn array creation, indexing, slicing and broadcasting.",
+          "resources": [
+            {
+              "label": "NumPy Quickstart",
+              "url": "https://numpy.org/doc/stable/user/quickstart.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Pandas Basics",
+          "definition": "Pandas provides the DataFrame — a table with named columns and typed values — and the operations for filtering, grouping, joining and aggregating it. It is where most of the day-to-day work happens, because most of ML is preparing data rather than training on it. If you know SQL, most of the concepts transfer directly.",
+          "resources": [
+            {
+              "label": "10 Minutes to Pandas",
+              "url": "https://pandas.pydata.org/docs/user_guide/10min.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Data Cleaning",
+          "definition": "Real datasets have missing values, duplicates, inconsistent formats and impossible entries. Every one of those has to be decided on — dropped, filled, corrected — before training, because models cannot tell a placeholder from a real number. Expect this to take considerably longer than modelling, and to matter more.",
+          "resources": [
+            {
+              "label": "Pandas Missing Data",
+              "url": "https://pandas.pydata.org/docs/user_guide/missing_data.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Features and Labels",
+          "definition": "Features are the inputs a model learns from; the label is what it is trying to predict. Framing a problem well means choosing features that are genuinely available at prediction time — using a value that is only known afterwards is called leakage, and it produces models that score brilliantly in testing and fail completely in production.",
+          "resources": [
+            {
+              "label": "Scikit-learn Glossary",
+              "url": "https://scikit-learn.org/stable/glossary.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Supervised Learning",
+          "definition": "Supervised learning trains on examples where the right answer is already known, so the model learns the mapping from features to label. Predicting a price, flagging fraud and classifying an email are all supervised. It needs labelled data, and obtaining that is usually the expensive part.",
+          "resources": [
+            {
+              "label": "Scikit-learn Supervised Learning",
+              "url": "https://scikit-learn.org/stable/supervised_learning.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Unsupervised Learning",
+          "definition": "Unsupervised learning works on data with no labels, finding structure rather than predicting a known answer. Clustering customers into groups and reducing many columns to a few informative ones are the common uses. There is no accuracy score to check against, so judging the result takes domain knowledge.",
+          "resources": [
+            {
+              "label": "Scikit-learn Unsupervised Learning",
+              "url": "https://scikit-learn.org/stable/unsupervised_learning.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Classification",
+          "definition": "Classification predicts which category something belongs to — spam or not, which of five faults, which customer segment. The output is usually a probability per class rather than a bare answer, and where you set the threshold is a business decision. It is the most common supervised task in production.",
+          "resources": [
+            {
+              "label": "Scikit-learn Supervised Learning",
+              "url": "https://scikit-learn.org/stable/supervised_learning.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Regression",
+          "definition": "Regression predicts a number rather than a category — a price, a duration, a temperature. The measures of success differ from classification: you care about how far off you are on average, and whether large errors are worse than several small ones. Choosing that error measure deliberately is most of framing the problem.",
+          "resources": [
+            {
+              "label": "Scikit-learn Regression Overview",
+              "url": "https://scikit-learn.org/stable/modules/linear_model.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Train / Test Split",
+          "definition": "You hold part of your data back and never train on it, so you can measure how the model performs on examples it has not seen. Scoring a model on data it trained on tells you nothing useful — it can simply memorise. This split is the most basic guard against fooling yourself, and it is easy to leak across accidentally.",
+          "resources": [
+            {
+              "label": "train_test_split",
+              "url": "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Validation & Cross-Validation",
+          "definition": "A validation set is a third slice used for tuning, so the test set stays untouched until the end. Cross-validation goes further: it splits the data several ways and averages the results, giving a more stable estimate on limited data. Both exist because tuning against your test set quietly turns it into a training set.",
+          "resources": [
+            {
+              "label": "Cross-validation",
+              "url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Data Preprocessing",
+          "definition": "Models expect numbers on comparable scales, so text becomes categories, categories become numbers, and numeric columns get scaled. Fit every transformation on the training data alone and then apply it to the test data — fitting on everything leaks information and inflates your scores. This is the single most common subtle mistake in this stage.",
+          "resources": [
+            {
+              "label": "Scikit-learn Preprocessing",
+              "url": "https://scikit-learn.org/stable/modules/preprocessing.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Feature Engineering",
+          "definition": "Feature engineering is constructing better inputs from what you have: a ratio instead of two raw columns, a day of week from a timestamp, an aggregate over a customer's history. A good feature often beats a more sophisticated model. It is where domain knowledge translates most directly into accuracy.",
+          "resources": [
+            {
+              "label": "Scikit-learn Preprocessing",
+              "url": "https://scikit-learn.org/stable/modules/preprocessing.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Overfitting vs Underfitting",
+          "definition": "An overfitted model has memorised the training data, including its noise, and performs badly on anything new. An underfitted model is too simple to capture the real pattern and performs badly everywhere. You diagnose the difference by comparing training and validation scores, and nearly all model tuning is navigating between the two.",
+          "resources": [
+            {
+              "label": "Underfitting vs Overfitting",
+              "url": "https://scikit-learn.org/stable/auto_examples/model_selection/plot_underfitting_overfitting.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Evaluation Metrics",
+          "definition": "A metric turns model behaviour into a number you can compare, and which one you choose determines what the model optimises for. Accuracy is a poor choice on imbalanced data — a model predicting “not fraud” every time can be 99% accurate and useless. Choose the metric that reflects the actual cost of being wrong.",
+          "resources": [
+            {
+              "label": "Model Evaluation",
+              "url": "https://scikit-learn.org/stable/modules/model_evaluation.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Accuracy, Precision, Recall, F1",
+          "definition": "Accuracy is the share of predictions that were right. Precision asks what fraction of the things you flagged really were positive; recall asks what fraction of the real positives you caught. They trade off against each other, F1 combines them into one number, and which you favour depends on whether a false alarm or a miss costs more.",
+          "resources": [
+            {
+              "label": "Classification Metrics",
+              "url": "https://scikit-learn.org/stable/modules/model_evaluation.html#classification-metrics",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Confusion Matrix",
+          "definition": "The confusion matrix is a table of predicted against actual classes, so you can see exactly which errors the model makes rather than a single summary score. It shows whether mistakes are spread evenly or concentrated in one class. It is usually the first thing to look at when a metric is disappointing and you do not know why.",
+          "resources": [
+            {
+              "label": "Confusion Matrix",
+              "url": "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "ML Pipelines",
+          "definition": "A pipeline chains preprocessing and the model into one object that is fitted and applied as a unit. Beyond tidiness, it prevents leakage: the transformations get fitted only on the training fold automatically. It also means the exact same steps run in production as in training, which is otherwise a frequent source of silent bugs.",
+          "resources": [
+            {
+              "label": "Scikit-learn Pipelines",
+              "url": "https://scikit-learn.org/stable/modules/compose.html",
+              "source": "team-lead"
+            }
+          ]
+        }
       ],
       "resources": [
         {
@@ -76,81 +264,6 @@
           "url": "https://www.coursera.org/specializations/machine-learning-introduction",
           "source": "curated",
           "note": "Audit free."
-        },
-        {
-          "label": "NumPy Quickstart",
-          "url": "https://numpy.org/doc/stable/user/quickstart.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "10 Minutes to Pandas",
-          "url": "https://pandas.pydata.org/docs/user_guide/10min.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "Pandas Missing Data",
-          "url": "https://pandas.pydata.org/docs/user_guide/missing_data.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "Scikit-learn Glossary",
-          "url": "https://scikit-learn.org/stable/glossary.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "Scikit-learn Supervised Learning",
-          "url": "https://scikit-learn.org/stable/supervised_learning.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "Scikit-learn Unsupervised Learning",
-          "url": "https://scikit-learn.org/stable/unsupervised_learning.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "Scikit-learn Regression Overview",
-          "url": "https://scikit-learn.org/stable/modules/linear_model.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "train_test_split",
-          "url": "https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "Cross-validation",
-          "url": "https://scikit-learn.org/stable/modules/cross_validation.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "Scikit-learn Preprocessing",
-          "url": "https://scikit-learn.org/stable/modules/preprocessing.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "Underfitting vs Overfitting",
-          "url": "https://scikit-learn.org/stable/auto_examples/model_selection/plot_underfitting_overfitting.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "Model Evaluation",
-          "url": "https://scikit-learn.org/stable/modules/model_evaluation.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "Classification Metrics",
-          "url": "https://scikit-learn.org/stable/modules/model_evaluation.html#classification-metrics",
-          "source": "team-lead"
-        },
-        {
-          "label": "Confusion Matrix",
-          "url": "https://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "Scikit-learn Pipelines",
-          "url": "https://scikit-learn.org/stable/modules/compose.html",
-          "source": "team-lead"
         }
       ]
     },
@@ -161,12 +274,33 @@
       "level": "mid",
       "levelLabel": "Mid",
       "description": "Neural nets, backprop, PyTorch.",
+      "overview": "Neural networks are what made modern AI work, and this stage covers what they are and how they learn. You will train small ones yourself, which is the only way the ideas become concrete rather than vocabulary. Everything from image models to the language models in the other paths is built on the mechanism taught here.",
       "topics": [
-        "Neural network fundamentals",
-        "Backpropagation",
-        "Tensors and training loops",
-        "Common architectures",
-        "Embeddings basics"
+        {
+          "term": "Neural network fundamentals",
+          "definition": "A neural network is layers of simple units, each combining its inputs with learned weights and passing the result through a non-linear function. That non-linearity is what lets stacked layers represent complicated relationships instead of collapsing into one. Depth is what gives these models their capacity, and their appetite for data.",
+          "resources": []
+        },
+        {
+          "term": "Backpropagation",
+          "definition": "Backpropagation is how a network learns: run an example forward, measure the error, then work backwards computing how much each weight contributed to it. Every weight is nudged in the direction that reduces the error, and repeating this over many examples is training. Frameworks do this for you, but knowing it is happening explains most training failures.",
+          "resources": []
+        },
+        {
+          "term": "Tensors and training loops",
+          "definition": "A tensor is an array with more than two dimensions — a batch of images has four. The training loop is the same handful of steps every time: take a batch, predict, compute loss, backpropagate, update, repeat. Once you can write that loop from memory, most deep learning code becomes readable.",
+          "resources": []
+        },
+        {
+          "term": "Common architectures",
+          "definition": "Different data shapes call for different structures: convolutional networks for images, recurrent networks for sequences, and transformers for almost everything now, including the language models in the other paths. Knowing which family suits which problem matters far more than being able to implement one. Nearly all practical work starts from a pretrained architecture rather than a blank page.",
+          "resources": []
+        },
+        {
+          "term": "Embeddings basics",
+          "definition": "A network learns to represent its inputs as vectors of numbers in its intermediate layers, and those vectors place similar things near each other. That is what an embedding is, and it is the same idea the RAG stages in other paths depend on. Seeing it emerge from training makes the retrieval techniques elsewhere considerably less mysterious.",
+          "resources": []
+        }
       ],
       "resources": [
         {
@@ -199,11 +333,52 @@
       "level": "mid",
       "levelLabel": "Mid → Senior",
       "description": "Experiment tracking, feature stores, pipelines.",
+      "overview": "A model that works in a notebook is not a system. MLOps is the practice that turns experiments into something reproducible: tracking what you ran, versioning the data and the model, and automating the path from training to a deployable artefact. This is the largest single difference between a data scientist and an ML engineer.",
       "topics": [
-        "Experiment Tracking",
-        "Model Registry",
-        "Model Evaluation",
-        "LLM / Agent Evaluation"
+        {
+          "term": "Experiment Tracking",
+          "definition": "When you change a prompt, a model or a retrieval setting, record what you changed and what it scored. Memory and scattered notebooks stop being sufficient the moment there are more than a handful of variants. Tools such as MLflow exist to make that record the default rather than an act of discipline.",
+          "resources": [
+            {
+              "label": "MLflow Tracking",
+              "url": "https://mlflow.org/docs/latest/tracking.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Model Registry",
+          "definition": "A registry is the record of which version is approved, what it was evaluated against, and what is currently live. It is how you answer “what is in production right now” and how you roll back without guesswork. It applies to prompt and configuration versions every bit as much as to trained models.",
+          "resources": [
+            {
+              "label": "MLflow Model Registry",
+              "url": "https://mlflow.org/docs/latest/model-registry.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Model Evaluation",
+          "definition": "Evaluation means scoring output against known-good examples rather than reading a few and forming an impression. Decide what correct means for your task, assemble a fixed test set, and re-run it on every change. Anything you cannot measure, you cannot safely improve.",
+          "resources": [
+            {
+              "label": "MLflow Model Evaluation",
+              "url": "https://mlflow.org/docs/latest/models.html#model-evaluation",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "LLM / Agent Evaluation",
+          "definition": "Generated text usually has no single right answer, so evaluation combines several checks: does it contain the required facts, does it hold the format, does another model judge it acceptable, does a human sample agree. For agents you also score the steps taken, not just the final reply. Expect to build this rather than install it.",
+          "resources": [
+            {
+              "label": "MLflow LLM & Agent Evaluation",
+              "url": "https://mlflow.org/docs/latest/genai/eval-monitor/",
+              "source": "team-lead"
+            }
+          ]
+        }
       ],
       "resources": [
         {
@@ -215,26 +390,6 @@
           "label": "Weights & Biases free tier",
           "url": "https://wandb.ai/site",
           "source": "curated"
-        },
-        {
-          "label": "MLflow Tracking",
-          "url": "https://mlflow.org/docs/latest/tracking.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "MLflow Model Registry",
-          "url": "https://mlflow.org/docs/latest/model-registry.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "MLflow Model Evaluation",
-          "url": "https://mlflow.org/docs/latest/models.html#model-evaluation",
-          "source": "team-lead"
-        },
-        {
-          "label": "MLflow LLM & Agent Evaluation",
-          "url": "https://mlflow.org/docs/latest/genai/eval-monitor/",
-          "source": "team-lead"
         }
       ]
     },
@@ -245,91 +400,157 @@
       "level": "senior",
       "levelLabel": "Senior",
       "description": "Serving, scaling, drift monitoring.",
+      "overview": "Getting a trained model behind an API and keeping it healthy is the job. That means serving it efficiently, scaling it, and watching for the specific way models fail — quietly, by becoming less accurate as the world drifts away from the data they were trained on. A model with no monitoring is a model whose decay nobody will notice.",
       "topics": [
-        "Local vs Production Deployment",
-        "Docker Basics",
-        "Dockerfile",
-        "Docker Compose",
-        "API Deployment Concepts",
-        "Workers & Scaling",
-        "CI/CD Basics",
-        "Secrets in Deployment",
-        "Logs",
-        "Metrics",
-        "Traces",
-        "Monitoring & Alerting",
-        "Kubernetes Basics"
+        {
+          "term": "Local vs Production Deployment",
+          "definition": "Development servers reload on save, print stack traces and trust their surroundings; production servers must be secure, restart on failure and give nothing away to an attacker. The gap between the two is where most first deployments break. Assume that nothing which worked locally is configured on the server.",
+          "resources": [
+            {
+              "label": "FastAPI Deployment",
+              "url": "https://fastapi.tiangolo.com/deployment/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Docker Basics",
+          "definition": "Docker packages your application together with its dependencies into an image that runs identically anywhere. It removes the entire class of failure where code works on your machine but not on the server. For AI work, where Python and native library versions are unusually brittle, this matters more than it does for most software.",
+          "resources": [
+            {
+              "label": "Docker Get Started",
+              "url": "https://docs.docker.com/get-started/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Dockerfile",
+          "definition": "A Dockerfile is the recipe for an image: the base, the dependencies, your code, and the command that starts it. Order the steps so the parts that rarely change come first, because Docker caches by layer and rebuilds everything after the first thing that changed. Never bake secrets into it.",
+          "resources": [
+            {
+              "label": "Dockerfile Overview",
+              "url": "https://docs.docker.com/reference/dockerfile/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Docker Compose",
+          "definition": "Compose runs several containers together from one file — your API, a database, a vector store — with the networking between them handled for you. It is how you reproduce a realistic environment on your own machine. For a single service it is unnecessary; for anything with a datastore it saves a great deal of setup.",
+          "resources": [
+            {
+              "label": "Docker Compose Docs",
+              "url": "https://docs.docker.com/compose/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "API Deployment Concepts",
+          "definition": "Getting a service live means a process manager that restarts it, a reverse proxy in front, TLS, health checks, and configuration read from the environment rather than files. These are the same whatever your API happens to do. Learn them once and every deployment after this one is faster.",
+          "resources": [
+            {
+              "label": "FastAPI Deployment Concepts",
+              "url": "https://fastapi.tiangolo.com/deployment/concepts/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Workers & Scaling",
+          "definition": "One process handles one request at a time unless you run several workers. You scale up with more workers on a machine and out with more machines behind a load balancer. Calls to a language model are mostly spent waiting on the network, so concurrency helps far more here than raw processing power.",
+          "resources": [
+            {
+              "label": "FastAPI Server Workers",
+              "url": "https://fastapi.tiangolo.com/deployment/server-workers/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "CI/CD Basics",
+          "definition": "Continuous integration runs your tests on every push; continuous deployment ships whatever passes. Together they remove the manual steps people skip when they are in a hurry. Even a pipeline that only runs a linter and a build is worth setting up on the first day.",
+          "resources": [
+            {
+              "label": "GitHub Actions Docs",
+              "url": "https://docs.github.com/en/actions",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Secrets in Deployment",
+          "definition": "API keys belong in environment variables or a secrets manager, never in the repository. Rotate them on a schedule, use a different key per environment, and make certain they cannot end up in logs. A leaked provider key is billed to you until somebody notices.",
+          "resources": [
+            {
+              "label": "GitHub Actions Secrets",
+              "url": "https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Logs",
+          "definition": "Logs are the timestamped record of what happened. For AI systems that means logging the prompt, the model, the parameters and the response — without them, a bad answer is impossible to investigate afterwards. Be deliberate about redacting anything personal before it is written down.",
+          "resources": [
+            {
+              "label": "OpenTelemetry Logs",
+              "url": "https://opentelemetry.io/docs/concepts/signals/logs/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Metrics",
+          "definition": "Metrics are numbers over time: requests per minute, error rate, latency, tokens consumed, cost. They tell you that something is wrong and roughly where to look. Watch the 95th percentile rather than the average, because averages hide exactly the slow requests users complain about.",
+          "resources": [
+            {
+              "label": "Prometheus Overview",
+              "url": "https://prometheus.io/docs/introduction/overview/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Traces",
+          "definition": "A trace follows a single request through every step — retrieval, each model call, each tool — with timings for each. When a response takes nine seconds, the trace is what tells you which part took eight of them. This becomes essential with RAG and agents, where one request fans out into many calls.",
+          "resources": [
+            {
+              "label": "OpenTelemetry Overview",
+              "url": "https://opentelemetry.io/docs/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Monitoring & Alerting",
+          "definition": "Monitoring is collecting the signals; alerting is being told when one crosses a threshold. Alert only on things a person must act on — error spikes, latency, budget — or people learn to ignore alerts entirely. The aim is to hear about a failure before your users report it.",
+          "resources": [
+            {
+              "label": "Prometheus Getting Started",
+              "url": "https://prometheus.io/docs/prometheus/latest/getting_started/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Kubernetes Basics",
+          "definition": "Kubernetes runs containers across a fleet of machines, restarting and rescheduling them as needed. It solves real problems at scale and adds substantial complexity underneath you. Understand what it does and why teams adopt it, but do not reach for it until something simpler has actually stopped being enough.",
+          "resources": [
+            {
+              "label": "Kubernetes Overview",
+              "url": "https://kubernetes.io/docs/concepts/overview/",
+              "source": "team-lead"
+            }
+          ]
+        }
       ],
       "resources": [
         {
           "label": "FastAPI Deployment Docs",
           "url": "https://fastapi.tiangolo.com/deployment/",
           "source": "curated"
-        },
-        {
-          "label": "FastAPI Deployment",
-          "url": "https://fastapi.tiangolo.com/deployment/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Docker Get Started",
-          "url": "https://docs.docker.com/get-started/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Dockerfile Overview",
-          "url": "https://docs.docker.com/reference/dockerfile/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Docker Compose Docs",
-          "url": "https://docs.docker.com/compose/",
-          "source": "team-lead"
-        },
-        {
-          "label": "FastAPI Deployment Concepts",
-          "url": "https://fastapi.tiangolo.com/deployment/concepts/",
-          "source": "team-lead"
-        },
-        {
-          "label": "FastAPI Server Workers",
-          "url": "https://fastapi.tiangolo.com/deployment/server-workers/",
-          "source": "team-lead"
-        },
-        {
-          "label": "GitHub Actions Docs",
-          "url": "https://docs.github.com/en/actions",
-          "source": "team-lead"
-        },
-        {
-          "label": "GitHub Actions Secrets",
-          "url": "https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenTelemetry Logs",
-          "url": "https://opentelemetry.io/docs/concepts/signals/logs/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Prometheus Overview",
-          "url": "https://prometheus.io/docs/introduction/overview/",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenTelemetry Overview",
-          "url": "https://opentelemetry.io/docs/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Prometheus Getting Started",
-          "url": "https://prometheus.io/docs/prometheus/latest/getting_started/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Kubernetes Overview",
-          "url": "https://kubernetes.io/docs/concepts/overview/",
-          "source": "team-lead"
         }
       ]
     },
@@ -340,63 +561,179 @@
       "level": "senior",
       "levelLabel": "Senior",
       "description": "Baseline LLM knowledge — most ML engineering roles now need this.",
+      "overview": "Most ML engineering roles now expect working knowledge of language models even when the job is not primarily about them. You do not need to train one, but you should know what they can do, what they cost, and when retrieval or an API call is the better answer than training something. This stage is the shortest route to being fluent in that conversation.",
       "topics": [
-        "What is an LLM?",
-        "Tokens",
-        "Context Window",
-        "System Prompt vs User Prompt",
-        "Clear Task Instruction",
-        "Role Prompting",
-        "Few-Shot Prompting",
-        "Output Formatting",
-        "Structured Outputs",
-        "Function / Tool Calling",
-        "Temperature & Output Control",
-        "Hallucinations",
-        "Prompt Chaining",
-        "Prompt Templates",
-        "Evaluating Prompt Quality"
+        {
+          "term": "What is an LLM?",
+          "definition": "A large language model is a program that predicts the next piece of text given the text before it. It has been trained on an enormous amount of writing, which makes those predictions useful for answering questions, summarising and writing code. It does not look anything up and it does not reason about truth; it produces the continuation its training makes most likely. Everything it does well and everything it gets wrong follows from that single behaviour.",
+          "resources": [
+            {
+              "label": "OpenAI Text Generation",
+              "url": "https://platform.openai.com/docs/guides/text",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Tokens",
+          "definition": "Models do not read characters or words, they read tokens — short chunks of text, roughly three to four characters each. A common word is usually one token, while a rare name might be four or five. This matters in practice because you are billed per token, context limits are counted in tokens, and response time scales with how many the model has to produce.",
+          "resources": [
+            {
+              "label": "OpenAI Prompt Guidance",
+              "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Context Window",
+          "definition": "The context window is the maximum number of tokens a model can consider at once, counting your input and its reply together. Anything outside it does not exist as far as the model is concerned. When a conversation or a document grows past that limit you have to summarise, truncate, or retrieve only the relevant parts — which is what the next stage is about.",
+          "resources": [
+            {
+              "label": "OpenAI Models Docs",
+              "url": "https://platform.openai.com/docs/models",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "System Prompt vs User Prompt",
+          "definition": "The system prompt holds standing instructions: what role the model is playing, what format to use, what it must refuse. The user prompt is the specific request. Keeping them apart means you can change the request without restating the rules every time, and models are trained to give system instructions more weight.",
+          "resources": [
+            {
+              "label": "OpenAI Prompt Guidance",
+              "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Clear Task Instruction",
+          "definition": "Models follow literal instructions far better than implied ones. State what output you want, in what format, and what to do at the edges, rather than trusting the model to infer it. A surprising share of “the model is bad at this” turns out to be a prompt that never said what “this” meant.",
+          "resources": [
+            {
+              "label": "Gemini Prompt Design",
+              "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Role Prompting",
+          "definition": "Telling the model to answer as a particular kind of expert shifts its vocabulary, level of detail and default assumptions. It is a cheap way to set register and depth for an audience. It does not give the model knowledge it lacks — it only changes how it draws on what it already has.",
+          "resources": [
+            {
+              "label": "Claude Prompt Engineering Overview",
+              "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Few-Shot Prompting",
+          "definition": "Rather than describing the output you want, show two or three worked examples in the prompt and let the model infer the pattern. For anything with a consistent shape — classification labels, a particular formatting style — this is usually more reliable than a written description. Choose examples that cover the awkward cases, not just the obvious ones.",
+          "resources": [
+            {
+              "label": "Claude Prompt Engineering Overview",
+              "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Output Formatting",
+          "definition": "Asking for a specific shape — a bullet list, a table, JSON — makes a response easier for both people and code to use. Be explicit about the exact headings or keys you expect rather than describing them loosely. Format instructions placed in the system prompt tend to hold up better across a long conversation.",
+          "resources": [
+            {
+              "label": "OpenAI Structured Outputs",
+              "url": "https://platform.openai.com/docs/guides/structured-outputs",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Structured Outputs",
+          "definition": "Structured outputs make the model return data conforming to a schema you supply, so you get valid JSON rather than JSON wrapped in an apology. The provider enforces the shape instead of you parsing and hoping. Use it any time the response feeds code rather than a person.",
+          "resources": [
+            {
+              "label": "OpenAI Structured Outputs",
+              "url": "https://platform.openai.com/docs/guides/structured-outputs",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Function / Tool Calling",
+          "definition": "Tool calling lets you describe functions the model may invoke — search a database, fetch a price, send an email. The model does not run them: it returns the name and arguments it wants, your code executes it, and you pass the result back. This is the mechanism that turns a text generator into something that can act, and stage 3 is built entirely on it.",
+          "resources": [
+            {
+              "label": "OpenAI Function Calling",
+              "url": "https://platform.openai.com/docs/guides/function-calling",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Temperature & Output Control",
+          "definition": "Temperature controls how much randomness goes into choosing each next token. Low values give consistent, repeatable text; higher values give more variety. For extraction, classification, or anything you intend to parse, keep it near zero — there is no setting that makes the model more correct, only less predictable.",
+          "resources": [
+            {
+              "label": "OpenAI Prompt Guidance",
+              "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Hallucinations",
+          "definition": "A hallucination is output that is stated confidently and is simply wrong — an invented citation, a function that does not exist. It happens because the model generates plausible continuations, and plausible is not the same as true. You reduce it by supplying the facts in the prompt, asking for sources, and verifying anything that matters; you do not eliminate it.",
+          "resources": [
+            {
+              "label": "Gemini Prompt Design",
+              "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Prompt Chaining",
+          "definition": "Instead of one prompt doing five things, break the work into steps and feed each result into the next. Every step becomes easier to test, cheaper to retry and far easier to debug when the output is wrong. It is the simplest version of the multi-step pattern you meet again with agents.",
+          "resources": [
+            {
+              "label": "Claude Prompt Engineering Overview",
+              "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Prompt Templates",
+          "definition": "A template is a prompt with typed slots — the user's question, the retrieved documents, today's date — filled in at runtime. Keeping templates in version control rather than scattered through the code means changes get reviewed and can be rolled back. Treat prompts as source code, because that is what they are.",
+          "resources": [
+            {
+              "label": "Gemini Prompt Design",
+              "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Evaluating Prompt Quality",
+          "definition": "Judging a prompt by trying it once is how bad prompts reach production. Keep a small set of representative inputs with known good answers and re-run them whenever you change the wording. This is a manual habit at this stage and becomes automated testing in stage 6.",
+          "resources": [
+            {
+              "label": "Gemini Prompt Design",
+              "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+              "source": "team-lead"
+            }
+          ]
+        }
       ],
       "resources": [
         {
           "label": "Hugging Face Learn",
           "url": "https://huggingface.co/learn",
           "source": "curated"
-        },
-        {
-          "label": "OpenAI Text Generation",
-          "url": "https://platform.openai.com/docs/guides/text",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Prompt Guidance",
-          "url": "https://platform.openai.com/docs/guides/prompt-engineering",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Models Docs",
-          "url": "https://platform.openai.com/docs/models",
-          "source": "team-lead"
-        },
-        {
-          "label": "Gemini Prompt Design",
-          "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
-          "source": "team-lead"
-        },
-        {
-          "label": "Claude Prompt Engineering Overview",
-          "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Structured Outputs",
-          "url": "https://platform.openai.com/docs/guides/structured-outputs",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Function Calling",
-          "url": "https://platform.openai.com/docs/guides/function-calling",
-          "source": "team-lead"
         },
         {
           "label": "Hands-On Large Language Models (GitHub)",
@@ -412,6 +749,9 @@
       "level": "mid",
       "levelLabel": "Any level",
       "description": "Vendor credential.",
+      "overview": "A certification will not get you hired on its own, but it gives you a syllabus and a deadline if self-directed study has stalled. The credentials here are the recognised ML engineering ones and cover roughly stages 2 to 5, framed around one cloud provider. Take it whenever it is useful rather than treating it as a gate.",
+      "kind": "certification",
+      "note": "Certification checkpoints are not tied to a level — take one whenever it is useful. `level` is set to mid only so the stage groups sensibly in the UI.",
       "topics": [],
       "resources": [
         {
@@ -424,9 +764,7 @@
           "url": "https://aws.amazon.com/certification/certified-machine-learning-specialty/",
           "source": "curated"
         }
-      ],
-      "kind": "certification",
-      "note": "Certification checkpoints are not tied to a level — take one whenever it is useful. `level` is set to mid only so the stage groups sensibly in the UI."
+      ]
     },
     {
       "id": "senior-to-architect",
@@ -435,16 +773,37 @@
       "level": "architect",
       "levelLabel": "Senior+",
       "description": "ML system design, model governance.",
-      "topics": [
-        "Model and provider selection across the whole system",
-        "Scaling strategy and cost ceilings",
-        "Governance, risk and reliability ownership",
-        "Design docs and decision records over code",
-        "Tying AI investment to business value"
-      ],
-      "resources": [],
+      "overview": "At this level the work is deciding what should be built, what it must not do, and who answers for it when it is wrong. Model governance in particular becomes real: what data trained this, who approved it, how a decision is explained to somebody it affected. The output shifts from code to design documents and the reasoning behind them.",
       "kind": "architect",
-      "note": "One architect track sits above all seven paths — the job becomes system-level judgement rather than language or framework specifics. See the career ladder."
+      "note": "One architect track sits above all seven paths — the job becomes system-level judgement rather than language or framework specifics. See the career ladder.",
+      "topics": [
+        {
+          "term": "Model and provider selection across the whole system",
+          "definition": "Different parts of a system justify different models, and the choice turns on cost, latency, data residency, licensing and how much you want to depend on one vendor. Making it once for the organisation, with the reasoning written down, saves every team re-litigating it. It also means you can move when the market shifts, which it does.",
+          "resources": []
+        },
+        {
+          "term": "Scaling strategy and cost ceilings",
+          "definition": "Deciding in advance what the system must handle and what it is allowed to cost turns architecture into a set of constraints rather than a matter of taste. Cost per request multiplied by projected volume is the number that decides whether a design is viable at all. Set the ceiling before building, because retrofitting one means redesigning.",
+          "resources": []
+        },
+        {
+          "term": "Governance, risk and reliability ownership",
+          "definition": "Somebody has to own what happens when the system is confidently wrong, leaks data, or simply stops. That means defined approval paths, audit trails, retention rules, and a named owner for each. It is unglamorous, and it is what allows AI systems to be used for anything that matters.",
+          "resources": []
+        },
+        {
+          "term": "Design docs and decision records over code",
+          "definition": "At this level the durable output is a written argument: the problem, the options considered, the choice, and why. A decision record tells whoever arrives in two years why the system is shaped this way, which is the difference between maintaining it and rewriting it. Writing clearly becomes a core technical skill rather than a soft one.",
+          "resources": []
+        },
+        {
+          "term": "Tying AI investment to business value",
+          "definition": "Every system needs an answer to what it is worth — time saved, revenue enabled, risk reduced — measured against what it costs to run. Without that, AI spend is a line item that gets cut in the first difficult quarter. Being able to make the argument is what makes this a business role as much as a technical one.",
+          "resources": []
+        }
+      ],
+      "resources": []
     }
   ]
 }

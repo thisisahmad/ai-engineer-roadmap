@@ -22,22 +22,173 @@
       "level": "junior",
       "levelLabel": "Junior → Mid",
       "description": "Calling LLM APIs from a backend, streaming responses.",
+      "overview": "This is the bridge from web development to AI: your backend calls a model provider much as it calls any other HTTP API, and passes the result to your frontend. The mechanics are familiar — a request, a key, a response — but the response arrives as a stream of text rather than one finished payload, which changes how you handle it. Everything later in this path assumes you can make that call and shape what comes back.",
       "topics": [
-        "What is an LLM?",
-        "Tokens",
-        "Context Window",
-        "System Prompt vs User Prompt",
-        "Clear Task Instruction",
-        "Role Prompting",
-        "Few-Shot Prompting",
-        "Output Formatting",
-        "Structured Outputs",
-        "Function / Tool Calling",
-        "Temperature & Output Control",
-        "Hallucinations",
-        "Prompt Chaining",
-        "Prompt Templates",
-        "Evaluating Prompt Quality"
+        {
+          "term": "What is an LLM?",
+          "definition": "A large language model is a program that predicts the next piece of text given the text before it. It has been trained on an enormous amount of writing, which makes those predictions useful for answering questions, summarising and writing code. It does not look anything up and it does not reason about truth; it produces the continuation its training makes most likely. Everything it does well and everything it gets wrong follows from that single behaviour.",
+          "resources": [
+            {
+              "label": "OpenAI Text Generation",
+              "url": "https://platform.openai.com/docs/guides/text",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Tokens",
+          "definition": "Models do not read characters or words, they read tokens — short chunks of text, roughly three to four characters each. A common word is usually one token, while a rare name might be four or five. This matters in practice because you are billed per token, context limits are counted in tokens, and response time scales with how many the model has to produce.",
+          "resources": [
+            {
+              "label": "OpenAI Prompt Guidance",
+              "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Context Window",
+          "definition": "The context window is the maximum number of tokens a model can consider at once, counting your input and its reply together. Anything outside it does not exist as far as the model is concerned. When a conversation or a document grows past that limit you have to summarise, truncate, or retrieve only the relevant parts — which is what the next stage is about.",
+          "resources": [
+            {
+              "label": "OpenAI Models Docs",
+              "url": "https://platform.openai.com/docs/models",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "System Prompt vs User Prompt",
+          "definition": "The system prompt holds standing instructions: what role the model is playing, what format to use, what it must refuse. The user prompt is the specific request. Keeping them apart means you can change the request without restating the rules every time, and models are trained to give system instructions more weight.",
+          "resources": [
+            {
+              "label": "OpenAI Prompt Guidance",
+              "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Clear Task Instruction",
+          "definition": "Models follow literal instructions far better than implied ones. State what output you want, in what format, and what to do at the edges, rather than trusting the model to infer it. A surprising share of “the model is bad at this” turns out to be a prompt that never said what “this” meant.",
+          "resources": [
+            {
+              "label": "Gemini Prompt Design",
+              "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Role Prompting",
+          "definition": "Telling the model to answer as a particular kind of expert shifts its vocabulary, level of detail and default assumptions. It is a cheap way to set register and depth for an audience. It does not give the model knowledge it lacks — it only changes how it draws on what it already has.",
+          "resources": [
+            {
+              "label": "Claude Prompt Engineering Overview",
+              "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Few-Shot Prompting",
+          "definition": "Rather than describing the output you want, show two or three worked examples in the prompt and let the model infer the pattern. For anything with a consistent shape — classification labels, a particular formatting style — this is usually more reliable than a written description. Choose examples that cover the awkward cases, not just the obvious ones.",
+          "resources": [
+            {
+              "label": "Claude Prompt Engineering Overview",
+              "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Output Formatting",
+          "definition": "Asking for a specific shape — a bullet list, a table, JSON — makes a response easier for both people and code to use. Be explicit about the exact headings or keys you expect rather than describing them loosely. Format instructions placed in the system prompt tend to hold up better across a long conversation.",
+          "resources": [
+            {
+              "label": "OpenAI Structured Outputs",
+              "url": "https://platform.openai.com/docs/guides/structured-outputs",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Structured Outputs",
+          "definition": "Structured outputs make the model return data conforming to a schema you supply, so you get valid JSON rather than JSON wrapped in an apology. The provider enforces the shape instead of you parsing and hoping. Use it any time the response feeds code rather than a person.",
+          "resources": [
+            {
+              "label": "OpenAI Structured Outputs",
+              "url": "https://platform.openai.com/docs/guides/structured-outputs",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Function / Tool Calling",
+          "definition": "Tool calling lets you describe functions the model may invoke — search a database, fetch a price, send an email. The model does not run them: it returns the name and arguments it wants, your code executes it, and you pass the result back. This is the mechanism that turns a text generator into something that can act, and stage 3 is built entirely on it.",
+          "resources": [
+            {
+              "label": "OpenAI Function Calling",
+              "url": "https://platform.openai.com/docs/guides/function-calling",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Temperature & Output Control",
+          "definition": "Temperature controls how much randomness goes into choosing each next token. Low values give consistent, repeatable text; higher values give more variety. For extraction, classification, or anything you intend to parse, keep it near zero — there is no setting that makes the model more correct, only less predictable.",
+          "resources": [
+            {
+              "label": "OpenAI Prompt Guidance",
+              "url": "https://platform.openai.com/docs/guides/prompt-engineering",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Hallucinations",
+          "definition": "A hallucination is output that is stated confidently and is simply wrong — an invented citation, a function that does not exist. It happens because the model generates plausible continuations, and plausible is not the same as true. You reduce it by supplying the facts in the prompt, asking for sources, and verifying anything that matters; you do not eliminate it.",
+          "resources": [
+            {
+              "label": "Gemini Prompt Design",
+              "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Prompt Chaining",
+          "definition": "Instead of one prompt doing five things, break the work into steps and feed each result into the next. Every step becomes easier to test, cheaper to retry and far easier to debug when the output is wrong. It is the simplest version of the multi-step pattern you meet again with agents.",
+          "resources": [
+            {
+              "label": "Claude Prompt Engineering Overview",
+              "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Prompt Templates",
+          "definition": "A template is a prompt with typed slots — the user's question, the retrieved documents, today's date — filled in at runtime. Keeping templates in version control rather than scattered through the code means changes get reviewed and can be rolled back. Treat prompts as source code, because that is what they are.",
+          "resources": [
+            {
+              "label": "Gemini Prompt Design",
+              "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Evaluating Prompt Quality",
+          "definition": "Judging a prompt by trying it once is how bad prompts reach production. Keep a small set of representative inputs with known good answers and re-run them whenever you change the wording. This is a manual habit at this stage and becomes automated testing in stage 6.",
+          "resources": [
+            {
+              "label": "Gemini Prompt Design",
+              "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
+              "source": "team-lead"
+            }
+          ]
+        }
       ],
       "resources": [
         {
@@ -49,41 +200,6 @@
           "label": "Anthropic API Docs",
           "url": "https://docs.claude.com/",
           "source": "curated"
-        },
-        {
-          "label": "OpenAI Text Generation",
-          "url": "https://platform.openai.com/docs/guides/text",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Prompt Guidance",
-          "url": "https://platform.openai.com/docs/guides/prompt-engineering",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Models Docs",
-          "url": "https://platform.openai.com/docs/models",
-          "source": "team-lead"
-        },
-        {
-          "label": "Gemini Prompt Design",
-          "url": "https://ai.google.dev/gemini-api/docs/prompting-strategies",
-          "source": "team-lead"
-        },
-        {
-          "label": "Claude Prompt Engineering Overview",
-          "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Structured Outputs",
-          "url": "https://platform.openai.com/docs/guides/structured-outputs",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Function Calling",
-          "url": "https://platform.openai.com/docs/guides/function-calling",
-          "source": "team-lead"
         },
         {
           "label": "Hands-On Large Language Models (GitHub)",
@@ -99,11 +215,28 @@
       "level": "mid",
       "levelLabel": "Mid",
       "description": "Streaming UI, the Vercel AI SDK (TypeScript standard for AI features).",
+      "overview": "Model responses take seconds, not milliseconds, and a spinner for eight seconds reads as broken. This stage covers the interface patterns that make the wait tolerable: showing text as it arrives, keeping the page responsive while it does, and handling a request the user abandons halfway. This is the part of AI work a full-stack engineer is better placed to do than anyone else on the team.",
       "topics": [
-        "Streaming responses to the browser",
-        "Optimistic and partial UI",
-        "Token-by-token rendering",
-        "Error and cancellation states"
+        {
+          "term": "Streaming responses to the browser",
+          "definition": "Rather than waiting for the model to finish and sending one response, the server forwards each piece as it arrives — usually over Server-Sent Events or a streamed HTTP body. The user starts reading after a few hundred milliseconds instead of watching a spinner for eight seconds. The total time is unchanged; the perceived time is not, and that is the whole point.",
+          "resources": []
+        },
+        {
+          "term": "Optimistic and partial UI",
+          "definition": "Optimistic UI shows the result of an action before the server has confirmed it — the user's own message appears the instant they press send. Partial UI renders whatever has arrived so far and fills in the rest as it comes. Both keep an interface responsive while a slow call is in flight, and both need a defined way to correct themselves when that call fails.",
+          "resources": []
+        },
+        {
+          "term": "Token-by-token rendering",
+          "definition": "Text arriving in small pieces has to be appended without re-rendering the page on every chunk, or the interface visibly stutters. Batch incoming tokens into animation frames rather than setting state on each one. Watch for markdown and code blocks in particular, which are not valid to render until their closing characters arrive.",
+          "resources": []
+        },
+        {
+          "term": "Error and cancellation states",
+          "definition": "Long requests get abandoned — the user navigates away, closes the tab, or presses stop. Your client needs to be able to cancel a request in flight, and your server needs to notice and stop paying for output nobody will read. Decide as well what a half-streamed response that then fails should leave on the screen.",
+          "resources": []
+        }
       ],
       "resources": [
         {
@@ -120,79 +253,190 @@
       "level": "mid",
       "levelLabel": "Mid",
       "description": "Document ingestion, chunking, vector DB in a full-stack app.",
+      "overview": "This is the same retrieval technique the AI Engineer path covers, wired into a working application: users upload documents, your app indexes them, and answers point back at the source. The extra work is everything around the model — file handling, keeping one user's documents away from another's, re-indexing when a document changes. That surrounding work is most of what a document-aware product actually is.",
       "topics": [
-        "Embeddings",
-        "Why Embeddings Matter",
-        "Text Embedding Models",
-        "Similarity Search",
-        "Semantic Search",
-        "Vector Database",
-        "Vector Stores",
-        "Metadata Filtering",
-        "Document Chunking",
-        "Retrieval Pipeline",
-        "What is RAG?",
-        "Basic RAG Flow",
-        "RAG vs Fine-Tuning",
-        "Hybrid Retrieval",
-        "Retrieval Agents",
-        "RAG Evaluation"
+        {
+          "term": "Embeddings",
+          "definition": "An embedding turns a piece of text into a list of numbers that represents its meaning. Texts about similar things end up with similar numbers even when they share no words at all. That property is what makes it possible to search by meaning rather than by matching characters.",
+          "resources": [
+            {
+              "label": "OpenAI Embeddings Guide",
+              "url": "https://platform.openai.com/docs/guides/embeddings",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Why Embeddings Matter",
+          "definition": "Keyword search fails whenever the user's words differ from the document's — “how do I cancel” against a page titled “ending your subscription”. Comparing embeddings compares meaning, so that match succeeds. This is what lets you retrieve the right passage without having anticipated the exact phrasing.",
+          "resources": [
+            {
+              "label": "OpenAI Embeddings Guide",
+              "url": "https://platform.openai.com/docs/guides/embeddings",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Text Embedding Models",
+          "definition": "Embeddings are produced by their own models, separate from the ones that generate text. Each produces vectors of a fixed size, and vectors from different models are not comparable with one another. Pick one deliberately, because changing it later means re-embedding everything you have stored.",
+          "resources": [
+            {
+              "label": "OpenAI Embeddings Guide",
+              "url": "https://platform.openai.com/docs/guides/embeddings",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Similarity Search",
+          "definition": "Once text is embedded, finding related content becomes arithmetic: which stored vectors sit closest to the query vector. Closeness is normally cosine similarity, which compares direction rather than distance. What comes back is a ranked list of candidates, not a single correct answer.",
+          "resources": [
+            {
+              "label": "Qdrant Vectors Docs",
+              "url": "https://qdrant.tech/documentation/concepts/vectors/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Semantic Search",
+          "definition": "Semantic search is the whole pipeline: embed the query, find the nearest stored vectors, return the original text. It is the retrieval half of RAG and a useful feature in its own right. Its quality depends far more on how you split the documents than on which embedding model you picked.",
+          "resources": [
+            {
+              "label": "OpenAI Retrieval Guide",
+              "url": "https://platform.openai.com/docs/guides/retrieval",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Vector Database",
+          "definition": "A vector database stores embeddings and finds the nearest ones quickly. Comparing against every vector is fine for a few thousand and hopeless for millions, so these use approximate indexes that trade a little accuracy for a large speed gain. Qdrant, Pinecone and pgvector inside Postgres are all common choices.",
+          "resources": [
+            {
+              "label": "Qdrant Overview",
+              "url": "https://qdrant.tech/documentation/overview/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Vector Stores",
+          "definition": "“Vector store” is the framework-level abstraction over whichever database you chose — the same add, search and delete calls whether the backend is Qdrant, Pinecone or a local file. Writing against it keeps your application from being welded to one vendor. Start with the simplest option that works and swap later if you need to.",
+          "resources": [
+            {
+              "label": "OpenAI Retrieval Guide",
+              "url": "https://platform.openai.com/docs/guides/retrieval",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Metadata Filtering",
+          "definition": "Alongside each vector you can store ordinary fields — author, date, customer id, document type — and restrict a search to matching records. This is how you stop one customer retrieving another's documents, and how you keep answers to current policy rather than last year's. Decide on these fields before you index, because adding them afterwards means re-indexing.",
+          "resources": [
+            {
+              "label": "Pinecone Vector Search",
+              "url": "https://docs.pinecone.io/guides/get-started/overview",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Document Chunking",
+          "definition": "Documents are too long to embed whole, so they get split into passages. Chunks that are too large dilute the meaning and waste context; chunks that are too small lose the surrounding sense. A few hundred tokens with a little overlap is a reasonable starting point, and tuning this improves retrieval more than almost anything else you can change.",
+          "resources": [
+            {
+              "label": "LangChain Retrieval Docs",
+              "url": "https://python.langchain.com/docs/concepts/retrieval/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Retrieval Pipeline",
+          "definition": "The retrieval pipeline is the full path from raw file to prompt-ready text: load, clean, chunk, embed, store, then at query time embed and search. Each stage quietly degrades the next — a poor PDF extraction produces poor chunks, which produce poor matches. Inspect the intermediate output, not only the final answer.",
+          "resources": [
+            {
+              "label": "LangChain Retrieval Docs",
+              "url": "https://python.langchain.com/docs/concepts/retrieval/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "What is RAG?",
+          "definition": "Retrieval-augmented generation means finding relevant text first and including it in the prompt, so the model answers from your documents rather than from memory. It addresses two problems at once: the model not knowing your data, and the model inventing answers when it does not. The model still writes the reply — you are controlling what it has to work from.",
+          "resources": [
+            {
+              "label": "LangChain RAG Tutorial",
+              "url": "https://python.langchain.com/docs/tutorials/rag/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Basic RAG Flow",
+          "definition": "The minimal loop is four steps: take the question, retrieve the top few matching chunks, put them in the prompt with an instruction to answer only from them, return the result. Everything more elaborate is a refinement of those four. Build this version first and measure it before adding anything on top.",
+          "resources": [
+            {
+              "label": "LangChain RAG Tutorial",
+              "url": "https://python.langchain.com/docs/tutorials/rag/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "RAG vs Fine-Tuning",
+          "definition": "RAG changes what the model knows; fine-tuning changes how it behaves. If the answer lives in documents that change, retrieve them. If you need a consistent tone, format or task-specific skill, fine-tune. Reaching for fine-tuning to teach facts is the common and expensive mistake.",
+          "resources": [
+            {
+              "label": "OpenAI Retrieval Guide",
+              "url": "https://platform.openai.com/docs/guides/retrieval",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Hybrid Retrieval",
+          "definition": "Semantic search misses exact strings — part numbers, error codes, surnames — because those carry little meaning to embed. Hybrid retrieval runs keyword search alongside vector search and merges the results. It is the usual fix when retrieval looks fine in testing and falls over on real queries containing identifiers.",
+          "resources": [
+            {
+              "label": "Qdrant Hybrid Queries",
+              "url": "https://qdrant.tech/documentation/concepts/hybrid-queries/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Retrieval Agents",
+          "definition": "Instead of retrieving once and answering, the model decides whether to search, judges whether the results are good enough, and searches again with a better query. This handles questions that need several lookups to answer. It costs more calls and more time, so use it where one-shot retrieval demonstrably falls short.",
+          "resources": [
+            {
+              "label": "LangGraph Agentic RAG Tutorial",
+              "url": "https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "RAG Evaluation",
+          "definition": "A RAG system can fail at retrieval or at generation, and the two have to be measured separately. Ask first whether the right passages were found, then whether the answer actually followed them. Without a fixed test set you are guessing, and changes that feel like improvements frequently are not.",
+          "resources": [
+            {
+              "label": "LangSmith RAG Evaluation Tutorial",
+              "url": "https://docs.smith.langchain.com/evaluation/tutorials/rag",
+              "source": "team-lead"
+            }
+          ]
+        }
       ],
       "resources": [
         {
           "label": "LangChain RAG Tutorial",
           "url": "https://python.langchain.com/docs/tutorials/rag/",
           "source": "curated"
-        },
-        {
-          "label": "OpenAI Embeddings Guide",
-          "url": "https://platform.openai.com/docs/guides/embeddings",
-          "source": "team-lead"
-        },
-        {
-          "label": "Qdrant Vectors Docs",
-          "url": "https://qdrant.tech/documentation/concepts/vectors/",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Retrieval Guide",
-          "url": "https://platform.openai.com/docs/guides/retrieval",
-          "source": "team-lead"
-        },
-        {
-          "label": "Qdrant Overview",
-          "url": "https://qdrant.tech/documentation/overview/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Pinecone Vector Search",
-          "url": "https://docs.pinecone.io/guides/get-started/overview",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangChain Retrieval Docs",
-          "url": "https://python.langchain.com/docs/concepts/retrieval/",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangChain RAG Tutorial",
-          "url": "https://python.langchain.com/docs/tutorials/rag/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Qdrant Hybrid Queries",
-          "url": "https://qdrant.tech/documentation/concepts/hybrid-queries/",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangGraph Agentic RAG Tutorial",
-          "url": "https://langchain-ai.github.io/langgraph/tutorials/rag/langgraph_agentic_rag/",
-          "source": "team-lead"
-        },
-        {
-          "label": "LangSmith RAG Evaluation Tutorial",
-          "url": "https://docs.smith.langchain.com/evaluation/tutorials/rag",
-          "source": "team-lead"
         },
         {
           "label": "RAG (video series)",
@@ -208,11 +452,28 @@
       "level": "mid",
       "levelLabel": "Mid",
       "description": "Turning PDFs and unstructured data into usable input for LLMs.",
+      "overview": "Real documents are PDFs, scans, spreadsheets and web pages, not clean text. This stage is about turning them into something a model can use: extracting the text, correcting what the extractor got wrong, and updating the index when the source changes. It is unglamorous, and poor extraction quietly ruins retrieval no matter how good everything downstream is.",
       "topics": [
-        "Document loaders",
-        "PDF and OCR extraction",
-        "Normalisation and cleaning",
-        "Incremental re-indexing"
+        {
+          "term": "Document loaders",
+          "definition": "A loader reads one source format — PDF, DOCX, HTML, CSV, a database row — and returns plain text plus metadata. Frameworks ship dozens of them, so you will rarely write your own. Their quality varies considerably between formats, so test the ones you depend on against real files rather than assuming that a loader existing means it works.",
+          "resources": []
+        },
+        {
+          "term": "PDF and OCR extraction",
+          "definition": "PDFs store positioned glyphs rather than paragraphs, so extraction has to reconstruct reading order and regularly gets tables and multi-column layouts wrong. Scanned PDFs contain no text at all and need OCR, which adds its own errors. Read the extracted text directly before trusting it — retrieval problems trace back to this step more often than to anything else.",
+          "resources": []
+        },
+        {
+          "term": "Normalisation and cleaning",
+          "definition": "Extracted text arrives carrying page headers, footers, navigation, repeated boilerplate and broken hyphenation. Left in, all of it gets embedded and competes with real content at retrieval time. Cleaning is unglamorous and specific to each source, and it is usually the cheapest improvement to answer quality available to you.",
+          "resources": []
+        },
+        {
+          "term": "Incremental re-indexing",
+          "definition": "When a document changes you want to replace only its chunks, not rebuild the entire index. That means storing a stable identifier and a version or hash for each source, so you can find and delete everything it previously produced. Plan this before you index anything, because retrofitting identifiers means starting over.",
+          "resources": []
+        }
       ],
       "resources": [
         {
@@ -234,49 +495,80 @@
       "level": "mid",
       "levelLabel": "Mid → Senior",
       "description": "Multi-step reasoning triggered from your UI.",
+      "overview": "Some requests need several steps — look something up, act on it, check the result — and cannot be answered in one call. This stage covers triggering that work from your interface and reporting progress to a user who is watching. The agent techniques are the same as elsewhere; the new difficulty is that a multi-step process outliving a single web request needs somewhere to run and something to report.",
       "topics": [
-        "What is an AI Agent?",
-        "Agent Workflow",
-        "Tool / Function Calling",
-        "Tool Design",
-        "Guardrails",
-        "MCP Basics"
+        {
+          "term": "What is an AI Agent?",
+          "definition": "An agent is a model in a loop with tools: it takes a goal, decides on an action, sees the result, and decides again until the goal is met or it gives up. The model supplies the decisions and your code supplies the tools and the stopping conditions. What separates it from a plain prompt is that the number of steps is not fixed in advance.",
+          "resources": [
+            {
+              "label": "OpenAI Agents SDK",
+              "url": "https://openai.github.io/openai-agents-python/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Agent Workflow",
+          "definition": "A typical run goes: read the goal, choose a tool, your code executes it, the result is appended to the conversation, the model chooses again. The loop ends when the model returns a final answer or hits a limit you imposed. Always impose one — without a cap, a confused agent will keep calling tools and spending money.",
+          "resources": [
+            {
+              "label": "Running Agents",
+              "url": "https://openai.github.io/openai-agents-python/running_agents/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Tool / Function Calling",
+          "definition": "You met this in stage 1 as a way to get structured actions out of a model; here it is the mechanism the entire loop runs on. You supply a name, a description and a parameter schema for each tool, and the model returns which one to call with what arguments. The description does most of the work, because that is what the model chooses from.",
+          "resources": [
+            {
+              "label": "OpenAI Function Calling",
+              "url": "https://platform.openai.com/docs/guides/function-calling",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Tool Design",
+          "definition": "Tools work best when they are few, clearly named and hard to misuse. Prefer one tool with an obvious purpose over three with overlapping ones, validate arguments before acting, and return errors as readable text the model can recover from. Most agent misbehaviour is a tool design problem rather than a model problem.",
+          "resources": [
+            {
+              "label": "Define Agents",
+              "url": "https://openai.github.io/openai-agents-python/agents/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Guardrails",
+          "definition": "Guardrails are the checks around the model: what it may call, what it must never output, what requires a human to approve. They belong in your code rather than the prompt, because a prompt is a request and a guardrail is a rule. Anything expensive, destructive or irreversible belongs behind one.",
+          "resources": [
+            {
+              "label": "OpenAI Guardrails",
+              "url": "https://platform.openai.com/docs/guides/guardrails",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "MCP Basics",
+          "definition": "The Model Context Protocol is an open standard for exposing tools and data to models, so a capability written once works with any client that speaks it. Instead of wiring every integration into every application, you run an MCP server and connect to it. Its value grows with the number of tools and applications you maintain.",
+          "resources": [
+            {
+              "label": "MCP Introduction",
+              "url": "https://modelcontextprotocol.io/introduction",
+              "source": "team-lead"
+            }
+          ]
+        }
       ],
       "resources": [
         {
           "label": "LangGraph Overview",
           "url": "https://langchain-ai.github.io/langgraph/",
           "source": "curated"
-        },
-        {
-          "label": "OpenAI Agents SDK",
-          "url": "https://openai.github.io/openai-agents-python/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Running Agents",
-          "url": "https://openai.github.io/openai-agents-python/running_agents/",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Function Calling",
-          "url": "https://platform.openai.com/docs/guides/function-calling",
-          "source": "team-lead"
-        },
-        {
-          "label": "Define Agents",
-          "url": "https://openai.github.io/openai-agents-python/agents/",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenAI Guardrails",
-          "url": "https://platform.openai.com/docs/guides/guardrails",
-          "source": "team-lead"
-        },
-        {
-          "label": "MCP Introduction",
-          "url": "https://modelcontextprotocol.io/introduction",
-          "source": "team-lead"
         }
       ]
     },
@@ -287,115 +579,201 @@
       "level": "senior",
       "levelLabel": "Senior",
       "description": "Full-stack deployment with AI cost controls.",
+      "overview": "Shipping a full-stack application with AI in it means the usual deployment work plus a cost model that grows with usage rather than with servers. A feature that is inexpensive for a hundred users can be ruinous at a hundred thousand, and nothing about the deployment will warn you. This stage covers getting it live and keeping the bill predictable as it grows.",
       "topics": [
-        "Local vs Production Deployment",
-        "Docker Basics",
-        "Dockerfile",
-        "Docker Compose",
-        "API Deployment Concepts",
-        "Workers & Scaling",
-        "CI/CD Basics",
-        "Secrets in Deployment",
-        "Experiment Tracking",
-        "Model Registry",
-        "Model Evaluation",
-        "LLM / Agent Evaluation",
-        "Logs",
-        "Metrics",
-        "Traces",
-        "Monitoring & Alerting",
-        "Kubernetes Basics"
+        {
+          "term": "Local vs Production Deployment",
+          "definition": "Development servers reload on save, print stack traces and trust their surroundings; production servers must be secure, restart on failure and give nothing away to an attacker. The gap between the two is where most first deployments break. Assume that nothing which worked locally is configured on the server.",
+          "resources": [
+            {
+              "label": "FastAPI Deployment",
+              "url": "https://fastapi.tiangolo.com/deployment/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Docker Basics",
+          "definition": "Docker packages your application together with its dependencies into an image that runs identically anywhere. It removes the entire class of failure where code works on your machine but not on the server. For AI work, where Python and native library versions are unusually brittle, this matters more than it does for most software.",
+          "resources": [
+            {
+              "label": "Docker Get Started",
+              "url": "https://docs.docker.com/get-started/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Dockerfile",
+          "definition": "A Dockerfile is the recipe for an image: the base, the dependencies, your code, and the command that starts it. Order the steps so the parts that rarely change come first, because Docker caches by layer and rebuilds everything after the first thing that changed. Never bake secrets into it.",
+          "resources": [
+            {
+              "label": "Dockerfile Overview",
+              "url": "https://docs.docker.com/reference/dockerfile/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Docker Compose",
+          "definition": "Compose runs several containers together from one file — your API, a database, a vector store — with the networking between them handled for you. It is how you reproduce a realistic environment on your own machine. For a single service it is unnecessary; for anything with a datastore it saves a great deal of setup.",
+          "resources": [
+            {
+              "label": "Docker Compose Docs",
+              "url": "https://docs.docker.com/compose/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "API Deployment Concepts",
+          "definition": "Getting a service live means a process manager that restarts it, a reverse proxy in front, TLS, health checks, and configuration read from the environment rather than files. These are the same whatever your API happens to do. Learn them once and every deployment after this one is faster.",
+          "resources": [
+            {
+              "label": "FastAPI Deployment Concepts",
+              "url": "https://fastapi.tiangolo.com/deployment/concepts/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Workers & Scaling",
+          "definition": "One process handles one request at a time unless you run several workers. You scale up with more workers on a machine and out with more machines behind a load balancer. Calls to a language model are mostly spent waiting on the network, so concurrency helps far more here than raw processing power.",
+          "resources": [
+            {
+              "label": "FastAPI Server Workers",
+              "url": "https://fastapi.tiangolo.com/deployment/server-workers/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "CI/CD Basics",
+          "definition": "Continuous integration runs your tests on every push; continuous deployment ships whatever passes. Together they remove the manual steps people skip when they are in a hurry. Even a pipeline that only runs a linter and a build is worth setting up on the first day.",
+          "resources": [
+            {
+              "label": "GitHub Actions Docs",
+              "url": "https://docs.github.com/en/actions",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Secrets in Deployment",
+          "definition": "API keys belong in environment variables or a secrets manager, never in the repository. Rotate them on a schedule, use a different key per environment, and make certain they cannot end up in logs. A leaked provider key is billed to you until somebody notices.",
+          "resources": [
+            {
+              "label": "GitHub Actions Secrets",
+              "url": "https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Experiment Tracking",
+          "definition": "When you change a prompt, a model or a retrieval setting, record what you changed and what it scored. Memory and scattered notebooks stop being sufficient the moment there are more than a handful of variants. Tools such as MLflow exist to make that record the default rather than an act of discipline.",
+          "resources": [
+            {
+              "label": "MLflow Tracking",
+              "url": "https://mlflow.org/docs/latest/tracking.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Model Registry",
+          "definition": "A registry is the record of which version is approved, what it was evaluated against, and what is currently live. It is how you answer “what is in production right now” and how you roll back without guesswork. It applies to prompt and configuration versions every bit as much as to trained models.",
+          "resources": [
+            {
+              "label": "MLflow Model Registry",
+              "url": "https://mlflow.org/docs/latest/model-registry.html",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Model Evaluation",
+          "definition": "Evaluation means scoring output against known-good examples rather than reading a few and forming an impression. Decide what correct means for your task, assemble a fixed test set, and re-run it on every change. Anything you cannot measure, you cannot safely improve.",
+          "resources": [
+            {
+              "label": "MLflow Model Evaluation",
+              "url": "https://mlflow.org/docs/latest/models.html#model-evaluation",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "LLM / Agent Evaluation",
+          "definition": "Generated text usually has no single right answer, so evaluation combines several checks: does it contain the required facts, does it hold the format, does another model judge it acceptable, does a human sample agree. For agents you also score the steps taken, not just the final reply. Expect to build this rather than install it.",
+          "resources": [
+            {
+              "label": "MLflow LLM & Agent Evaluation",
+              "url": "https://mlflow.org/docs/latest/genai/eval-monitor/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Logs",
+          "definition": "Logs are the timestamped record of what happened. For AI systems that means logging the prompt, the model, the parameters and the response — without them, a bad answer is impossible to investigate afterwards. Be deliberate about redacting anything personal before it is written down.",
+          "resources": [
+            {
+              "label": "OpenTelemetry Logs",
+              "url": "https://opentelemetry.io/docs/concepts/signals/logs/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Metrics",
+          "definition": "Metrics are numbers over time: requests per minute, error rate, latency, tokens consumed, cost. They tell you that something is wrong and roughly where to look. Watch the 95th percentile rather than the average, because averages hide exactly the slow requests users complain about.",
+          "resources": [
+            {
+              "label": "Prometheus Overview",
+              "url": "https://prometheus.io/docs/introduction/overview/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Traces",
+          "definition": "A trace follows a single request through every step — retrieval, each model call, each tool — with timings for each. When a response takes nine seconds, the trace is what tells you which part took eight of them. This becomes essential with RAG and agents, where one request fans out into many calls.",
+          "resources": [
+            {
+              "label": "OpenTelemetry Overview",
+              "url": "https://opentelemetry.io/docs/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Monitoring & Alerting",
+          "definition": "Monitoring is collecting the signals; alerting is being told when one crosses a threshold. Alert only on things a person must act on — error spikes, latency, budget — or people learn to ignore alerts entirely. The aim is to hear about a failure before your users report it.",
+          "resources": [
+            {
+              "label": "Prometheus Getting Started",
+              "url": "https://prometheus.io/docs/prometheus/latest/getting_started/",
+              "source": "team-lead"
+            }
+          ]
+        },
+        {
+          "term": "Kubernetes Basics",
+          "definition": "Kubernetes runs containers across a fleet of machines, restarting and rescheduling them as needed. It solves real problems at scale and adds substantial complexity underneath you. Understand what it does and why teams adopt it, but do not reach for it until something simpler has actually stopped being enough.",
+          "resources": [
+            {
+              "label": "Kubernetes Overview",
+              "url": "https://kubernetes.io/docs/concepts/overview/",
+              "source": "team-lead"
+            }
+          ]
+        }
       ],
       "resources": [
         {
           "label": "Docker Get Started",
           "url": "https://docs.docker.com/get-started/",
           "source": "curated"
-        },
-        {
-          "label": "FastAPI Deployment",
-          "url": "https://fastapi.tiangolo.com/deployment/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Docker Get Started",
-          "url": "https://docs.docker.com/get-started/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Dockerfile Overview",
-          "url": "https://docs.docker.com/reference/dockerfile/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Docker Compose Docs",
-          "url": "https://docs.docker.com/compose/",
-          "source": "team-lead"
-        },
-        {
-          "label": "FastAPI Deployment Concepts",
-          "url": "https://fastapi.tiangolo.com/deployment/concepts/",
-          "source": "team-lead"
-        },
-        {
-          "label": "FastAPI Server Workers",
-          "url": "https://fastapi.tiangolo.com/deployment/server-workers/",
-          "source": "team-lead"
-        },
-        {
-          "label": "GitHub Actions Docs",
-          "url": "https://docs.github.com/en/actions",
-          "source": "team-lead"
-        },
-        {
-          "label": "GitHub Actions Secrets",
-          "url": "https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions",
-          "source": "team-lead"
-        },
-        {
-          "label": "MLflow Tracking",
-          "url": "https://mlflow.org/docs/latest/tracking.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "MLflow Model Registry",
-          "url": "https://mlflow.org/docs/latest/model-registry.html",
-          "source": "team-lead"
-        },
-        {
-          "label": "MLflow Model Evaluation",
-          "url": "https://mlflow.org/docs/latest/models.html#model-evaluation",
-          "source": "team-lead"
-        },
-        {
-          "label": "MLflow LLM & Agent Evaluation",
-          "url": "https://mlflow.org/docs/latest/genai/eval-monitor/",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenTelemetry Logs",
-          "url": "https://opentelemetry.io/docs/concepts/signals/logs/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Prometheus Overview",
-          "url": "https://prometheus.io/docs/introduction/overview/",
-          "source": "team-lead"
-        },
-        {
-          "label": "OpenTelemetry Overview",
-          "url": "https://opentelemetry.io/docs/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Prometheus Getting Started",
-          "url": "https://prometheus.io/docs/prometheus/latest/getting_started/",
-          "source": "team-lead"
-        },
-        {
-          "label": "Kubernetes Overview",
-          "url": "https://kubernetes.io/docs/concepts/overview/",
-          "source": "team-lead"
         }
       ]
     },
@@ -406,6 +784,9 @@
       "level": "mid",
       "levelLabel": "Any level",
       "description": "Vendor credential.",
+      "overview": "A certification will not get you hired on its own, but it supplies a syllabus and a deadline if self-directed study has stalled. The credential here covers cloud AI services at a level that complements stages 1 to 6 rather than repeating them. Take it whenever it is useful, not as a gate you must clear first.",
+      "kind": "certification",
+      "note": "Certification checkpoints are not tied to a level — take one whenever it is useful. `level` is set to mid only so the stage groups sensibly in the UI.",
       "topics": [],
       "resources": [
         {
@@ -413,9 +794,7 @@
           "url": "https://aws.amazon.com/certification/certified-ai-practitioner/",
           "source": "curated"
         }
-      ],
-      "kind": "certification",
-      "note": "Certification checkpoints are not tied to a level — take one whenever it is useful. `level` is set to mid only so the stage groups sensibly in the UI."
+      ]
     },
     {
       "id": "senior-to-architect",
@@ -424,16 +803,37 @@
       "level": "architect",
       "levelLabel": "Senior+",
       "description": "End-to-end product and AI system architecture.",
-      "topics": [
-        "Model and provider selection across the whole system",
-        "Scaling strategy and cost ceilings",
-        "Governance, risk and reliability ownership",
-        "Design docs and decision records over code",
-        "Tying AI investment to business value"
-      ],
-      "resources": [],
+      "overview": "At this level the questions stop being about React or FastAPI and start being about consequences: what the system costs, who answers for it when it is wrong, what happens at ten times the traffic. That is why the architect track sits above all seven paths rather than at the end of one. The output shifts from code to design documents and the reasoning behind the decisions in them.",
       "kind": "architect",
-      "note": "One architect track sits above all seven paths — the job becomes system-level judgement rather than language or framework specifics. See the career ladder."
+      "note": "One architect track sits above all seven paths — the job becomes system-level judgement rather than language or framework specifics. See the career ladder.",
+      "topics": [
+        {
+          "term": "Model and provider selection across the whole system",
+          "definition": "Different parts of a system justify different models, and the choice turns on cost, latency, data residency, licensing and how much you want to depend on one vendor. Making it once for the organisation, with the reasoning written down, saves every team re-litigating it. It also means you can move when the market shifts, which it does.",
+          "resources": []
+        },
+        {
+          "term": "Scaling strategy and cost ceilings",
+          "definition": "Deciding in advance what the system must handle and what it is allowed to cost turns architecture into a set of constraints rather than a matter of taste. Cost per request multiplied by projected volume is the number that decides whether a design is viable at all. Set the ceiling before building, because retrofitting one means redesigning.",
+          "resources": []
+        },
+        {
+          "term": "Governance, risk and reliability ownership",
+          "definition": "Somebody has to own what happens when the system is confidently wrong, leaks data, or simply stops. That means defined approval paths, audit trails, retention rules, and a named owner for each. It is unglamorous, and it is what allows AI systems to be used for anything that matters.",
+          "resources": []
+        },
+        {
+          "term": "Design docs and decision records over code",
+          "definition": "At this level the durable output is a written argument: the problem, the options considered, the choice, and why. A decision record tells whoever arrives in two years why the system is shaped this way, which is the difference between maintaining it and rewriting it. Writing clearly becomes a core technical skill rather than a soft one.",
+          "resources": []
+        },
+        {
+          "term": "Tying AI investment to business value",
+          "definition": "Every system needs an answer to what it is worth — time saved, revenue enabled, risk reduced — measured against what it costs to run. Without that, AI spend is a line item that gets cut in the first difficult quarter. Being able to make the argument is what makes this a business role as much as a technical one.",
+          "resources": []
+        }
+      ],
+      "resources": []
     }
   ]
 }
