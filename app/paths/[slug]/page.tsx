@@ -4,11 +4,13 @@ import { ArrowLeft, ArrowRight, Hammer, Layers, Star } from "lucide-react";
 import type { Metadata } from "next";
 
 import { Reveal } from "@/components/motion/reveal";
+import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import {
   PathProgressBar,
   PathProgressProvider,
 } from "@/components/path-progress";
 import { PathRoadmapGraph } from "@/components/path-roadmap-graph";
+import { PathToc } from "@/components/path-toc";
 import { ResourceList } from "@/components/resource-list";
 import { StageTimeline } from "@/components/stage-timeline";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +25,7 @@ import {
   getProjectsForPath,
 } from "@/lib/content";
 import { cn } from "@/lib/utils";
+import { countResources } from "@/lib/stages";
 
 type Params = { slug: string };
 
@@ -93,10 +96,7 @@ export default async function PathPage({
 
   const foundation = getFoundation();
   const projects = getProjectsForPath(slug);
-  const resourceCount = path.stages.reduce(
-    (total, stage) => total + stage.resources.length,
-    0,
-  );
+  const resourceCount = countResources(path.stages);
 
   const facts = [
     { label: "Path", value: path.pathLetter },
@@ -125,7 +125,7 @@ export default async function PathPage({
             All paths
           </Link>
 
-          <Reveal from="none" className="mt-6">
+          <ScrollReveal className="mt-6">
             {path.flagship ? (
               <Badge
                 variant="outline"
@@ -136,7 +136,7 @@ export default async function PathPage({
               </Badge>
             ) : null}
 
-            <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h1 className="text-balance text-4xl tracking-tight sm:text-5xl">
               {path.title}
             </h1>
             <p className="mt-5 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
@@ -162,13 +162,13 @@ export default async function PathPage({
                 </div>
               ))}
             </dl>
-          </Reveal>
+          </ScrollReveal>
         </div>
       </header>
 
       <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
         {path.note ? (
-          <Reveal className="mb-12">
+          <ScrollReveal className="mb-12">
             <p
               className={cn(
                 "rounded-xl border p-5 text-sm leading-relaxed",
@@ -178,13 +178,13 @@ export default async function PathPage({
             >
               {path.note}
             </p>
-          </Reveal>
+          </ScrollReveal>
         ) : null}
 
         {path.prerequisite ? (
-          <Reveal className="mb-12">
+          <ScrollReveal className="mb-12">
             <div className="rounded-xl border border-border/60 p-5">
-              <h2 className="text-sm font-medium">Prerequisite</h2>
+              <h2 className="font-semibold text-sm font-medium">Prerequisite</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 {path.prerequisite}
               </p>
@@ -197,11 +197,11 @@ export default async function PathPage({
                 </Button>
               ) : null}
             </div>
-          </Reveal>
+          </ScrollReveal>
         ) : null}
 
         {path.requiresFoundation ? (
-          <Reveal className="mb-16">
+          <ScrollReveal className="mb-16">
             <section
               aria-labelledby="foundation-heading"
               className="rounded-xl border border-border/60 bg-muted/20 p-6"
@@ -242,21 +242,24 @@ export default async function PathPage({
                 </div>
               </div>
             </section>
-          </Reveal>
+          </ScrollReveal>
         ) : null}
 
         {/* Overview graph. Lazy, client-only, and rendered above the stage
             list it links into — the list itself stays server-rendered. */}
+        {/* Left on the plain fade deliberately. The canvas is already the
+            loudest thing on the page; a GSAP reveal on top of it is the
+            visual overkill the brief rules out. */}
         <Reveal className="mb-14">
           <PathRoadmapGraph path={path} />
         </Reveal>
 
         <PathProgressProvider slug={path.slug}>
           <section aria-labelledby="stages-heading">
-            <Reveal className="mb-10">
+            <ScrollReveal className="mb-10">
               <h2
                 id="stages-heading"
-                className="text-2xl font-semibold tracking-tight sm:text-3xl"
+                className="font-display text-2xl tracking-tight sm:text-3xl"
               >
                 The stages
               </h2>
@@ -265,13 +268,19 @@ export default async function PathPage({
                 every resource from both sources — the team lead&apos;s original
                 sheet and the curated 2026 roadmap.
               </p>
-            </Reveal>
+            </ScrollReveal>
 
-            <Reveal className="mb-10">
+            <ScrollReveal className="mb-10">
               <PathProgressBar
                 stageIds={path.stages.map((stage) => stage.id)}
               />
-            </Reveal>
+            </ScrollReveal>
+
+            {/* Server-rendered jump links. Pages run long now that every topic
+                carries a definition, so this is the fast way back to a stage. */}
+            <ScrollReveal className="mb-12">
+              <PathToc stages={path.stages} accentName={path.accent} />
+            </ScrollReveal>
 
             <StageTimeline
               stages={path.stages}
@@ -286,10 +295,10 @@ export default async function PathPage({
           <>
             <Separator className="my-16" />
             <section aria-labelledby="projects-heading">
-              <Reveal className="mb-8">
+              <ScrollReveal className="mb-8">
                 <h2
                   id="projects-heading"
-                  className="text-2xl font-semibold tracking-tight sm:text-3xl"
+                  className="font-display text-2xl tracking-tight sm:text-3xl"
                 >
                   Projects to build
                 </h2>
@@ -297,12 +306,12 @@ export default async function PathPage({
                   Tagged for this path. The portfolio is what gets read, not the
                   syllabus.
                 </p>
-              </Reveal>
+              </ScrollReveal>
 
               <ul className="space-y-4">
-                {projects.map((project, i) => (
+                {projects.map((project) => (
                   <li key={project.id}>
-                    <Reveal delay={Math.min(i, 6) * 0.04}>
+                    <ScrollReveal delay={0.05}>
                       <div className="rounded-xl border border-border/60 p-5">
                         <h3 className="flex items-center gap-2 font-medium">
                           <Hammer
@@ -316,7 +325,7 @@ export default async function PathPage({
                           className="mt-3"
                         />
                       </div>
-                    </Reveal>
+                    </ScrollReveal>
                   </li>
                 ))}
               </ul>
