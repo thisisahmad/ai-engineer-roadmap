@@ -96,7 +96,9 @@ export function ChatThread({
               </div>
             </div>
 
-            {empty ? (
+            {/* Signed out these are a dead end — clicking one only produces
+                "sign in first", which the panel below already says. */}
+            {empty && signedIn ? (
               <ul className="flex flex-wrap gap-2">
                 {OPENERS.map((opener) => (
                   <li key={opener}>
