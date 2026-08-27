@@ -12,6 +12,7 @@ import {
 import { PathRoadmapGraph } from "@/components/path-roadmap-graph";
 import { PathToc } from "@/components/path-toc";
 import { ResourceList } from "@/components/resource-list";
+import { StageScrollNav } from "@/components/stage-scroll-nav";
 import { StageTimeline } from "@/components/stage-timeline";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -282,12 +283,21 @@ export default async function PathPage({
               <PathToc stages={path.stages} accentName={path.accent} />
             </ScrollReveal>
 
-            <StageTimeline
-              stages={path.stages}
-              accentName={path.accent}
-              pathTitles={pathTitles}
-              trackProgress
-            />
+            {/* The sidebar needs more width than the 4xl prose column, so
+                this block breaks out of it on large screens only. Below lg the
+                grid collapses and the PathToc above remains the navigation. */}
+            <div className="lg:-mx-[10rem] lg:grid lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10 xl:-mx-[14rem] xl:grid-cols-[15rem_minmax(0,1fr)]">
+              <StageScrollNav stages={path.stages} />
+
+              <div className="min-w-0">
+                <StageTimeline
+                  stages={path.stages}
+                  accentName={path.accent}
+                  pathTitles={pathTitles}
+                  trackProgress
+                />
+              </div>
+            </div>
           </section>
         </PathProgressProvider>
 
