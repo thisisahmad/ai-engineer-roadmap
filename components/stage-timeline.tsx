@@ -118,16 +118,23 @@ export function StageTimeline({
                 </p>
               ) : null}
 
-              {/* The banner reflects what is actually below it. The topics
-                  here now carry written definitions, so claiming "not yet
-                  written" contradicted the page; it reads as a draft notice
-                  instead, and only says "not yet written" while the topics are
-                  genuinely empty. */}
+              {/*
+                The wording is derived from the fields it describes, never
+                stored or edited separately. Empty overview and empty
+                definitions means "not yet written"; anything present means a
+                draft is on the page.
+
+                This is deliberate: the two were previously allowed to
+                disagree, and the banner ended up asserting "not yet written"
+                directly above ten written definitions. Reading the data is
+                the only way it cannot drift again.
+              */}
               {stage.needsOriginalContent ? (
                 <div className="rounded-lg border border-amber-500/40 bg-amber-500/5 p-4">
                   <p className="flex items-center gap-2 text-sm font-medium text-amber-400">
                     <PenLine className="size-4" aria-hidden />
-                    {stage.topics.some((topic) => topic.definition)
+                    {stage.overview.trim() ||
+                    stage.topics.some((topic) => topic.definition.trim())
                       ? "Draft — to be rewritten from production experience"
                       : "Original content — not yet written"}
                   </p>

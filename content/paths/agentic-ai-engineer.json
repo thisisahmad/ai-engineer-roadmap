@@ -723,58 +723,58 @@
       "level": "senior",
       "levelLabel": "Senior",
       "description": "Agent handshake and comms, queue systems, microservice vs monolith, KV cache optimization.",
-      "overview": "This is the stage that separates people who have built an agent demo from people who have run agents in production. Everything here appears once you have real concurrent users: memory that cannot be held in context, orchestration that has to survive restarts, and cost that scales with steps rather than requests. The topic definitions below are a starting point — this section is meant to carry your own production experience, which is what no external course covers.",
+      "overview": "",
       "needsOriginalContent": true,
       "note": "Flagged for original content. These topics had zero links in the team lead's sheet and no external course covers them well — write this section from production experience rather than linking out. This is the strongest differentiator on the site.",
       "topics": [
         {
           "term": "Transformers internals",
-          "definition": "The transformer is the architecture behind essentially every current language model. Its central mechanism is attention: when producing each token, the model weighs every previous token by how relevant it is. Knowing this is what makes the cost and latency behaviour in the rest of this stage make sense rather than seem arbitrary.",
+          "definition": "",
           "resources": []
         },
         {
           "term": "Generative modeling paradigm",
-          "definition": "Generative models produce new output rather than choosing among fixed options, which is what makes them flexible and what makes them unpredictable. There is no correct answer to check against, only output that is more or less acceptable. Every hard problem in this stage — evaluation, guardrails, cost — traces back to that single property.",
+          "definition": "",
           "resources": []
         },
         {
           "term": "KV cache optimization in transformers",
-          "definition": "Generating each token requires the model's internal representation of every previous token, and recomputing that each time would be enormously wasteful, so it is cached. That cache grows with conversation length and is held in GPU memory, which makes it the main constraint on how many conversations one machine can serve. Managing it — reuse, eviction, sharing a common prefix — is where most of the achievable saving in agent serving is found.",
+          "definition": "",
           "resources": []
         },
         {
           "term": "Agent memory",
-          "definition": "At scale, memory stops being a feature and becomes a storage problem: what is written, what is retrieved, what is forgotten, and who can see it. Everything cannot go in the context window, so memory becomes a retrieval system with its own relevance and privacy questions. Multi-tenant systems make this sharper, because leaking one user's memory into another's context is a serious failure.",
+          "definition": "",
           "resources": []
         },
         {
           "term": "Agent orchestration scalability (thousands of users)",
-          "definition": "One agent for one user is straightforward; thousands of concurrent agents, each mid-run and holding state, is a different system. Runs must be resumable, state must live outside the process, and provider rate limits become a shared resource to allocate. This is the point at which agent work becomes distributed systems work.",
+          "definition": "",
           "resources": []
         },
         {
           "term": "Agent orchestration design patterns",
-          "definition": "Recurring shapes: a supervisor delegating to specialists, a pipeline where each stage refines the last, a router choosing one path, and parallel workers whose results get merged. Each has different failure and cost characteristics. Choosing deliberately, rather than letting a shape emerge, is most of what makes a multi-agent system maintainable.",
+          "definition": "",
           "resources": []
         },
         {
           "term": "Scalable microservice architecture",
-          "definition": "Splitting agent capabilities into separate services lets them scale, fail and deploy independently — the tool that calls a slow API need not hold up everything else. The price is network calls between components, distributed tracing, and considerably more operational surface. It earns its place when parts of the system have genuinely different scaling needs.",
+          "definition": "",
           "resources": []
         },
         {
           "term": "Monolith design",
-          "definition": "A single well-structured service is easier to build, deploy, trace and reason about, and it is the right starting point for almost every agent system. The usual mistake is splitting into services before knowing where the real boundaries are, which produces a distributed system with a monolith's coupling. Split when a specific pressure demands it, not in anticipation.",
+          "definition": "",
           "resources": []
         },
         {
           "term": "Agent handshake mechanism (intra-agent communication)",
-          "definition": "When one agent passes work to another, both need agreement on what is being asked, what context travels with it, and what a completed reply looks like. Left implicit, this is where multi-agent systems quietly break: the receiving agent lacks something it needed and improvises. Treating it as a defined contract, versioned like any other interface, is what keeps it reliable.",
+          "definition": "",
           "resources": []
         },
         {
           "term": "Queue systems",
-          "definition": "A queue puts requests in durable storage and lets workers take them when capacity allows, rather than doing everything inside the original request. For agents this is close to essential: runs take minutes, must survive a deploy, and need retrying without duplicating side effects. It also gives you a natural place to enforce concurrency limits and priority.",
+          "definition": "",
           "resources": []
         }
       ],
