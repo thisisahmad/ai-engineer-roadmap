@@ -177,6 +177,38 @@
 
 /* --- Project additions ------------------------------------------------- */
 
+/* Roadmap rail: a highlight that travels the connector once, on view.
+   Transform and opacity only, so it composites without repainting. */
+@keyframes rail-shimmer {
+  0% {
+    transform: translateX(-25%);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(125%);
+    opacity: 0;
+  }
+}
+
+/* Slow specular drift across a glass node, so the surface reads as glass
+   rather than as a flat translucent rectangle. */
+@keyframes glass-sheen {
+  0%,
+  100% {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  55%,
+  100% {
+    transform: translateX(220%) skewX(-18deg);
+  }
+}
+
 /* Used by the hero WebGL layer, which fades in once three.js has loaded. */
 @keyframes fade-in {
   from {

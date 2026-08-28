@@ -53,7 +53,11 @@ export async function generateMetadata({
   if (!path) return {};
 
   const stageCount = path.stages.length;
-  const description = `${path.tagline}. A ${stageCount}-stage roadmap from junior to AI System Architect — what to cover at each level, with free courses and certifications for every stage.`;
+  // "A 8-stage" reads as a typo in search results. 8 is the only count on the
+  // site that takes "an", but deriving it from the spoken form rather than
+  // special-casing means 11 and 18 stay correct too.
+  const article = /^(8|11|18)/.test(String(stageCount)) ? "An" : "A";
+  const description = `${path.tagline}. ${article} ${stageCount}-stage roadmap from junior to AI System Architect — what to cover at each level, with free courses and certifications for every stage.`;
 
   return {
     title: path.title,
