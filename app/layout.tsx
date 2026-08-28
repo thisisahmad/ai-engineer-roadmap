@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 
 import { ChatWidget } from "@/components/chat/chat-widget";
@@ -112,6 +113,17 @@ export default function RootLayout({
               already hosts the same conversation from the same storage key. */}
           <ChatWidget />
         </div>
+
+        {/*
+          Page views and referrers. Inert unless deployed on Vercel, so it
+          costs nothing locally and needs no key or account setup.
+
+          Page views only — custom events via track() are a Pro feature, so
+          in-page interactions like opening the chat cannot be measured here.
+          Chat usage is already recorded in our own database (chat_messages),
+          which is a better source for it anyway.
+        */}
+        <Analytics />
         </SessionProvider>
       </body>
     </html>

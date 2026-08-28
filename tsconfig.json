@@ -31,11 +31,12 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    ".next-glass/types/**/*.ts",
     ".next-seo/types/**/*.ts",
     ".next-verify/types/**/*.ts",
     ".next/types/**/*.ts",
     "next-env.d.ts",
-    ".next-glass/types/**/*.ts"
+    ".next-an/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
